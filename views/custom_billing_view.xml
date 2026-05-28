@@ -3,7 +3,7 @@
     <data>
         <menuitem name="Contabilidad kuale" id="contabilidad_kuale_menu"
                   web_icon="contabilidad_kuale,static/description/contabilidad.png"
-                  groups="reclutamiento__kuale.group_or_auxiliar">
+                  groups="reclutamiento__kuale.group_or_auxiliar,reclutamiento__kuale.group_direccion">
 
             <menuitem id="contabilidad_kuale_custom_sales" name="Ventas y Facturacion" sequence="1">
                 <menuitem id="ticket_monitor_sales_menu" name="Ventas de mostrador" action="action_ticket_monitor"/>
