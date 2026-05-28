@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="contabilidad_kuale.report_trial_balance">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="12"/>
+            <t t-set="data_report_header_spacing" t-value="0"/>
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <h3 style="text-align: center; margin: 0;">Balance de Comprobación</h3>
+                    <p style="text-align: center; margin: 0; font-size: 12px;">
+                        <t t-esc="data.get('date_from', 'N/A')"/> al <t t-esc="data.get('date_to', 'N/A')"/>
+                    </p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 0; font-size: 9px;">
+                        <thead style="background-color: #007cba; color: white;">
+                            <tr>
+                                <th style="padding: 3px; text-align: center;">Código</th>
+                                <th style="padding: 3px; text-align: left;">Nombre</th>
+                                <th style="padding: 3px; text-align: right;">Saldo Inicial</th>
+                                <th style="padding: 3px; text-align: right;">Débito</th>
+                                <th style="padding: 3px; text-align: right;">Crédito</th>
+                                <th style="padding: 3px; text-align: right;">Saldo Final</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="Accounts" t-as="account">
+                                <tr>
+                                    <td style="padding: 2px; text-align: center;"><t t-esc="account['code']"/></td>
+                                    <td style="padding: 2px; text-align: left;"><t t-esc="account['name']"/></td>
+                                    <td style="padding: 2px; text-align: right;"><t t-esc="'{:,.2f}'.format(account.get('initial_balance', 0.0))"/></td>
+                                    <td style="padding: 2px; text-align: right;"><t t-esc="'{:,.2f}'.format(account['debit'])"/></td>
+                                    <td style="padding: 2px; text-align: right;"><t t-esc="'{:,.2f}'.format(account['credit'])"/></td>
+                                    <td style="padding: 2px; text-align: right;"><t t-esc="'{:,.2f}'.format(account['balance'])"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

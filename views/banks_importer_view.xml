@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="view_santander_statement_importer_form" model="ir.ui.view">
+        <field name="name">santander.statement.importer.form</field>
+        <field name="model">santander.statement.importer</field>
+        <field name="arch" type="xml">
+            <form string="Importar Extracto Santander">
+                <group>
+                    <field name="data_file" widget="binary" filename="filename"/>
+                    <field name="filename"/>
+                    <field name="numero_cuenta" placeholder="Opcional: filtrar por número de cuenta"/>
+                    <field name="formato_extracto" widget="radio"/>
+                </group>
+                <footer>
+                    <button string="Importar" name="action_import_statements" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_santander_statement_importer" model="ir.actions.act_window">
+        <field name="name">Importar Extracto Santander (TXT)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">santander.statement.importer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_santander_statement_importer_form"/>
+    </record>
+
+
+
+    <record id="view_santander_csv_statement_importer_form" model="ir.ui.view">
+        <field name="name">santander.csv.statement.importer.form</field>
+        <field name="model">santander.csv.statement.importer</field>
+        <field name="arch" type="xml">
+            <form string="Importar CSV Santander">
+                <group>
+                    <group string="Archivo">
+                        <field name="data_file" widget="binary" filename="filename"/>
+                        <field name="filename"/>
+                    </group>
+                    <group string="Configuración">
+                        <field name="numero_cuenta" placeholder="Opcional: filtrar por cuenta"/>
+                        <field name="skip_header_lines"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Importar CSV" name="action_import_statements" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_santander_csv_statement_importer" model="ir.actions.act_window">
+        <field name="name">Importar CSV Santander</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">santander.csv.statement.importer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_santander_csv_statement_importer_form"/>
+    </record>
+
+
+    <record id="view_banregio_statement_importer_form" model="ir.ui.view">
+        <field name="name">banregio.statement.importer.form</field>
+        <field name="model">banregio.statement.importer</field>
+        <field name="arch" type="xml">
+            <form string="Importar Extracto Banregio">
+                <group>
+                    <field name="data_file" widget="binary" filename="filename"/>
+                    <field name="filename"/>
+                    <field name="numero_cuenta" placeholder="Opcional: filtrar por número de cuenta"/>
+                    <field name="skip_initial_balance"/>
+                </group>
+                <footer>
+                    <button string="Importar CSV" name="action_import_statements" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_banregio_statement_importer" model="ir.actions.act_window">
+        <field name="name">Importar Extracto Banregio (CSV)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">banregio.statement.importer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_banregio_statement_importer_form"/>
+    </record>
+
+
+
+    <record id="view_bbva_xlsx_statement_importer_form" model="ir.ui.view">
+        <field name="name">bbva.xlsx.statement.importer.form</field>
+        <field name="model">bbva.xlsx.statement.importer</field>
+        <field name="arch" type="xml">
+            <form string="Importar Estado de Cuenta BBVA Excel">
+                <group>
+                    <group string="Archivo">
+                        <field name="data_file" filename="filename"/>
+                        <field name="filename" invisible="1"/>
+                    </group>
+
+                    <group string="Configuración de Moneda">
+                        <field name="currency_id"
+                               widget="selection"
+                               options="{'no_create': True, 'no_open': True}"
+                               required="1"/>
+                        <label for="currency_id"
+                               string="Importante: Seleccione la moneda correcta"
+                               class="text-muted"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group string="Opciones de Importación">
+                        <field name="numero_cuenta"
+                               placeholder="Ej: 0123456789 (opcional)"/>
+                        <field name="sheet_name"/>
+                        <field name="skip_rows"/>
+                        <field name="has_headers"/>
+                    </group>
+                    <group string="Ayuda" colspan="2" style="all:unset;">
+                        <div class="alert alert-info" role="alert" style="white-space: normal; line-height: 1.5; padding: 10px 15px; border-radius: 8px;">
+                            <strong>Formato BBVA Excel:</strong><br/>
+                            • Extractos descargados de BBVA online<br/>
+                            • Formato: índice, fecha, descripción, cargo, abono, saldo<br/>
+                            • <strong> Seleccione la moneda correcta antes de importar</strong><br/>
+                            • Los montos se guardarán en la moneda indicada<br/>
+                        </div>
+                    </group>
+                </group>
+
+                <footer>
+                    <button name="action_import_statements"
+                            string="Importar Extractos"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_bbva_xlsx_statement_importer" model="ir.actions.act_window">
+        <field name="name">Importar BBVA Excel</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bbva.xlsx.statement.importer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_bbva_xlsx_statement_importer_form"/>
+    </record>
+
+         <record id="view_inbursa_xlsx_statement_importer_form" model="ir.ui.view">
+        <field name="name">inbursa.xlsx.statement.importer.form</field>
+        <field name="model">inbursa.xlsx.statement.importer</field>
+        <field name="arch" type="xml">
+            <form string="Importar Estado de Cuenta Inbursa">
+                <group>
+                    <group string=" Archivo">
+                        <field name="data_file" filename="filename"/>
+                        <field name="filename" invisible="1"/>
+                    </group>
+
+                    <group string=" Configuración">
+                        <field name="currency_id"
+                               widget="selection"
+                               options="{'no_create': True, 'no_open': True}"
+                               required="1"/>
+                        <field name="sheet_name"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group string="Información" colspan="2" style="all:unset;">
+                        <div class="alert alert-info" role="alert" style="white-space: normal; line-height: 1.5; padding: 10px 15px; border-radius: 8px;">
+                            <strong>Formato Inbursa Excel:</strong><br/>
+                            • Extractos descargados de portal Inbursa<br/>
+                            • Formato: Estado de Cuenta Individual<br/>
+                            • Columnas: Fecha, Movimiento, Cargo, Abono, Saldo<br/>
+                            • <strong>Seleccione la moneda correcta</strong><br/>
+                            • Detecta automáticamente número de cuenta<br/>
+                        </div>
+                    </group>
+                </group>
+
+                <footer>
+                    <button name="action_import_statements"
+                            string=" Importar Extractos Inbursa"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_inbursa_xlsx_statement_importer" model="ir.actions.act_window">
+        <field name="name">Importar Inbursa Excel</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">inbursa.xlsx.statement.importer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_inbursa_xlsx_statement_importer_form"/>
+    </record>
+
+    <record id="view_banamex_csv_statement_importer_form" model="ir.ui.view">
+        <field name="name">banamex.csv.statement.importer.form</field>
+        <field name="model">banamex.csv.statement.importer</field>
+        <field name="arch" type="xml">
+            <form string="Importar Movimientos Banamex">
+                <group>
+                    <group string="Archivo">
+                        <field name="data_file" filename="filename"/>
+                        <field name="filename" invisible="1"/>
+                    </group>
+
+                    <group string="Configuración">
+                        <field name="currency_id"
+                               widget="selection"
+                               options="{'no_create': True, 'no_open': True}"
+                               required="1"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group string="Información" style="all:unset;">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Formato Banamex CSV:</strong><br/>
+                            • Extractos descargados de portal Banamex<br/>
+                            • Formato: Movimientos de Cuenta Cheques<br/>
+                            • Columnas: Fecha, Descripción, Depósitos, Retiros, Saldo<br/>
+                            • <strong>Seleccione la moneda correcta</strong><br/>
+                            • Detecta automáticamente número de cuenta<br/>
+                            • Extrae Referencia Numérica y Autorización<br/>
+                        </div>
+                    </group>
+                </group>
+
+                <footer>
+                    <button name="action_import_statements"
+                            string="Importar Extractos Banamex"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_banamex_csv_statement_importer" model="ir.actions.act_window">
+        <field name="name">Importar Banamex CSV</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">banamex.csv.statement.importer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_santander_bank_statement_tree" model="ir.ui.view">
+        <field name="name">santander.bank.statement.tree</field>
+        <field name="model">santander.bank.statement</field>
+        <field name="arch" type="xml">
+            <tree string="Extractos Bancarios"
+                  decoration-success="procesado == 'procesado'">
+                <field name="fecha_movimiento"/>
+                <field name="numero_cuenta"/>
+                <field name="signo" widget="badge"
+                       decoration-success="signo == '+'"
+                       decoration-danger="signo == '-'"/>
+                <field name="importe" sum="Total"/>
+                <field name="currency_id" optional="show"/>
+                <field name="descripcion"/>
+                <field name="nombre_beneficiario"/>
+                <field name="nombre_ordenante"/>
+                <field name="banco_participante"/>
+                <field name="formato_origen"/>
+                <field name="procesado" widget="badge"/>
+                <field name="referencia" optional="hide"/>
+                <field name="clave_rastreo" optional="hide"/>
+                <!-- Campos para funcionalidad básica -->
+                <field name="codigo_devolucion" column_invisible="1"/>
+                <field name="hora_movimiento" optional="hide"/>
+                <field name="saldo" optional="hide"/>
+                <field name="sucursal" optional="hide"/>
+                <field name="clacon" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_santander_bank_statement_form" model="ir.ui.view">
+        <field name="name">santander.bank.statement.form</field>
+        <field name="model">santander.bank.statement</field>
+        <field name="arch" type="xml">
+            <form string="Movimiento Bancario">
+                <header>
+                    <button name="toggle_procesado" string="Marcar Procesado" type="object"
+                            class="btn-primary" invisible="procesado == 'procesado'"/>
+                    <button name="toggle_procesado" string="Marcar Pendiente" type="object"
+                            class="btn-secondary" invisible="procesado == 'pendiente'"/>
+                    <field name="procesado" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="numero_cuenta" class="oe_edit_only"/>
+                        <h1><field name="numero_cuenta"/></h1>
+                        <h2>
+                            <field name="signo" widget="badge"
+                                   decoration-success="signo == '+'"
+                                   decoration-danger="signo == '-'"/>
+                            <field name="importe" widget="monetary"/>
+                            <field name="currency_id"/>
+                        </h2>
+                    </div>
+
+                    <group>
+                        <group string="Información Básica">
+                            <field name="fecha_movimiento"/>
+                            <field name="hora_movimiento"/>
+                            <field name="saldo"/>
+                            <field name="referencia"/>
+                            <field name="sucursal"/>
+                            <field name="clacon"/>
+                        </group>
+                        <group string="Metadatos">
+                            <field name="formato_origen" readonly="1"/>
+                            <field name="fecha_importacion" readonly="1"/>
+                            <field name="archivo_origen" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Descripción" name="descripcion">
+                            <group>
+                                <field name="descripcion" colspan="2"/>
+                                <field name="concepto" colspan="2"/>
+                                <field name="informacion_adicional" colspan="2"/>
+                                <field name="campo_afil" colspan="2"/>
+                            </group>
+                        </page>
+
+                        <page string="SPEI - Beneficiario" name="beneficiario">
+                            <group>
+                                <group string="Datos del Beneficiario">
+                                    <field name="nombre_beneficiario"/>
+                                    <field name="clabe_beneficiario"/>
+                                    <field name="rfc_receptor"/>
+                                </group>
+                                <group string="Datos del Ordenante">
+                                    <field name="nombre_ordenante"/>
+                                    <field name="cuenta_ordenante"/>
+                                    <field name="rfc_ordenante"/>
+                                </group>
+                            </group>
+                            <group string="Información Bancaria">
+                                <field name="banco_participante" colspan="2"/>
+                                <field name="clave_rastreo" colspan="2"/>
+                            </group>
+                        </page>
+
+                        <page string="Devoluciones" name="devoluciones">
+                            <group>
+                                <field name="codigo_devolucion"/>
+                                <field name="causa_devolucion" colspan="2"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_santander_bank_statement_search" model="ir.ui.view">
+        <field name="name">santander.bank.statement.search</field>
+        <field name="model">santander.bank.statement</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Movimientos">
+                <field name="numero_cuenta"/>
+                <field name="descripcion"/>
+                <field name="nombre_beneficiario"/>
+                <field name="nombre_ordenante"/>
+                <field name="banco_participante"/>
+                <field name="referencia"/>
+
+                <separator/>
+
+                <filter string="Pendientes" name="pendientes"
+                        domain="[('procesado','=','pendiente')]"/>
+                <filter string="Procesados" name="procesados"
+                        domain="[('procesado','=','procesado')]"/>
+
+                <separator/>
+
+                <filter name="currency_mxn"
+                        string=" MXN (Pesos)"
+                        domain="[('currency_id.name', '=', 'MXN')]"/>
+                <filter name="currency_usd"
+                        string=" USD (Dólares)"
+                        domain="[('currency_id.name', '=', 'USD')]"/>
+                <separator/>
+
+                <filter string="Abonos" name="abonos"
+                        domain="[('signo','=','+')]"/>
+                <filter string="Cargos" name="cargos"
+                        domain="[('signo','=','-')]"/>
+
+                <separator/>
+
+                <filter string="Transferencias SPEI" name="spei"
+                        domain="[('descripcion','ilike','SPEI')]"/>
+                <filter string="Con Devoluciones" name="devoluciones"
+                        domain="[('codigo_devolucion','!=',False),('codigo_devolucion','!=','')]"/>
+
+                <separator/>
+
+                <!-- Filtros por banco -->
+                <filter string="Santander" name="santander"
+                        domain="[('formato_origen','in',['original','extendido'])]"/>
+                <filter string="Banregio" name="banregio"
+                        domain="[('formato_origen','=','banregio_csv')]"/>
+
+                <separator/>
+
+                <filter string="Hoy" name="hoy"
+                        domain="[('fecha_movimiento','=',context_today())]"/>
+                <filter string="Esta Semana" name="esta_semana"
+                        domain="[('fecha_movimiento','&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Este Mes" name="este_mes"
+                        domain="[('fecha_movimiento','&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_fecha" string="Fecha" context="{'group_by': 'fecha_movimiento'}"/>
+                    <filter name="group_cuenta" string="Cuenta" context="{'group_by': 'numero_cuenta'}"/>
+                    <filter name="group_signo" string="Tipo (Abono/Cargo)" context="{'group_by': 'signo'}"/>
+                    <filter name="group_banco_origen" string="Banco de Origen" context="{'group_by': 'formato_origen'}"/>
+                    <filter name="group_procesado" string="Estado" context="{'group_by': 'procesado'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="action_santander_bank_statement" model="ir.actions.act_window">
+        <field name="name">Extractos Bancarios</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">santander.bank.statement</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_santander_bank_statement_tree"/>
+        <field name="search_view_id" ref="view_santander_bank_statement_search"/>
+        <field name="context">{'search_default_pendientes': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay movimientos bancarios registrados
+            </p>
+            <p>
+                Haga clic en "Importar Extracto" para comenzar a procesar archivos bancarios.
+                Soporta extractos de Santander (TXT) y Banregio (CSV).
+            </p>
+        </field>
+    </record>
+
+    <record id="action_santander_only" model="ir.actions.act_window">
+        <field name="name">Extractos Santander</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">santander.bank.statement</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('formato_origen','in',['original','extendido'])]</field>
+        <field name="context">{'search_default_pendientes': 1}</field>
+    </record>
+
+    <record id="action_banregio_only" model="ir.actions.act_window">
+        <field name="name">Extractos Banregio</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">santander.bank.statement</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('formato_origen','=','banregio_csv')]</field>
+        <field name="context">{'search_default_pendientes': 1}</field>
+    </record>
+
+    <record id="action_spei_movements" model="ir.actions.act_window">
+        <field name="name">Transferencias SPEI</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">santander.bank.statement</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('descripcion','ilike','SPEI')]</field>
+        <field name="context">{'search_default_pendientes': 1}</field>
+    </record>
+
+    <record id="action_santander_devoluciones" model="ir.actions.act_window">
+        <field name="name">Devoluciones</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">santander.bank.statement</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('codigo_devolucion','!=',False),('codigo_devolucion','!=','')]</field>
+    </record>
+</odoo>

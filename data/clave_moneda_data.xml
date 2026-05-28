@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="cfdi_clavemoneda_mxn" model="cfdi.clavemoneda">
+            <field name="Clave_moneda">MXN</field>
+            <field name="Descripcion">Peso mexicano</field>
+        </record>
+        <record id="cfdi_clavemoneda_usd" model="cfdi.clavemoneda">
+            <field name="Clave_moneda">USD</field>
+            <field name="Descripcion">Dólar estadounidense</field>
+        </record>
+        <record id="cfdi_clavemoneda_usn" model="cfdi.clavemoneda">
+            <field name="Clave_moneda">USN</field>
+            <field name="Descripcion">Dólar estadounidense(siguiente dia)</field>
+        </record>
+        <record id="cfdi_clavemoneda_uss" model="cfdi.clavemoneda">
+            <field name="Clave_moneda">USS</field>
+            <field name="Descripcion">Dólar estadounidense(Mismo dia)</field>
+        </record>
+        <record id="cfdi_clavemoneda_cny" model="cfdi.clavemoneda">
+            <field name="Clave_moneda">CNY</field>
+            <field name="Descripcion">Yuan chino</field>
+        </record>
+        <record id="cfdi_clavemoneda_cop" model="cfdi.clavemoneda">
+            <field name="Clave_moneda">COP</field>
+            <field name="Descripcion">Peso colombiano</field>
+        </record>
+        <record id="cfdi_clavemoneda_cup" model="cfdi.clavemoneda">
+            <field name="Clave_moneda">CUP</field>
+            <field name="Descripcion">Peso cubano</field>
+        </record>
+
+    </data>
+</odoo>

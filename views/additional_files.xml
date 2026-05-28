@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="ir_cron_delete_temporary_pdfs" model="ir.cron">
+            <field name="name">Eliminar PDFs Temporales</field>
+            <field name="model_id" ref="model_contabilidad_kuale_additional_file"/>
+            <field name="state">code</field>
+            <field name="code">model.delete_temporary_pdfs()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

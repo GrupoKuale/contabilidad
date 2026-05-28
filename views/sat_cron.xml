@@ -1,0 +1,15 @@
+<odoo>
+    <record id="ir_cron_verify_sat_invoices" model="ir.cron">
+        <field name="name">Verificar CFDI SAT</field>
+        <field name="model_id" ref="model_sat_xml_invoices"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_verify_sat_status()</field>
+
+        <!-- cada 6 horas -->
+        <field name="interval_number">15</field>
+        <field name="interval_type">days</field>
+
+        <field name="numbercall">-1</field>
+        <field name="active">False</field>
+    </record>
+</odoo>

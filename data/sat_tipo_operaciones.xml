@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="sat_tipo_tercero_nat_02" model="sat.tipo.operacion">
+            <field name="name">Enajenación de bienes</field>
+            <field name="code">02</field>
+            <field name="supplier">nacional</field>
+        </record>
+
+        <record id="sat_tipo_tercero_nat_03" model="sat.tipo.operacion">
+            <field name="name">Prestación de Servicios Profesionales</field>
+            <field name="code">03</field>
+            <field name="supplier">nacional</field>
+        </record>
+
+        <record id="sat_tipo_tercero_nat_06" model="sat.tipo.operacion">
+            <field name="name">Uso o goce temporal de bienes</field>
+            <field name="code">06</field>
+            <field name="supplier">nacional</field>
+        </record>
+
+        <record id="sat_tipo_tercero_nat_08" model="sat.tipo.operacion">
+            <field name="name">Importación por transferencia virtual</field>
+            <field name="code">08</field>
+            <field name="supplier">nacional</field>
+        </record>
+
+        <record id="sat_tipo_tercero_nat_85" model="sat.tipo.operacion">
+            <field name="name">Otros</field>
+            <field name="code">85</field>
+            <field name="supplier">nacional</field>
+        </record>
+
+        <record id="sat_tipo_tercero_int_02" model="sat.tipo.operacion">
+            <field name="name">Enajenación de bienes</field>
+            <field name="code">02</field>
+            <field name="supplier">extranjero</field>
+        </record>
+
+        <record id="sat_tipo_tercero_int_03" model="sat.tipo.operacion">
+            <field name="name">Prestación de Servicios Profesionales</field>
+            <field name="code">03</field>
+            <field name="supplier">extranjero</field>
+        </record>
+
+        <record id="sat_tipo_tercero_int_07" model="sat.tipo.operacion">
+            <field name="name">Importación de bienes o servicios globales</field>
+            <field name="code">07</field>
+            <field name="supplier">extranjero</field>
+        </record>
+
+        <record id="sat_tipo_tercero_glob_87" model="sat.tipo.operacion">
+            <field name="name">Operaciones</field>
+            <field name="code">87</field>
+            <field name="supplier">global</field>
+        </record>
+
+    </data>
+</odoo>

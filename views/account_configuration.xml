@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_cash_flow_view" model="ir.ui.view">
+        <field name="name">Flujo de fondos</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="replace">
+                <form>
+                    <sheet>
+                        <div>
+                            <h1 style="font-size: 1.5rem;">
+                                <div class="row">
+                                    <div class="col col-md-auto">
+                                        <label for="code" string="Código"/>
+                                        <div>
+                                            <field name="code" placeholder="e.g. 101000" class="oe_inline"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="font-size: 1.9rem;">
+
+                                    <div class="col col-md-8">
+                                        <label for="name" string="Nombre de la cuenta"/>
+                                        <div>
+                                            <field name="name" placeholder="e.g. Current Assets"
+                                                   style="width:80% !important;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <field name="company_id" invisible="1"/>
+                            </h1>
+                        </div>
+                        <separator string="Contabilidad"/>
+                        <group>
+                            <group>
+                                <field name="accountable"/>
+                                <field name="tax_ids" widget="many2many_tags"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="allowed_journal_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="account_type"/>
+                                <field name="currency_id"/>
+                                <field name="deprecated"/>
+                                <field name="company_id"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Configuración contable">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="sat_nivel"/>
+                                        <br/>
+                                        <field name="sat_nivel" class="w-100"/>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="group_id" string="Concepto acumulador" readonly="False"/>
+                                        <br/>
+                                        <field name="group_id" class="w-100"/>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="naturaleza"/>
+                                        <br/>
+                                        <field name="naturaleza" class="w-100"/>
+                                    </div>
+                                </div>
+                            </page>
+                            <page string="Código agrupador de cuentas SAT">
+                                <field name="codigo_sat">
+                                    <tree>
+                                        <field name="level"/>
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_account_list_inherit" model="ir.ui.view">
+        <field name="name">account.account.tree.inherit</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="accountable" optional="hide"/>
+                <field name="naturaleza" optional="hide"/>
+            </xpath>
+            <xpath expr="//tree/field[@name='code']" position="after">
+                <field name="sat_nivel" optional="show"/>
+            </xpath>
+            <xpath expr="//tree/field[@name='group_id']" position="attributes">
+                <attribute name="string">Código agrupador</attribute>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,235 @@
+<odoo>
+    <template id="sales_system_summary_pdf_template">
+        <t t-call="web.html_container">
+            <meta charset="utf-8"/>
+            <t t-set="background_color">
+                <t t-if="docs.company_id.id == 1">197abf</t>
+                <!--  197abf  -->
+                <t t-if="docs.company_id.id == 2">fc8207</t>
+                <!--  fc8207  -->
+                <t t-if="docs.company_id.id == 4">ffcd32</t>
+                <!--  ffcd32  -->
+                <t t-if="docs.company_id.id not in [1, 2, 4]">f0f0f0</t>
+                <!--  Valor por defecto  -->
+            </t>
+            <div class="page">
+                <table style="width: 100%; border-collapse: collapse;">
+
+                    <tr>
+                        <td>
+                            <div style="display: flex; flex-direction: column; width: 100%;">
+                                <table class="emisor-details-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">
+                                                Reporte de venta
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Sucursal</td>
+                                            <td>
+                                                <t t-esc="docs.branch_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Periodo</td>
+                                            <td>
+                                                <t t-esc="docs.date_from"/>
+                                                -
+                                                <t t-esc="docs.date_to"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Guia General</td>
+                                            <td>#GUIA</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                        <td style="width: 25%; vertical-align: center; padding: 3px;">
+                            <img t-att-src="'data:image/png+xml;base64,' + logo" alt="Logo"
+                                 style="width: 70%; max-width: 100%;"/>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <br/>
+                <table style="width: 100%; border-collapse: collapse;" border="1">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Día</th>
+                            <th rowspan="2">Fecha</th>
+                            <th rowspan="2">Ventas netas totales<br/>(sin IVA)
+                            </th>
+                            <th rowspan="2">Ticket Promedio</th>
+                            <th colspan="8">Transacciones</th>
+                        </tr>
+                        <tr>
+                            <th>Mostrador</th>
+                            <th>LLevar</th>
+                            <th>Drive</th>
+                            <th>Uber</th>
+                            <th>Rappi</th>
+                            <th>Reparto/App</th>
+                            <th>App pick up</th>
+                            <th>Totales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="records" t-as="record">
+                            <tr>
+                                <td>
+                                    <t t-esc="record['date_day']"/>
+                                </td>
+                                <td>
+                                    <t t-esc="record['date']"/>
+                                </td>
+                                <td>$
+                                    <t t-esc="record['net_sale']"/>
+                                </td>
+                                <td>#TICKET PROMEDIO</td>
+                                <td>#Mostrador</td>
+                                <td>#LLevar</td>
+                                <td>#Drive</td>
+                                <td>#Uber</td>
+                                <td>#Rappi</td>
+                                <td>#Reparto/App</td>
+                                <td>#App pick up</td>
+                                <td>#Totales</td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="page" style="page-break-before: always;">
+                <table style="width: 100%; border-collapse: collapse;" border="1">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Expertos/ers</th>
+                            <th colspan="2">Coord Anfitrionas</th>
+                            <th colspan="2">Entrenadores</th>
+                            <th colspan="2">Guia en Entrenamiento star</th>
+                            <th colspan="2">Guias en Entrenamiento super star</th>
+                            <th colspan="2">Guia General</th>
+                            <th colspan="2">Plantilla Completa</th>
+                            <th colspan="2">Labor$</th>
+                            <th colspan="2">Labor%</th>
+                            <th colspan="2">Bajas</th>
+                            <th colspan="2">Rotacion%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="records" t-as="record">
+                            <tr>
+                                <td colspan="2">#Expertos</td>
+                                <td colspan="2">#Coord</td>
+                                <td colspan="2">#Entre</td>
+                                <td colspan="2">#Guia</td>
+                                <td colspan="2">#Guia</td>
+                                <td colspan="2">#Guia</td>
+                                <td colspan="2">#Plantilla</td>
+                                <td colspan="2">#Labor</td>
+                                <td colspan="2">#Labor</td>
+                                <td colspan="2">#Bajas</td>
+                                <td colspan="2">#Rotacion</td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="page" style="page-break-before: always;">
+                <table style="width: 100%; border-collapse: collapse;" border="1">
+                    <thead>
+                        <tr>
+                            <th colspan="4">Merma $</th>
+                            <th colspan="4">Merma %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="records" t-as="record">
+                            <tr>
+                                <td colspan="4">#MERMA</td>
+                                <td colspan="4">#MERMA</td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="page" style="page-break-before: always;">
+                <table style="width: 100%; border-collapse: collapse;" border="1">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Venta Total<br/>(con IVA)
+                            </th>
+                            <th colspan="2">Terminarles Bancarias</th>
+                            <th rowspan="2">Total<br/>Uber
+                            </th>
+                            <th rowspan="2">Total<br/>Rappi
+                            </th>
+                            <th colspan="2">Venta de plataforma</th>
+                            <th rowspan="2">Total<br/>A depositar
+                            </th>
+                            <th rowspan="2">Depositado en<br/>Cometra
+                            </th>
+                            <th rowspan="2">Depositos Pendientes de hacer por Oficinas</th>
+                            <th rowspan="2">Diferencia</th>
+                            <th rowspan="2">Nombre y Apellido Responsable</th>
+                            <th rowspan="2">Observaciones de Dinero extra depositado a la cuenta</th>
+                            <th rowspan="2">Observaciones</th>
+                        </tr>
+                        <tr>
+                            <th>Terminal 1</th>
+                            <th>Total</th>
+                            <th>App Reparto</th>
+                            <th>App pick Up</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <record id="paperformat_sales_summary_landscape" model="report.paperformat">
+        <field name="name">Sales Summary Landscape</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+    </record>
+
+    <record id="action_sales_system_summary_report" model="ir.actions.report">
+        <field name="name">Resumen de venta</field>
+        <field name="model">sales.system.summary.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">contabilidad_kuale.sales_system_summary_pdf_template</field>
+        <field name="report_file">contabilidad_kuale.sales_system_summary_pdf_template</field>
+         <field name="paperformat_id" ref="contabilidad_kuale.paperformat_sales_summary_landscape"/>
+        <field name="print_report_name">"Reporte_Ventas"</field>
+
+    </record>
+</odoo>

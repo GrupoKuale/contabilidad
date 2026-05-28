@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+  <t t-name="kuale_aux_movement.Renderer">
+    <style>
+      .child-row { display: none; background-color: #E2EAF4; }
+      .child-row-mov {background-color: #E4E4E5; }
+      .k-toggle-icon { font-weight: 600; margin-right: 4px; }
+    </style>
+
+      <header>
+      <div class="ms-auto">
+        <button class="btn btn-sm btn-primary me-2" t-on-click="exportToExcel">
+          <i class="fa fa-file-excel-o me-1"/>
+            Exportar a Excel
+        </button>
+        <button class="btn btn-sm btn-danger" t-on-click="exportToPDF">
+          <i class="fa fa-file-pdf-o me-1"/>
+            Exportar a PDF
+        </button>
+      </div>
+    </header>
+
+      <div class="mb-3 d-flex align-items-center gap-3">
+      <div>
+        <label for="company-select" class="form-label mb-1">Compañía:</label>
+          <select id="company-select" class="form-select form-select-sm w-auto d-inline-block"
+                  t-model="state.selectedCompanyId" t-on-change="onCompanyChange">
+          <t t-foreach="state.companyList" t-as="company" t-key="company.id">
+            <option t-att-value="company.id" t-esc="company.name"/>
+          </t>
+        </select>
+      </div>
+
+      <div>
+        <label for="branch-select" class="form-label mb-1">Sucursal:</label>
+          <select id="branch-select" class="form-select form-select-sm w-auto d-inline-block"
+                  t-model="state.selectedBranchId" t-on-change="onBranchChange">
+          <t t-foreach="state.branchList" t-as="branch" t-key="branch.id or 'all'">
+            <option t-att-value="branch.id" t-esc="branch.name"/>
+          </t>
+        </select>
+      </div>
+
+          <div>
+        <label for="sat-nivel-select" class="form-label mb-1">Nivel SAT:</label>
+              <select id="sat-nivel-select" class="form-select form-select-sm w-auto d-inline-block"
+                      t-model="state.selectedSatNivel" t-on-change="onSatNivelChange">
+          <t t-foreach="state.satNivelList" t-as="opt" t-key="opt.value or 'all'">
+            <option t-att-value="opt.value" t-esc="opt.label"/>
+          </t>
+        </select>
+      </div>
+
+          <div class="form-check mt-4">
+        <input class="form-check-input" type="checkbox" id="include-empty"
+               t-att-checked="state.includeEmpty ? 'checked' : null"
+               t-on-change="onIncludeEmptyToggle"/>
+              <label class="form-check-label" for="include-empty">Incluir grupos/cuentas sin movimientos</label>
+      </div>
+
+          <div class="d-flex gap-3">
+        <div>
+          <label for="from-date" class="form-label mb-1">Desde:</label>
+            <input type="date" id="from-date" class="form-control form-control-sm"
+                   t-model="state.fromDate" t-on-change="onDateChange"/>
+        </div>
+              <div>
+          <label for="to-date" class="form-label mb-1">Hasta:</label>
+                  <input type="date" id="to-date" class="form-control form-control-sm"
+                         t-model="state.toDate" t-on-change="onDateChange"/>
+        </div>
+      </div>
+          <!-- RANGO DE CODIGO -->
+          <div class="d-flex gap-3">
+        <div>
+          <label for="code-from" class="form-label mb-1">Código desde:</label>
+            <input type="text" id="code-from" class="form-control form-control-sm"
+                   placeholder="ej. 1"
+                   t-model="state.codeFrom" t-on-change="onCodeRangeChange"/>
+        </div>
+              <div>
+          <label for="code-to" class="form-label mb-1">Código hasta:</label>
+                  <input type="text" id="code-to" class="form-control form-control-sm"
+                         placeholder="ej. 1.2"
+                         t-model="state.codeTo" t-on-change="onCodeRangeChange"/>
+        </div>
+      </div>
+
+    </div>
+
+      <table class="table table-sm table-hover table-striped" style="margin-bottom: 50px !important;">
+      <thead>
+        <tr>
+          <th>Código</th>
+            <th>Fecha</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Referencia</th>
+            <th class="text-end">Saldo Inicial</th>
+            <th class="text-end">Débito</th>
+            <th class="text-end">Crédito</th>
+            <th class="text-end">Balance</th>
+        </tr>
+      </thead>
+          <tbody>
+        <t t-foreach="props.model.state.groups or []" t-as="group" t-key="group.id">
+          <t t-call="kuale_aux_movement.GroupRow">
+            <t t-set="group" t-value="group"/>
+              <t t-set="level" t-value="0"/>
+          </t>
+        </t>
+      </tbody>
+    </table>
+  </t>
+
+    <t t-name="kuale_aux_movement.GroupRow" t-vars="group, level">
+
+    <!-- GRUPO -->
+        <tr
+                t-attf-class="#{group.group_id ? ('child-row parent-g-' + group.group_id[0] + ' ') : ''}#{(((group.children ? group.children.length : 0) + (group.accounts ? group.accounts.length : 0)) > 0) ? 'toggle ' : ''}level-#{level} fw-bold bg-light"
+                t-attf-data-id="g-#{group.id}"
+                t-on-click="onToggle">
+      <td><t t-esc="group.code_prefix_start or ''"/></td>
+            <td/>
+            <td class="tree">
+        <span t-attf-style="padding-left: #{group.level * 20}px">
+          <t t-if="((group.children ? group.children.length : 0) + (group.accounts ? group.accounts.length : 0)) > 0">
+            <span class="k-toggle-icon">[+]</span>
+          </t>
+            <t t-esc="group.name"/>
+        </span>
+      </td>
+            <td/>
+            <td/>
+            <td class="text-end"><t t-esc="(group.initial_balance_total || 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(group.debit_total || 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(group.credit_total || 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(group.ending_balance_total || 0).toFixed(2)"/></td>
+    </tr>
+
+        <!-- HIJOS (cuentas primero, luego subgrupos) -->
+        <t t-foreach="group.items" t-as="it" t-key="(it.kind == 'acc' and ('a-' + it.id)) or ('g-' + it.id)">
+
+      <!-- CUENTA -->
+            <t t-if="it.kind == 'acc'">
+        <tr
+                t-attf-class="child-row parent-g-#{group.id} level-#{group.level + 1} #{(it.ref.lines &amp;&amp; it.ref.lines.length) ? 'toggle' : ''}"
+                t-attf-data-id="a-#{it.id}"
+                t-on-click="onToggle">
+          <td><t t-esc="it.ref.code"/></td>
+            <td/>
+            <td class="tree">
+            <span t-attf-style="padding-left: #{(group.level + 1) * 20}px">
+              <t t-if="it.ref.lines &amp;&amp; it.ref.lines.length"><span class="k-toggle-icon">[+]</span></t>
+                <t t-esc="it.ref.name"/>
+            </span>
+          </td>
+            <td/>
+            <td/>
+            <td class="text-end"><t t-esc="(it.ref.initial_balance || 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(it.ref.debit || 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(it.ref.credit || 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(it.ref.ending_balance || 0).toFixed(2)"/></td>
+        </tr>
+
+                <!-- MOVIMIENTOS -->
+                <t t-foreach="it.ref.lines || []" t-as="ln" t-key="ln.id">
+          <tr
+                  t-attf-class="child-row child-row-mov parent-a-#{it.id} level-#{group.level + 2}"
+                  t-attf-data-id="l-#{ln.id}">
+            <td/><!-- Código -->
+              <td><t t-esc="ln.date"/></td>
+              <td class="tree">
+              <span t-attf-style="padding-left: #{(group.level + 2) * 20}px">
+                <t t-esc="ln.name || ln.move_name || 'Línea'"/>
+              </span>
+            </td>
+              <!--            <td><t t-esc="(ln.journal_id &amp;&amp; ln.journal_id[1]) || ''"/></td>-->
+              <td><t t-esc="ln._journal_display or ''"/></td>
+              <td><t t-esc="ln.ref || ''"/></td>
+              <td/><!-- SI -->
+              <td class="text-end"><t t-esc="(ln.debit || 0).toFixed(2)"/></td>
+              <td class="text-end"><t t-esc="(ln.credit || 0).toFixed(2)"/></td>
+              <td class="text-end"><t t-esc="((ln.debit || 0) - (ln.credit || 0)).toFixed(2)"/></td>
+          </tr>
+        </t>
+      </t>
+
+            <!-- SUBGRUPO -->
+            <t t-if="it.kind == 'grp'">
+        <t t-call="kuale_aux_movement.GroupRow">
+          <t t-set="group" t-value="it.ref"/>
+            <t t-set="level" t-value="group.level + 1"/>
+        </t>
+      </t>
+
+    </t>
+  </t>
+
+</templates>

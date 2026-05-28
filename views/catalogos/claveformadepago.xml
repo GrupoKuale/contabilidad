@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_claveformadepago_filter" model="ir.ui.view">
+            <field name="name">filtro.claveformadepago</field>
+            <field name="model">cfdi.claveformadepago</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_forma_de_pago" string="Todo" filter_domain="['|',('Clave_forma_de_pago','ilike',self),
+                              ('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="claveformadepago_view_form" model="ir.ui.view">
+            <field name="name">claveformadepago form</field>
+            <field name="model">cfdi.claveformadepago</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="third_party_id"/>
+                            <field name="Clave_forma_de_pago"/>
+                            <field name="Descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="claveformadepago_view_tree" model="ir.ui.view">
+            <field name="name">claveformadepago tree</field>
+            <field name="model">cfdi.claveformadepago</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_forma_de_pago asc'  >
+                    <field name="third_party_id"/>
+                    <field name="Clave_forma_de_pago"/>
+                    <field name="Descripcion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_claveformadepago">
+            <field name="name">claveformadepago</field>
+            <field name="res_model">cfdi.claveformadepago</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

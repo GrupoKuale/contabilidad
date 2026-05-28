@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="update_prodserv_cp_view_form" model="ir.ui.view">
+            <field name="name">update_prodserv_cp form</field>
+            <field name="model">cfdi.update_prodserv_cp</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="archivo"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="update_prodserv_cp_view_tree" model="ir.ui.view">
+            <field name="name">update_prodserv_cp tree</field>
+            <field name="model">cfdi.update_prodserv_cp</field>
+            <field name="arch" type="xml">
+
+
+                <tree class="text-center"  >
+                    <header>
+                        <button name="action_procesar_archivo" type="object" string="Procesar" class="oe_highlight float-right pb-1"/>
+                    </header>
+                    <field name="archivo"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_update_prodserv_cp">
+            <field name="name">Upload File </field>
+            <field name="res_model">cfdi.update_prodserv_cp</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavemunicipio_filter" model="ir.ui.view">
+            <field name="name">filtro.clavemunicipio</field>
+            <field name="model">cfdi.clavemunicipio</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_municipio" string="Todo" filter_domain="['|',('Clave_municipio','ilike',self),
+                              '|',('Clave_estado','ilike',self),
+                              ('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavemunicipio_view_form" model="ir.ui.view">
+            <field name="name">clavemunicipio form</field>
+            <field name="model">cfdi.clavemunicipio</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_municipio"/>
+                            <field name="Clave_estado"/>
+                            <field name="Descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavemunicipio_view_tree" model="ir.ui.view">
+            <field name="name">clavemunicipio tree</field>
+            <field name="model">cfdi.clavemunicipio</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_municipio asc'  >
+                    <field name="Clave_municipio"/>
+                    <field name="Clave_estado"/>
+                    <field name="Descripcion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavemunicipio">
+            <field name="name">clavemunicipio</field>
+            <field name="res_model">cfdi.clavemunicipio</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

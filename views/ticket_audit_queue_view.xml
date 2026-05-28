@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ═══════════════════════════════════════════════════════════
+         VISTAS: Cola de Auditoría de Tickets
+         Permite monitorear el estado de cada job de auditoría
+         ═══════════════════════════════════════════════════════════ -->
+
+    <!-- List View -->
+    <record id="view_ticket_audit_queue_list" model="ir.ui.view">
+        <field name="name">ticket.audit.queue.list</field>
+        <field name="model">contabilidad_kuale.ticket_audit_queue</field>
+        <field name="arch" type="xml">
+            <tree string="Cola de Auditoría"
+                  decoration-success="status == 'done'"
+                  decoration-warning="status == 'processing'"
+                  decoration-danger="status == 'error'"
+                  decoration-muted="status == 'pending'"
+                  default_order="create_date desc">
+                <field name="job_uuid" string="UUID del Job"/>
+                <field name="create_date" string="Recibido"/>
+                <field name="company_id" string="Empresa"/>
+                <field name="branch_id" string="Sucursal"/>
+                <field name="ticket_count" string="Tickets"/>
+                <field name="final_audit" string="Auditoría Final"/>
+                <field name="status" string="Estado"
+                       decoration-success="status == 'done'"
+                       decoration-warning="status == 'processing'"
+                       decoration-danger="status == 'error'"
+                       decoration-muted="status == 'pending'"/>
+                <field name="success_count" string="Exitosos"/>
+                <field name="error_count" string="Errores"/>
+                <field name="processed_at" string="Procesado"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_ticket_audit_queue_form" model="ir.ui.view">
+        <field name="name">ticket.audit.queue.form</field>
+        <field name="model">contabilidad_kuale.ticket_audit_queue</field>
+        <field name="arch" type="xml">
+            <form string="Job de Auditoría">
+                <header>
+                    <button name="action_retry"
+                            string="Reintentar"
+                            type="object"
+                            class="btn-warning"
+                            invisible="status != 'error'"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="pending,processing,done,error"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="job_uuid" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información del lote">
+                            <field name="company_id" readonly="1"/>
+                            <field name="branch_id" readonly="1"/>
+                            <field name="ticket_count" readonly="1"/>
+                            <field name="final_audit" readonly="1"/>
+                            <field name="create_date" string="Recibido en" readonly="1"/>
+                        </group>
+                        <group string="Resultado">
+                            <field name="success_count" readonly="1"/>
+                            <field name="error_count" readonly="1"/>
+                            <field name="processed_at" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detalle de Errores"
+                              invisible="not result_summary">
+                            <field name="result_summary"
+                                   widget="text"
+                                   readonly="1"
+                                   nolabel="1"/>
+                        </page>
+                        <page string="Payload JSON">
+                            <field name="payload"
+                                   widget="text"
+                                   readonly="1"
+                                   nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_ticket_audit_queue_search" model="ir.ui.view">
+        <field name="name">ticket.audit.queue.search</field>
+        <field name="model">contabilidad_kuale.ticket_audit_queue</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Jobs de Auditoría">
+                <field name="job_uuid" string="UUID"/>
+                <field name="company_id" string="Empresa"/>
+                <field name="branch_id" string="Sucursal"/>
+                <separator/>
+                <filter string="Pendientes" name="filter_pending"
+                        domain="[('status', '=', 'pending')]"/>
+                <filter string="Procesando" name="filter_processing"
+                        domain="[('status', '=', 'processing')]"/>
+                <filter string="Completados" name="filter_done"
+                        domain="[('status', '=', 'done')]"/>
+                <filter string="Con Error" name="filter_error"
+                        domain="[('status', '=', 'error')]"/>
+                <separator/>
+                <filter string="Con Errores de Tickets" name="filter_has_errors"
+                        domain="[('error_count', '>', 0)]"/>
+                <filter string="Auditoría Final" name="filter_final"
+                        domain="[('final_audit', '=', True)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Empresa" name="group_company"
+                            context="{'group_by': 'company_id'}"/>
+                    <filter string="Sucursal" name="group_branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter string="Estado" name="group_status"
+                            context="{'group_by': 'status'}"/>
+                    <filter string="Fecha de recepción" name="group_date"
+                            context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ticket_audit_queue" model="ir.actions.act_window">
+        <field name="name">Cola de Auditoría de Tickets</field>
+        <field name="res_model">contabilidad_kuale.ticket_audit_queue</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ticket_audit_queue_search"/>
+        <field name="context">{'search_default_filter_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay jobs de auditoría en la cola.
+            </p>
+            <p>
+                Los jobs aparecen aquí cuando el sistema POS envía un lote de tickets
+                al endpoint <code>/api/upload/ticket/audit</code>.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menuitem — bajo el menú de Ventas y Facturación -->
+    <menuitem id="menu_ticket_audit_queue"
+              name="Cola de Auditoría"
+              parent="contabilidad_kuale_custom_sales"
+              action="action_ticket_audit_queue"
+              sequence="25"/>
+
+</odoo>

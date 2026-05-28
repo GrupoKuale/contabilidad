@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_ticket_monitor_summary_tree" model="ir.ui.view">
+            <field name="name">ticket.monitor.summary.tree</field>
+            <field name="model">contabilidad_kuale.ticket_monitor_summary</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id"/>
+                    <field name="branch_id"/>
+                    <field name="month"/>
+                    <field name="year"/>
+                    <field name="tickets_quantity"/>
+                    <field name="total_tickets"/>
+                    <field name="subtotal_tickets"/>
+                    <field name="iva_tickets"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_ticket_monitor_summary_form" model="ir.ui.view">
+            <field name="name">ticket.monitor.summary.form</field>
+            <field name="model">contabilidad_kuale.ticket_monitor_summary</field>
+            <field name="arch" type="xml">
+                <form string="Resumen de Tickets">
+                    <sheet>
+                        <group>
+                            <group>
+                                <group>
+                                    <field name="month"/>
+                                    <field name="year"/>
+                                </group>
+                                <group>
+                                    <field name="company_id"/>
+                                    <field name="branch_id"/>
+                                </group>
+                            </group>
+                            <notebook>
+                                <page string="Total">
+                                    <group>
+                                        <field name="tickets_quantity"/>
+                                        <field name="total_tickets"/>
+                                        <field name="subtotal_tickets"/>
+                                        <field name="iva_tickets"/>
+                                    </group>
+                                </page>
+                                <page string="Facturados">
+                                    <group>
+                                        <field name="invoice_tickets_quantity"/>
+                                        <field name="total_invoiced"/>
+                                        <field name="subtotal_invoiced"/>
+                                        <field name="iva_invoiced"/>
+                                    </group>
+                                </page>
+                                <page string="No Facturados">
+                                    <group>
+                                        <field name="non_invoiced_quantity"/>
+                                        <field name="total_non_invoiced"/>
+                                        <field name="subtotal_non_invoiced"/>
+                                        <field name="iva_non_invoiced"/>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ticket_monitor_summary_search" model="ir.ui.view">
+            <field name="name">ticket.monitor.summary.search</field>
+            <field name="model">contabilidad_kuale.ticket_monitor_summary</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="month"/>
+                    <field name="year"/>
+                    <field name="tickets_quantity"/>
+                    <field name="invoice_tickets_quantity"/>
+                    <field name="non_invoiced_quantity"/>
+                    <filter name="current_year" string="Este Año"
+                            domain="[('year', '=', str(datetime.datetime.now().year))]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ticket_monitor_summary" model="ir.actions.act_window">
+            <field name="name">Resumen de Tickets</field>
+            <field name="res_model">contabilidad_kuale.ticket_monitor_summary</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- summary wizard -->
+        <record id="view_ticket_summary_wizard_form" model="ir.ui.view">
+            <field name="name">Resumen Mensual de Tickets</field>
+            <field name="model">contabilidad_kuale.ticket_summary_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Resumen de Tickets">
+
+                    <div class="d-flex justify-content-end align-items-center mb-2">
+                        <label for="use_date_range" class="me-2 text-muted small">Usar rango de fechas</label>
+                        <field name="use_date_range" widget="boolean_toggle" nolabel="1"/>
+                    </div>
+
+                    <!-- ── Filtros ── -->
+                    <group>
+                        <group>
+                            <field name="month" invisible="use_date_range"/>
+                            <field name="year" invisible="use_date_range"/>
+                            <field name="date_from" invisible="not use_date_range" widget="date"/>
+                            <field name="date_to" invisible="not use_date_range" widget="date"/>
+                        </group>
+                        <group>
+                            <field name="company_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="branch_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                    limit="0"/>
+                        </group>
+                    </group>
+
+                    <!-- Toggle -->
+                    
+
+                    <div class="container-fluid px-0 mb-3">
+                        <div class="row g-0 border rounded overflow-hidden">
+
+                            <div class="col-4 p-3 border-end">
+                                <span class="badge text-bg-primary mb-2">Total</span>
+                                <div class="text-muted small mb-1">Tickets registrados</div>
+                                <div class="d-flex align-items-baseline justify-content-between mb-2">
+                                    <field name="difference_tickets_quantity" readonly="1" nolabel="1"
+                                        class="fs-3 fw-semibold mb-0"/>
+                                </div>
+                                <div class="border-top pt-2 d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted" style="font-size:10px;">SUBTOTAL</div>
+                                        <field name="difference_subtotal_tickets" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-muted" style="font-size:10px;">IVA</div>
+                                        <field name="difference_iva_tickets" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-muted" style="font-size:10px;">TOTAL</div>
+                                        <field name="difference_total_tickets" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4 p-3 border-end">
+                                <span class="badge text-bg-success mb-2">Facturados</span>
+                                <div class="text-muted small mb-1">Tickets con CFDI</div>
+                                <div class="d-flex align-items-baseline justify-content-between mb-2">
+                                    <field name="difference_invoice_tickets_quantity" readonly="1" nolabel="1"
+                                        class="fs-3 fw-semibold text-success mb-0"/>
+                                </div>
+                                <div class="border-top pt-2 d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted" style="font-size:10px;">SUBTOTAL</div>
+                                        <field name="difference_subtotal_invoiced" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-muted" style="font-size:10px;">IVA</div>
+                                        <field name="difference_iva_invoiced" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-muted" style="font-size:10px;">TOTAL</div>
+                                        <field name="difference_total_invoiced" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4 p-3">
+                                <span class="badge text-bg-warning mb-2">Sin facturar</span>
+                                <div class="text-muted small mb-1">Tickets pendientes</div>
+                                <div class="d-flex align-items-baseline justify-content-between mb-2">
+                                    <field name="difference_non_invoiced_quantity" readonly="1" nolabel="1"
+                                        class="fs-3 fw-semibold text-warning mb-0"/>
+                                </div>
+                                <div class="border-top pt-2 d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted" style="font-size:10px;">SUBTOTAL</div>
+                                        <field name="difference_subtotal_non_invoiced" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-muted" style="font-size:10px;">IVA</div>
+                                        <field name="difference_iva_non_invoiced" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-muted" style="font-size:10px;">TOTAL</div>
+                                        <field name="difference_total_non_invoiced" readonly="1" nolabel="1"
+                                            class="small fw-semibold"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- ── Toggle detalles ── -->
+                    <div class="d-flex justify-content-end align-items-center mb-2">
+                        <label for="details" class="me-2 text-muted small">Ver detalles</label>
+                        <field name="details" widget="boolean_toggle"/>
+                    </div>
+
+                    <!-- ── Detalles: Sistema vs PIXL ── -->
+                    <div class="container-fluid px-0" invisible="not details">
+                        <div class="row g-0 border rounded overflow-hidden">
+
+                            <div class="col-4 p-3 border-end">
+                                <span class="badge text-bg-primary mb-2">Tickets PK</span>
+                                <div class="text-muted small mb-1">Tickets registrados</div>
+                                <div class="fs-3 fw-semibold mb-2">
+                                    <field name="tickets_quantity" readonly="1" nolabel="1"/>
+                                </div>
+                                <div class="border-top pt-2 d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted" style="font-size:10px;">SUBTOTAL</div>
+                                        <field name="subtotal_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-muted" style="font-size:10px;">IVA</div>
+                                        <field name="iva_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-muted" style="font-size:10px;">TOTAL</div>
+                                        <field name="total_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4 p-3 border-end">
+                                <span class="badge text-bg-light mb-2">Resumen Ventas</span>
+                                <div class="text-muted small mb-1">Tickets en sistema</div>
+                                <div class="fs-3 fw-semibold mb-2">
+                                    <field name="system_tickets_quantity" readonly="1" nolabel="1"/>
+                                </div>
+                                <div class="border-top pt-2 d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted" style="font-size:10px;">SUBTOTAL</div>
+                                        <field name="system_subtotal_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-muted" style="font-size:10px;">IVA</div>
+                                        <field name="system_iva_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-muted" style="font-size:10px;">TOTAL</div>
+                                        <field name="system_total_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4 p-3">
+                                <span class="badge text-bg-dark mb-2">Diferencia</span>
+                                <div class="text-muted small mb-1">Variación entre sistemas</div>
+                                <div class="fs-3 fw-semibold mb-2">
+                                    <field name="difference_tickets_quantity" readonly="1" nolabel="1"/>
+                                </div>
+                                <div class="border-top pt-2 d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted" style="font-size:10px;">SUBTOTAL</div>
+                                        <field name="difference_subtotal_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-muted" style="font-size:10px;">IVA</div>
+                                        <field name="difference_iva_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-muted" style="font-size:10px;">TOTAL</div>
+                                        <field name="difference_total_tickets" readonly="1" nolabel="1" class="small fw-semibold"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- ── Footer ── -->
+                    <footer>
+                        <button name="action_calculate_summary" type="object"
+                                string="Calcular" class="oe_highlight"/>
+                        <button name="action_timbrar_global" type="object"
+                                string="Timbrar global"/>
+                        <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ticket_summary_wizard" model="ir.actions.act_window">
+            <field name="name">Resumen Mensual de Tickets</field>
+            <field name="res_model">contabilidad_kuale.ticket_summary_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_ticket_summary_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

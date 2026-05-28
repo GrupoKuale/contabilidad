@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sat_xml_invoices_tree_view" model="ir.ui.view">
+        <field name="name">sat.xml.invoices.tree</field>
+        <field name="model">sat.xml.invoices</field>
+        <field name="arch" type="xml">
+            <tree string="Facturas SAT XML" 
+                  decoration-success="state_detail == 'done'" 
+                  decoration-warning="state_detail == 'error'"
+                  decoration-muted="sat_status == 'cancelado'">
+
+                <header>
+                    <button
+                        name="action_verify_sat_status_with_notification"
+                        type="object"
+                        string="Validación de Estatus"
+                        class="btn-primary"
+                        icon="fa-refresh"
+                        help="Verificar el estado vigente/cancelado ante el SAT"
+                        display="always"
+                    />
+
+                   
+                        
+                </header>
+
+                <field name="tfd_uuid" string="UUID"/>
+                <field name="name" string="Nombre"/>
+                <field name="factura_fecha" string="Fecha"/>
+
+                <field name="document_type" string="Tipo" widget="badge" 
+                       decoration-info="document_type == 'recibido'" 
+                       decoration-primary="document_type == 'emitido'"/>
+                <field name="document_group" string="Grupo" optional="show"/>
+                
+                
+                <field name="state_detail" string="Estatus Proceso" widget="badge"
+                    decoration-success="state_detail == 'done'"
+                    decoration-warning="state_detail == 'on_wait'"
+                    decoration-danger="state_detail == 'error'"/>
+
+                <button name="action_view_source_document" type="object" 
+                    string="Ver OC" icon="fa-external-link"
+                    invisible="state_detail != 'done'"/>
+
+                <field name="factura_serie" optional="hide"/>
+                <field name="factura_folio" optional="hide"/>
+                <field name="factura_tipo" string="Tipo Comprob." optional="show"/>
+                
+                <field name="rfc_emisor" optional="show"/>
+                <field name="nombre_emisor" optional="show"/>
+                <field name="rfc_receptor" optional="show"/>
+                <field name="nombre_receptor" optional="show"/>
+                
+                <field name="factura_moneda" optional="hide"/>
+                <field name="factura_tipo_cambio" optional="hide"/>
+                <field name="factura_total" string="Total" sum="Total" widget="monetary"/>
+                
+                <!-- CAMPOS CONTROL ADD -->
+                <field name="add_status" string="Estado ADD" widget="badge"
+                       decoration-success="add_status == 'processed'"
+                       decoration-warning="add_status == 'locked'"
+                       decoration-info="add_status == 'available'" optional="show"/>
+                <field name="add_user_id" string="Usuario ADD" optional="show"/>
+                <field name="add_date" string="Cargado" optional="hide"/>
+                
+                <!-- CAMPOS VERIFICACIÓN SAT -->
+                <field name="sat_status" string="Estado SAT" widget="badge"
+                       decoration-success="sat_status == 'vigente'"
+                       decoration-danger="sat_status == 'cancelado'"
+                       decoration-muted="sat_status == 'no_verificado'" optional="show"/>
+                <field name="sat_verification_date" string="Verificado" optional="hide"/>
+
+                <!-- CAMPOS ESTATUS PK-->
+                <field name="pk_status_received" string="Estado PK" widget="badge" optional="show"/>
+                <field name="pk_status_sent" string="Estado PK" widget="badge" optional="show"/>
+
+                <field name="is_available" invisible="1"/>
+                <field name="state_detail" string="Importación" optional="hide"/>
+                <field name="xml_file_name" optional="hide"/>
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="sat_xml_invoices_form_view" model="ir.ui.view">
+        <field name="name">sat.xml.invoices.form</field>
+        <field name="model">sat.xml.invoices</field>
+        <field name="arch" type="xml">
+            <form string="Factura SAT XML">
+                <header>
+                    <!-- Botones ADD -->
+                    <button name="action_add_to_user_add" 
+                            string="Agregar a mi ADD" 
+                            type="object" 
+                            class="oe_highlight"
+                            invisible="add_status != 'available' or add_user_id"
+                            help="Agregar este documento a mi Administrador de Documentos Digitales"/>
+                    
+                    <button name="action_remove_from_add" 
+                            string="Remover de mi ADD" 
+                            type="object" 
+                            class="btn-warning"
+                            invisible="not add_user_id or add_user_id != uid or add_status == 'available'"
+                            confirm="¿Está seguro de remover este documento de su ADD? Estará disponible para otros usuarios."/>
+                    
+                    <button name="action_verify_sat_status_with_notification"
+                            string="Verificar en SAT" 
+                            type="object" 
+                            class="btn-info"
+                            help="Verificar el estado vigente/cancelado ante el SAT"/>
+                    
+                    <button name="action_process_document" 
+                            string="Procesar Documento (OC/Venta)" 
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state_detail == 'done'"
+                            help="Crea una Orden de Compra (si es Recibido) o un Pedido de Venta (si es Emitido)"/>
+
+                    <button name="action_xml_view_code"
+                            string="Ver XML"
+                            type="object"
+                            class="btn-primary"
+                            help="Visualizar XML en su formato original"
+                    />
+
+                    <button name="%(action_report_sat_xml_invoice)d"
+                            string="Descagar XML"
+                            type="action"
+                            class="btn-primary"
+                            help="Visualizar los campos XML en un formato imprimible"
+                    />
+                    <field name="state_detail" widget="statusbar" 
+                           statusbar_visible="on_wait,done"/>
+                </header>
+                
+                <sheet>
+                    <!-- Ribbons informativos -->
+                    <widget name="web_ribbon" text="En mi ADD" bg_color="bg-success" 
+                            invisible="add_status != 'locked' or add_user_id != uid"/>
+                    <widget name="web_ribbon" text="ADD Bloqueado" bg_color="bg-warning" 
+                            invisible="add_status != 'locked' or add_user_id == uid or not add_user_id"/>
+                    <widget name="web_ribbon" text="Cancelado SAT" bg_color="bg-danger" 
+                            invisible="sat_status != 'cancelado'"/>
+                    <widget name="web_ribbon" text="Procesado" bg_color="bg-info" 
+                            invisible="add_status != 'processed'"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="tfd_uuid" readonly="1" placeholder="UUID del CFDI"/>
+                        </h1>
+                        <h3>
+                            <field name="name" readonly="1" placeholder="Referencia"/>
+                        </h3>
+                    </div>
+                    
+                    <group>
+                        <group string="Información del Comprobante">
+                            <field name="factura_fecha"/>
+                            <field name="factura_version"/>
+                            <field name="factura_tipo"/>
+                            <field name="factura_serie"/>
+                            <field name="factura_folio"/>
+                            <field name="factura_forma_pago"/>
+                            <field name="factura_metodo_pago"/>
+                            <field name="factura_lugar_expedicion"/>
+                        </group>
+                        
+                        <group string="Clasificación y Disponibilidad">
+                            <field name="document_type" widget="badge"/>
+                            <field name="document_group" readonly="1" widget="badge"/>
+                            <field name="is_available" readonly="1" 
+                                   widget="boolean" 
+                                   string="Disponible para ADD"/>
+                            <field name="active" widget="boolean_button" 
+                                   options="{'terminology': 'archive'}"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Emisor">
+                            <field name="rfc_emisor"/>
+                            <field name="nombre_emisor"/>
+                        </group>
+                        
+                        <group string="Receptor">
+                            <field name="rfc_receptor"/>
+                            <field name="nombre_receptor"/>
+                            <field name="partner_id" 
+                                   options="{'no_create': True, 'no_create_edit': True}"
+                                   domain="[('vat', '!=', False)]"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Importes">
+                            <field name="factura_subtotal" widget="monetary"/>
+                            <field name="factura_impuestos" widget="monetary"/>
+                            <field name="factura_total" widget="monetary"/>
+                            <field name="factura_moneda"/>
+                            <field name="factura_tipo_cambio"/>
+                            <field name="factura_exportacion"/>
+                        </group>
+                        
+                        <group string="Control ADD">
+                            <field name="add_status" widget="badge"/>
+                            <field name="add_user_id" readonly="1" 
+                                   options="{'no_create': True}"/>
+                            <field name="add_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Verificación SAT">
+                            <group>
+                                <field name="sat_status" widget="badge"/>
+                                <field name="sat_verification_date" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="sat_cancellation_date" readonly="1"
+                                       invisible="sat_status != 'cancelado'"/>
+                            </group>
+                        </group>
+                        <group string="Estatus Punto Kuale">
+                            <field name="pk_status_received" string="Estado de Factura Recibida" widget="badge"/>
+                            <field name="pk_status_sent" string="Estado de Factura Emitida" widget="badge"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Cuentas Contables">
+                            <field name="sat_cuenta" 
+                                   options="{'no_create': True}"
+                                   domain="[('account_type', '!=', False)]"/>
+                            <field name="sat_cuenta1" 
+                                   options="{'no_create': True}"/>
+                            <field name="sat_cuenta2" 
+                                   options="{'no_create': True}"/>
+                            <field name="sat_cuenta3" 
+                                   options="{'no_create': True}"/>
+                        </group>
+                        
+                        <group string="Archivo XML">
+                            <field name="xml_file" filename="xml_file_name"/>
+                            <field name="xml_file_name" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Conceptos">
+                            <field name="concepts_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="description"/>
+                                    <field name="cantidad"/>
+                                    <field name="valor_unitario" widget="monetary"/>
+                                    <field name="importe" widget="monetary"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="Complementos" invisible="not complements_ids">
+                            <field name="complements_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="tipo_complemento" widget="badge"/>
+                                    <field name="fecha"/>
+                                    <field name="total" widget="monetary"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="Notas de Crédito" invisible="not credit_note_ids">
+                            <field name="credit_note_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="sat_xml_invoices_search_view" model="ir.ui.view">
+        <field name="name">sat.xml.invoices.search</field>
+        <field name="model">sat.xml.invoices</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Facturas SAT">
+                <!-- Campos de búsqueda -->
+                <field name="tfd_uuid" string="UUID" filter_domain="[('tfd_uuid', 'ilike', self)]"/>
+                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="rfc_emisor" filter_domain="[('rfc_emisor', 'ilike', self)]"/>
+                <field name="nombre_emisor" filter_domain="[('nombre_emisor', 'ilike', self)]"/>
+                <field name="rfc_receptor" filter_domain="[('rfc_receptor', 'ilike', self)]"/>
+                <field name="nombre_receptor" filter_domain="[('nombre_receptor', 'ilike', self)]"/>
+                <field name="factura_folio" filter_domain="[('factura_folio', 'ilike', self)]"/>
+                <field name="factura_serie" filter_domain="[('factura_serie', 'ilike', self)]"/>
+                
+                <separator/>
+                
+                <!-- FILTROS ADD -->
+                <filter string="Disponibles para ADD" name="available" 
+                        domain="[('add_status', '=', 'available'), ('add_user_id', '=', False)]"
+                        help="Documentos que puedo agregar a mi ADD"/>
+                <filter string="En mi ADD" name="my_add" 
+                        domain="[('add_user_id', '=', uid)]"
+                        help="Documentos en mi Administrador Digital"/>
+                <filter string="Bloqueados en ADD" name="locked" 
+                        domain="[('add_status', '=', 'locked')]"/>
+                <filter string="Procesados" name="processed" 
+                        domain="[('add_status', '=', 'processed')]"/>
+                
+                <separator/>
+                
+                <!-- FILTROS POR TIPO -->
+                <filter string="XMLs Recibidos" name="recibidos" 
+                        domain="[('document_type', '=', 'recibido')]"
+                        help="CFDIs recibidos de proveedores"/>
+                <filter string="XMLs Emitidos" name="emitidos" 
+                        domain="[('document_type', '=', 'emitido')]"
+                        help="CFDIs emitidos por la empresa"/>
+                
+                <separator/>
+                
+                <!-- FILTROS POR GRUPO -->
+                <filter string="Facturas" name="facturas" 
+                        domain="[('document_group', '=', 'factura')]"/>
+                <filter string="Pagos" name="pagos" 
+                        domain="[('document_group', '=', 'pago')]"/>
+                <filter string="Nóminas" name="nominas" 
+                        domain="[('document_group', '=', 'nomina')]"/>
+                <filter string="Retenciones" name="retenciones" 
+                        domain="[('document_group', '=', 'retencion')]"/>
+                <filter string="Egresos" name="egresos" 
+                        domain="[('document_group', '=', 'egreso')]"/>
+                
+                <separator/>
+                
+                <!-- FILTROS SAT -->
+                <filter string="SAT Vigente" name="sat_vigente" 
+                        domain="[('sat_status', '=', 'vigente')]"/>
+                <filter string="SAT Cancelado" name="sat_cancelado" 
+                        domain="[('sat_status', '=', 'cancelado')]"/>
+                <filter string="SAT No Verificado" name="sat_no_verificado" 
+                        domain="[('sat_status', '=', 'no_verificado')]"/>
+                
+                <separator/>
+                
+                <!-- FILTROS DE FECHA -->
+                <filter string="Hoy" name="today"
+                        domain="[('factura_fecha', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Esta Semana" name="this_week"
+                        domain="[('factura_fecha', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Este Mes" name="this_month"
+                        domain="[('factura_fecha', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Este Año" name="this_year"
+                        domain="[('factura_fecha', '&gt;=', (context_today().replace(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+
+                <separator/>
+                
+                <!-- FILTROS ESTADO IMPORTACIÓN -->
+                <filter string="En Espera" name="on_wait" 
+                        domain="[('state_detail', '=', 'on_wait')]"/>
+                <filter string="Procesadas" name="done" 
+                        domain="[('state_detail', '=', 'done')]"/>
+                <filter string="Con Error" name="error" 
+                        domain="[('state_detail', '=', 'error')]"/>
+                
+                <separator/>
+                <filter string="Archivados" name="archived" 
+                        domain="[('active', '=', False)]"/>
+                
+                <!-- Filtro de rango de fechas -->
+                <separator/>
+                <filter string="Fecha Comprobante" name="date_range" date="factura_fecha"/>
+                
+                <!-- Agrupaciones -->
+                <group expand="0" string="Agrupar por">
+                    <filter string="Tipo de Documento" name="group_document_type" 
+                            context="{'group_by': 'document_type'}"/>
+                    <filter string="Grupo de Documento" name="group_document_group" 
+                            context="{'group_by': 'document_group'}"/>
+                    <filter string="Estado ADD" name="group_add_status" 
+                            context="{'group_by': 'add_status'}"/>
+                    <filter string="Usuario ADD" name="group_add_user" 
+                            context="{'group_by': 'add_user_id'}"/>
+                    <filter string="Estado SAT" name="group_sat_status" 
+                            context="{'group_by': 'sat_status'}"/>
+                    <filter string="Estado Importación" name="group_state_detail" 
+                            context="{'group_by': 'state_detail'}"/>
+                    <filter string="Fecha Comprobante" name="group_fecha" 
+                            context="{'group_by': 'factura_fecha'}"/>
+                    <filter string="RFC Emisor" name="group_rfc_emisor" 
+                            context="{'group_by': 'rfc_emisor'}"/>
+                    <filter string="Tipo de Comprobante" name="group_tipo" 
+                            context="{'group_by': 'factura_tipo'}"/>
+                    <filter string="Moneda" name="group_moneda" 
+                            context="{'group_by': 'factura_moneda'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="view_sat_uploads_tree" model="ir.ui.view">
+        <field name="name">sat.uploads.tree</field>
+        <field name="model">sat.uploads</field>
+        <field name="arch" type="xml">
+            <tree string="Cargas SAT">
+                <field name="name"/>
+                <field name="file_name"/>
+                <field name="month"/>
+                <field name="year"/>
+                <field name="create_date" string="Fecha de Carga"/>
+                <field name="create_uid" string="Usuario"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sat_uploads_form" model="ir.ui.view">
+        <field name="name">sat.uploads.form</field>
+        <field name="model">sat.uploads</field>
+        <field name="arch" type="xml">
+            <form string="Carga SAT">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="month"/>
+                            <field name="year"/>
+                        </group>
+                        <group>
+                            <field name="file" filename="file_name"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="create_date" string="Fecha de Carga" readonly="1"/>
+                            <field name="create_uid" string="Cargado por" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+
+    <record id="sat_uploads_wizard_form_view" model="ir.ui.view">
+        <field name="name">sat.uploads.wizard.form</field>
+        <field name="model">sat.uploads.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Descargar XMLs del SAT">
+                <group>
+                    <group string="Período de Descarga">
+                        <field name="year" required="1"/>
+                        <field name="month" required="1"/>
+                    </group>
+                    
+                    <group string="Tipo de Descarga">
+                        <field name="download_type" widget="radio" required="1"/>
+                        <div class="alert alert-info" role="alert">
+                            <strong>Información:</strong>
+                            <ul>
+                                <li><b>Recibidos:</b> CFDIs que recibió su empresa de proveedores</li>
+                                <li><b>Emitidos:</b> CFDIs que emitió su empresa a clientes</li>
+                                <li><b>Ambos:</b> Descarga los dos tipos en una sola ejecución</li>
+                            </ul>
+                        </div>
+                    </group>
+                </group>
+                
+                <footer>
+                    <button name="action_download_xml_monthly" 
+                            string="Descargar XMLs" 
+                            type="object" 
+                            class="oe_highlight"
+                            help="Iniciar descarga desde el portal del SAT"/>
+                    <button string="Cancelar" 
+                            class="btn-secondary" 
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+    <!-- Acción: Subir Archivos SAT  -->
+    <record model="ir.actions.act_window" id="action_sat_uploads_form">
+        <field name="name">Subir Archivos SAT</field>
+        <field name="res_model">sat.uploads</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_sat_uploads_tree"/>
+    </record>
+
+    <record id="action_sat_xml_invoices_form" model="ir.actions.act_window">
+        <field name="name">Facturas SAT XML</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay facturas SAT registradas
+            </p>
+            <p>
+                Puede cargar XMLs manualmente o descargarlos automáticamente del SAT
+            </p>
+        </field>
+    </record>
+
+
+    <!-- Acción: Wizard de Descarga -->
+    <record id="action_sat_uploads_wizard" model="ir.actions.act_window">
+        <field name="name">Descargar XMLs del SAT</field>
+        <field name="res_model">sat.uploads.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="sat_uploads_wizard_form_view"/>
+    </record>
+
+    <!-- Acción: Historial de cargas -->
+    <record id="action_sat_uploads" model="ir.actions.act_window">
+        <field name="name">Historial de Cargas SAT</field>
+        <field name="res_model">sat.uploads</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Acción: Todas las facturas -->
+    <record id="action_sat_xml_invoices" model="ir.actions.act_window">
+        <field name="name">Todas las Facturas SAT</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay facturas SAT registradas
+            </p>
+            <p>
+                Puede cargar XMLs manualmente o descargarlos automáticamente del SAT
+            </p>
+        </field>
+    </record>
+
+    <!-- ACCIONES ADD -->
+    <record id="action_sat_xml_my_add" model="ir.actions.act_window">
+        <field name="name">Mi ADD - Documentos Digitales</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('add_user_id', '=', uid)]</field>
+        <field name="context">{'search_default_my_add': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tienes documentos en tu ADD
+            </p>
+            <p>
+                El ADD (Administrador de Documentos Digitales) te permite gestionar los CFDIs asignados a ti.
+                <br/>
+                Agrega documentos desde el listado general usando el botón "Agregar a mi ADD".
+            </p>
+        </field>
+    </record>
+
+    <record id="action_sat_xml_available" model="ir.actions.act_window">
+        <field name="name">Documentos Disponibles</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('add_status', '=', 'available'), ('add_user_id', '=', False)]</field>
+        <field name="context">{'search_default_available': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay documentos disponibles
+            </p>
+            <p>
+                Los documentos disponibles son aquellos que no están asignados a ningún usuario en el ADD.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_sat_xml_recibidos" model="ir.actions.act_window">
+        <field name="name">CFDIs Recibidos</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('document_type', '=', 'recibido')]</field>
+        <field name="context">{'search_default_recibidos': 1, 'default_document_type': 'recibido'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay CFDIs recibidos
+            </p>
+            <p>
+                Los CFDIs recibidos son aquellos emitidos por sus proveedores.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_sat_xml_emitidos" model="ir.actions.act_window">
+        <field name="name">CFDIs Emitidos</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('document_type', '=', 'emitido')]</field>
+        <field name="context">{'search_default_emitidos': 1, 'default_document_type': 'emitido'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay CFDIs emitidos
+            </p>
+            <p>
+                Los CFDIs emitidos son aquellos que su empresa ha facturado a clientes.
+            </p>
+        </field>
+    </record>
+
+
+
+    <menuitem parent="account.menu_finance_entries_management"
+              id="menu_action_sat_uploads_form"
+              action="action_sat_uploads_form" 
+              sequence="103"
+              groups="account.group_account_user"/>
+
+    <!-- MENÚ PRINCIPAL SAT -->
+    <menuitem id="menu_sat_xml" 
+              name="SAT - CFDIs" 
+              sequence="50"
+              web_icon="contabilidad_kuale,static/description/icon.png"/>
+
+    <!-- Sección ADD -->
+    <menuitem id="menu_sat_add_section" 
+              name="ADD - Administrador Digital" 
+              parent="menu_sat_xml" 
+              sequence="1"/>
+
+    <menuitem id="menu_sat_my_add" 
+              name="Mi ADD" 
+              parent="menu_sat_add_section" 
+              action="action_sat_xml_my_add" 
+              sequence="1"/>
+
+    <menuitem id="menu_sat_available" 
+              name="Documentos Disponibles" 
+              parent="menu_sat_add_section" 
+              action="action_sat_xml_available" 
+              sequence="2"/>
+
+    <!-- Sección CFDIs -->
+    <menuitem id="menu_sat_cfdis_section" 
+              name="CFDIs" 
+              parent="menu_sat_xml" 
+              sequence="2"/>
+
+    <menuitem id="menu_sat_recibidos" 
+              name="CFDIs Recibidos" 
+              parent="menu_sat_cfdis_section" 
+              action="action_sat_xml_recibidos" 
+              sequence="1"/>
+
+    <menuitem id="menu_sat_emitidos" 
+              name="CFDIs Emitidos" 
+              parent="menu_sat_cfdis_section" 
+              action="action_sat_xml_emitidos" 
+              sequence="2"/>
+
+    <menuitem id="menu_sat_all" 
+              name="Todos los CFDIs" 
+              parent="menu_sat_cfdis_section" 
+              action="action_sat_xml_invoices" 
+              sequence="3"/>
+
+    <!-- Sección Herramientas -->
+    <menuitem id="menu_sat_tools" 
+              name="Herramientas" 
+              parent="menu_sat_xml" 
+              sequence="99"/>
+
+    <menuitem id="menu_sat_download" 
+              name="Descargar del SAT" 
+              parent="menu_sat_tools" 
+              action="action_sat_uploads_wizard" 
+              sequence="1"/>
+
+    <menuitem id="menu_sat_uploads_history" 
+              name="Historial de Cargas" 
+              parent="menu_sat_tools" 
+              action="action_sat_uploads" 
+              sequence="2"/>
+
+</odoo>

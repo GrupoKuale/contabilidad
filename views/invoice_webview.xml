@@ -1,0 +1,2118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--!TODO: VALIDATE PHONE,CP,EMAIL...  CHECK HOW DOES CFDI USE SHOULD WORK-->
+<odoo>
+    <data>
+        <template id="custom_invoice_template" name="client_invoice">
+            <!-- Modal de carga -->
+            <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content text-center p-4">
+                        <div id="loadingSpinner">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-3">Procesando tu solicitud, por favor espera...</p>
+                        </div>
+                        <div id="errorMessage" class="text-danger mt-3 d-none"></div>
+                        <button type="button" class="btn btn-danger mt-3 d-none" id="closeModalBtn"
+                                data-bs-dismiss="modal">Cerrar
+                        </button>
+                    </div>
+                </div>  
+            </div>
+            <t t-call="website.layout">
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+                      rel="stylesheet"/>
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"/>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"/>
+                <div class="container mt-5 justify-content-center">
+                    <header class="bg-white py-3 text-center mb-4">
+                        <a href="/">
+                            <img src="/contabilidad_kuale/static/src/img/logoKuale.png" alt="Grupo Kuale" style="height: 60px; filter: none !important;"/>
+                        </a>
+                    </header>
+                    <form class="w-75 mx-auto mb-5" id="invoice-form">
+                        <div class="form-page" id="page1">
+                            <div class="row justify-content-center text-center">
+                                <h1 style="font-family: 'Montserrat', sans-serif;">Gracias por tu visita.
+                                    <strong>¿Necesitas facturar?</strong>
+                                </h1>
+                                <p style="font-family: 'Montserrat', sans-serif; font-size: 18px;">Puedes ingresar tu
+                                    solicitud de factura después de 20 minutos de la compra y con tu ticket de
+                                    compra en mano.
+                                </p>
+                            </div><br/>
+                            <div class="row justify-content-center text-center">
+                                <h4 style="color: red; font-family: 'Montserrat', sans-serif;">
+                                    <span style="display: inline-block; width: 30px; height: 30px; border-radius: 50%; background-color: red; color: white; text-align: center; line-height: 30px; font-weight: bold; font-size: 18px;">
+                                        1
+                                    </span>
+                                    <strong>Elige la marca en la que realizaste tu consumo</strong>
+                                </h4>
+                            </div>
+                            <div class="row align-items-center">
+                                <!-- Filtrar solo compañías facturables -->
+                                <div t-foreach="companies.filtered(lambda c: c.billable)" t-as="company"
+                                     class="col-md-4">
+                                    <div class="card mb-3" style="cursor: pointer;" t-att-data-id="company.id"
+                                         onclick="selectCompany(this)">
+                                        <img t-if="company.logo"
+                                             t-att-src="'data:image/png;base64,%s' % company.logo.decode()"
+                                             class="card-img-top" alt="Logo de Compañía"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-page d-none" id="page2">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-8">
+                                    <div class="col-12 text-start">
+                                        <div id="company-image-container" class="mt-3">
+                                            <img id="company-image" src="" alt="Imagen de la compañía"
+                                                 class="img-fluid d-none"
+                                                 style="max-width: 200px; display: block; margin-bottom: 10px;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <h5 style="color: red; font-family: 'Montserrat', sans-serif;">
+                                            <span style="display: inline-block; width: 30px; height: 30px; border-radius: 50%; background-color: red; color: white; text-align: center; line-height: 30px; font-weight: bold; font-size: 18px;">
+                                                2
+                                            </span>
+                                            <strong>Registra tu ticket de compra</strong>
+                                        </h5>
+                                    </div>
+                                    <div class="row">
+                                        <!-- Sucursal -->
+                                        <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <img src="/contabilidad_kuale/static/src/img/Icono_A.svg" alt="Sucursal" class="kuale-field__icon"/>
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label">Sucursal</label>
+                                                        <div class="kuale-state-dropdown" id="branchDropdown">
+                                                            <button type="button" class="kuale-state-dropdown__trigger" id="branchTrigger">
+                                                                <span class="kuale-label" id="branchLabel">Seleccione una sucursal</span>
+                                                                <span class="kuale-state-dropdown__arrow">▼</span>
+                                                            </button>
+                                                            <div class="kuale-state-dropdown__menu" id="branchMenu"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Folio del Ticket -->
+                                        <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <img src="/contabilidad_kuale/static/src/img/Icono_B.svg" alt="Folio" class="kuale-field__icon"/>
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label" for="ticket">Folio del Ticket</label>
+                                                        <div class="kuale-input-wrapper">
+                                                            <input type="text" class="kuale-input" id="ticket" name="ticket" placeholder="Folio del Ticket" autocomplete="off"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Fecha -->
+                                        <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <img src="/contabilidad_kuale/static/src/img/Icono_C.svg" alt="Fecha" class="kuale-field__icon"/>
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label" for="date">Fecha</label>
+                                                        <div class="kuale-input-wrapper">
+                                                            <input type="text" class="kuale-input flatpickr-input" id="date" name="date" placeholder="dd/mm/aaaa" autocomplete="off" readonly="readonly"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Monto -->
+                                        <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <img src="/contabilidad_kuale/static/src/img/Icono_D.svg" alt="Monto" class="kuale-field__icon"/>
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label" for="amount">Monto</label>
+                                                        <div class="kuale-input-wrapper">
+                                                            <input type="number" class="kuale-input" id="amount" name="amount" placeholder="0.00" step="0.01"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Imagen grande a la derecha de los inputs -->
+                                <div class="col-12 col-md-4">
+                                    <div class="image-container" style="text-align: center; margin-top: 20px;">
+                                        <img id="ticket-image"
+                                             src="/contabilidad_kuale/static/src/img/ejemplo_ticket.png"
+                                             alt="Imagen Grande" style="max-width: 100%; height: auto;"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="col text-center mt-4">
+                                    <button type="button" class="btn btn-outline-primary w-25" onclick="goBack()"
+                                            style="border-color: #ed1c24; color: #ed1c24;"
+                                            onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#8e181a'">
+                                        Regresa
+                                    </button>
+                                    <button type="button" class="btn w-25" onclick="goToPage3()"
+                                            style="background-color: #ed1c24; color: white; border-color: #ed1c24;"
+                                            onmouseover="this.style.backgroundColor='#8e181a'; this.style.color='white'"
+                                            onmouseout="this.style.backgroundColor='#ed1c24'; this.style.color='white'">
+                                        Continuar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-page d-none" id="page3">
+                            <div class="row">
+                                <h5 style="color: red; font-family: 'Montserrat', sans-serif;">
+                                    <span style="display: inline-block; width: 30px; height: 30px; border-radius: 50%; background-color: red; color: white; text-align: center; line-height: 30px; font-weight: bold; font-size: 18px;">
+                                        3
+                                    </span>
+                                    <strong>Captura tus datos Fiscales</strong>
+                                </h5>
+                                <p>Sube o arrastra tu Constancia de Situación Fiscal al cuadro señalado para extraer
+                                    automáticamente tus datos.
+                                </p>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-4 mb-4">
+                                    <div class="kuale-dropzone-wrapper">
+                                        <span class="kuale-optional-badge">Opcional</span>
+                                        <div class="upload-container" id="drop-zone">
+                                            <div class="upload-content">
+                                                <img src="/contabilidad_kuale/static/src/img/Icono_Constancia-SAT.svg" alt="Upload Icon" class="upload-icon" style="width: 50px; height: 50px;"/>
+                                                <p style="font-size: 14px;">Arrastra o
+                                                    <strong>sube aquí</strong> tu Constancia para extraer tus datos fiscales
+                                                </p>
+                                                <input type="file" id="upload-pdf" accept=".pdf" class="upload-input"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <!-- RFC y Código Postal -->
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label" for="rfc">R.F.C</label>
+                                                        <div class="kuale-input-group">
+                                                            <input type="text" class="kuale-input" id="rfc"
+                                                                oninput="this.value = this.value.toUpperCase()"
+                                                                maxlength="13" placeholder="RFC"/>
+                                                            <button type="button" class="kuale-btn-search" onclick="searchRFC()">
+                                                                Buscar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label" for="address">Código Postal</label>
+                                                        <div class="kuale-input-wrapper">
+                                                            <input type="text" class="kuale-input" id="address" placeholder="Código Postal"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Razón Social -->
+                                    <div class="kuale-field">
+                                        <div class="kuale-field__row">
+                                            <div class="kuale-field__input-col">
+                                                <label class="kuale-field__label" for="receiver">Nombre o Razón Social</label>
+                                                <div class="kuale-input-wrapper">
+                                                    <input type="text" class="kuale-input" id="receiver" placeholder="Nombre o Razón Social"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Régimen Fiscal y Uso CFDI -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label" for="tax_regime">Régimen Fiscal</label>
+                                                        <select class="kuale-input" id="tax_regime" name="tax_regime" style="cursor:pointer;">
+                                                            <option value=""></option>
+                                                            <option t-foreach="request.env['cfdi.claveregimenfiscal'].sudo().search([])"
+                                                                t-as="regime"
+                                                                t-att-value="regime.Clave_regimenFiscal"
+                                                                t-att-data-moral="regime.Moral"
+                                                                t-att-data-fisica="regime.Fisica">
+                                                                <t t-esc="regime.Descripcion"/>
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="kuale-field">
+                                                <div class="kuale-field__row">
+                                                    <div class="kuale-field__input-col">
+                                                        <label class="kuale-field__label" for="cfdi_use">Uso de CFDI</label>
+                                                        <select class="kuale-input" id="cfdi_use" name="cfdi_use" style="cursor:pointer;">
+                                                            <option value=""></option>
+                                                            <option t-foreach="request.env['cfdi.claveusocfdi'].sudo().search([])"
+                                                                t-as="cfdi"
+                                                                t-att-value="cfdi.Clave_UsoCFDI"
+                                                                t-att-data-moral="cfdi.Moral"
+                                                                t-att-data-fisica="cfdi.Fisica"
+                                                                t-att-data-clave="cfdi.Clave_UsoCFDI">
+                                                                <t t-esc="cfdi.Descripcion"/>
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Correo Electrónico -->
+                                    <div class="kuale-field">
+                                        <div class="kuale-field__row">
+                                            <div class="kuale-field__input-col">
+                                                <label class="kuale-field__label" for="client_email">Correo Electrónico</label>
+                                                <div class="kuale-input-wrapper">
+                                                    <input type="email" class="kuale-input" id="client_email" placeholder="correo@ejemplo.com"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Toggle switch -->
+                            <div class="mt-3 kuale-switch-row">
+                                <label class="kuale-switch">
+                                    <input type="checkbox" id="extra-address" onchange="toggleAddressFields()"/>
+                                    <span class="kuale-switch__slider"></span>
+                                </label>
+                                <span class="kuale-switch__label">Domicilio (opcional)</span>
+                            </div>
+                            <!-- Campos opcionales -->
+                            <div id="address-extra-fields" style="display:none;" class="kuale-address-box mt-3">
+                                <p class="kuale-address-box__title">Domicilio Fiscal</p>
+                                <!-- Estado, Municipio/Ciudad, Colonia -->
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="kuale-field">
+                                            <label class="kuale-field__label" for="address-state">Estado</label>
+                                            <div class="kuale-input-wrapper">
+                                                <input type="text" class="kuale-input" id="address-state" placeholder="Ej. Tamaulipas"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="kuale-field">
+                                            <label class="kuale-field__label" for="address-city">Municipio / Ciudad</label>
+                                            <div class="kuale-input-wrapper">
+                                                <input type="text" class="kuale-input" id="address-city" placeholder="Ej. Tampico"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="kuale-field">
+                                            <label class="kuale-field__label">Colonia</label>
+                                            <div style="position: relative;">
+                                                <div class="kuale-input-wrapper">
+                                                    <input type="text" class="kuale-input" id="address-st2"
+                                                        placeholder="Escribe o selecciona una colonia"
+                                                        autocomplete="off"
+                                                        oninput="filtrarColonias(this.value)"/>
+                                                </div>
+                                                <div id="coloniaMenu"
+                                                    class="kuale-state-dropdown__menu"
+                                                    style="display:none; position:absolute; width:100%; z-index:9000;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Calle, Número Exterior, Número Interior -->
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="kuale-field">
+                                            <label class="kuale-field__label" for="address-st1">Calle</label>
+                                            <div class="kuale-input-wrapper">
+                                                <input type="text" class="kuale-input" id="address-st1" placeholder="Nombre de la calle"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="kuale-field">
+                                            <label class="kuale-field__label" for="address-extNumber">Núm. Exterior</label>
+                                            <div class="kuale-input-wrapper">
+                                                <input type="text" class="kuale-input" id="address-extNumber" placeholder="Ej. 123"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="kuale-field">
+                                            <label class="kuale-field__label" for="address-intNumber">Núm. Interior</label>
+                                            <div class="kuale-input-wrapper">
+                                                <input type="text" class="kuale-input" id="address-intNumber" placeholder="Ej. 4"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-outline-primary w-25" onclick="goBack()"
+                                        style="border-color: #ed1c24; color: #ed1c24;"
+                                        onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#8e181a'">
+                                    Regresa
+                                </button>
+                                <button type="button" class="btn w-25" onclick="goToPage4()"
+                                        style="background-color: #ed1c24; color: white; border-color: #ed1c24;"
+                                        onmouseover="this.style.backgroundColor='#8e181a'; this.style.color='white'"
+                                        onmouseout="this.style.backgroundColor='#ed1c24'; this.style.color='white'">
+                                    Continuar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-page d-none" id="page4">
+                            <div class="row justify-content-center text-center">
+                                <h4 style="color: red; font-family: 'Montserrat', sans-serif;">
+                                    <span style="display: inline-block; width: 30px; height: 30px; border-radius: 50%; background-color: red; color: white; text-align: center; line-height: 30px; font-weight: bold; font-size: 18px;">
+                                        4
+                                    </span>
+                                    <strong>Valida los datos de tu factura</strong>
+                                </h4>
+                                <p style="font-family: 'Montserrat', sans-serif;">
+                                    Para expedir tu factura, revisa que los datos sean correctos. Una vez generada, no
+                                    podremos modificarla.
+                                </p>
+                            </div>
+                            <div class="container mt-4">
+                                <!-- Fila superior: Ticket + Facturación -->
+                                <div class="row g-3">
+                                    <!-- Ticket de consumo -->
+                                    <div class="col-md-6">
+                                        <div class="kuale-summary-card">
+                                            <div class="kuale-summary-card__header">
+                                                <span class="kuale-summary-card__icon">🧾</span>
+                                                <span>Ticket de consumo</span>
+                                            </div>
+                                            <div class="kuale-summary-card__body">
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Sucursal</span>
+                                                    <span class="kuale-summary-row__value" id="summary-branch">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Folio</span>
+                                                    <span class="kuale-summary-row__value" id="summary-ticket">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Fecha</span>
+                                                    <span class="kuale-summary-row__value" id="summary-date">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row kuale-summary-row--total">
+                                                    <span class="kuale-summary-row__label">Total</span>
+                                                    <span class="kuale-summary-row__value" id="summary-amount">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Forma de pago</span>
+                                                    <span class="kuale-summary-row__value" id="summary-paymentType">—</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Datos de facturación -->
+                                    <div class="col-md-6">
+                                        <div class="kuale-summary-card">
+                                            <div class="kuale-summary-card__header">
+                                                <span class="kuale-summary-card__icon">📄</span>
+                                                <span>Datos de facturación</span>
+                                            </div>
+                                            <div class="kuale-summary-card__body">
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Razón Social</span>
+                                                    <span class="kuale-summary-row__value" id="summary-receiver">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">RFC</span>
+                                                    <span class="kuale-summary-row__value" id="summary-rfc">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">C.P.</span>
+                                                    <span class="kuale-summary-row__value" id="summary-address">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Régimen Fiscal</span>
+                                                    <span class="kuale-summary-row__value" id="summary-taxRegime">—</span>
+                                                </div>
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Uso de CFDI</span>
+                                                    <span class="kuale-summary-row__value" id="summary-cfdiUse">—</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Enviar factura a -->
+                                    <div class="col-12">
+                                        <div class="kuale-summary-card kuale-summary-card--email">
+                                            <div class="kuale-summary-card__header">
+                                                <span class="kuale-summary-card__icon">✉️</span>
+                                                <span>Enviar factura a</span>
+                                            </div>
+                                            <div class="kuale-summary-card__body">
+                                                <div class="kuale-summary-row">
+                                                    <span class="kuale-summary-row__label">Correo</span>
+                                                    <span class="kuale-summary-row__value" id="summary-clientEmail">—</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-outline-primary w-25" onclick="goBack()"
+                                        style="border-color: #ed1c24; color: #ed1c24;"
+                                        onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#8e181a'">
+                                    Regresa
+                                </button>
+                                <button type="button" class="btn w-25" onclick="submitInvoiceData()"
+                                        style="background-color: #ed1c24; color: white; border-color: #ed1c24;"
+                                        onmouseover="this.style.backgroundColor='#8e181a'; this.style.color='white'"
+                                        onmouseout="this.style.backgroundColor='#ed1c24'; this.style.color='white'">
+                                    Facturar
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Página 5: Descarga de factura -->
+                        <div class="form-page d-none" id="page5">
+                            <div class="row justify-content-center text-center">
+                                <div class="col-12">
+                                    <img src="/contabilidad_kuale/static/src/img/Icono_check.svg" alt="Check" class="icon-check"/>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <h5 class="success-message">
+                                        <strong>Tu ticket ha sido facturado con éxito</strong>
+                                    </h5>
+                                    <p class="info-text">Descarga tu factura haciendo clic en el formato que necesitas</p>
+                                </div>
+                            </div>
+
+                            <!-- Botones de descarga -->
+                            <div class="d-flex justify-content-center mt-4" style="gap: 12px;">
+                                <a onclick="downloadPDF()" class="dl-btn">
+                                    <img src="/contabilidad_kuale/static/src/img/Icono_PDF.svg" alt="PDF" style="height: 48px;"/>
+                                    <span class="dl-label">Descargar PDF</span>
+                                    <span class="dl-hint">↓ Toca para descargar</span>
+                                </a>
+                                <a onclick="downloadXML()" class="dl-btn">
+                                    <img src="/contabilidad_kuale/static/src/img/Icono_XML.svg" alt="XML" style="height: 48px;"/>
+                                    <span class="dl-label">Descargar XML</span>
+                                    <span class="dl-hint">↓ Toca para descargar</span>
+                                </a>
+                            </div>
+
+                            <!-- Reenviar factura -->
+                            <div class="row justify-content-center text-center mt-4">
+                                <p class="info-text">Reenvía tu factura por correo:</p>
+                            </div>
+                            <div class="row justify-content-center mb-3">
+                                <div class="col-10 col-md-8 col-lg-6">
+                                    <div class="input-group input-group-sm">
+                                        <input type="email" class="form-control kuale-input" id="email_invoice_client"
+                                            placeholder="Correo electrónico"/>
+                                        <button class="btn btn-outline-danger" id="btn_send_email_invoice">
+                                            Enviar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn w-25" onclick="goToPage(1)"
+                                        style="border: 1px solid #ed1c24; color: #ed1c24; background: transparent;"
+                                        onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ed1c24'">
+                                    Factura otro ticket
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-page d-none" id="email-notice-page">
+                            <div style="display:flex; justify-content:center; padding: 2rem 1rem;">
+                                <div style="background: #fff; padding: 2rem 2.5rem; max-width: 560px; width: 100%;">
+
+                                <div style="display:flex; align-items:center; gap: 12px; margin-bottom: 1.5rem;">
+                                    <div style="width: 48px; height: 48px; border-radius: 50%; background: #fce8e8; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <i class="fa fa-envelope" style="font-size: 20px; color: #ed1c24;"></i>
+                                    </div>
+                                    <div>
+                                    <p style="font-size: 17px; font-weight: 500; margin: 0;">Solicitud de facturación por correo</p>
+                                    <p style="font-size: 13px; color: #6c757d; margin: 0;">Envía la siguiente información a:</p>
+                                    </div>
+                                </div>
+
+                                <div style="background: #f8f9fa; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; display:flex; align-items:center; gap: 10px;">
+                                    <i class="fa fa-paper-plane" style="color: #ed1c24;"></i>
+                                    <span style="font-size: 14px; font-weight: 500;">contactanos@grupokuale.com.mx</span>
+                                </div>
+
+                                <div style="display:flex; flex-direction:column; gap: 10px; margin-bottom: 1.75rem;">
+
+                                    <div style="display:flex; align-items:center; gap: 12px; padding: 0.65rem 0.9rem;">
+                                    <i class="fa fa-camera" style="color: #ed1c24; width:18px; text-align:center;"></i>
+                                    <span style="font-size: 14px;">Foto legible del ticket</span>
+                                    </div>
+                                    
+                                    <div style="display:flex; align-items:center; gap: 12px; padding: 0.65rem 0.9rem;">
+                                    <i class="fa fa-id-card" style="color: #ed1c24; width:18px; text-align:center;"></i>
+                                    <span style="font-size: 14px;">RFC</span>
+                                    </div>
+
+                                    <div style="display:flex; align-items:center; gap: 12px; padding: 0.65rem 0.9rem;">
+                                    <i class="fa fa-map-marker" style="color: #ed1c24; width:18px; text-align:center;"></i>
+                                    <span style="font-size: 14px;">Código Postal</span>
+                                    </div>
+
+                                    <div style="display:flex; align-items:center; gap: 12px; padding: 0.65rem 0.9rem;">
+                                    <i class="fa fa-building" style="color: #ed1c24; width:18px; text-align:center;"></i>
+                                    <span style="font-size: 14px;">Nombre o Razón Social</span>
+                                    </div>
+
+                                    <div style="display:flex; align-items:center; gap: 12px; padding: 0.65rem 0.9rem;">
+                                    <i class="fa fa-list-alt" style="color: #ed1c24; width:18px; text-align:center;"></i>
+                                    <span style="font-size: 14px;">Régimen Fiscal y Uso de CFDI</span>
+                                    </div>
+
+                                    <div style="display:flex; align-items:center; gap: 12px; padding: 0.65rem 0.9rem;">
+                                    <i class="fa fa-at" style="color: #ed1c24; width:18px; text-align:center;"></i>
+                                    <span style="font-size: 14px;">Correo electrónico</span>
+                                    </div>
+
+                                    <div style="display:flex; align-items:center; gap: 12px; padding: 0.65rem 0.9rem;">
+                                    <i class="fa fa-file-text" style="color: #ed1c24; width:18px; text-align:center;"></i>
+                                    <span style="font-size: 14px;">Constancia Fiscal <span style="color: #6c757d; font-size: 12px;">(opcional)</span></span>
+                                    </div>
+
+                                </div>
+
+                                <button type="button" class="btn w-25" onclick="goBackToCompanies()"
+                                        style="border-color: #ed1c24; color: #ed1c24;"
+                                            onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#8e181a'">
+                                    <i class="fa fa-arrow-left" style="font-size: 13px;"></i> Regresar
+                                </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- <div>
+                        <p>
+                            <b>¿No pudiste realizar el proceso de facturación?</b>
+                        </p>
+                        <button type="button" class="btn btn-outline-primary"
+                                style="background-color: #ed1c24; color: white; border-color: #ed1c24;"
+                                onclick="openComplaintForm()"
+                                onmouseover="this.style.backgroundColor='#8e181a'; this.style.color='white'"
+                                onmouseout="this.style.backgroundColor='#ed1c24'; this.style.color='white'">
+                            Contáctanos
+                        </button>
+                        <button type="button" class="btn btn-outline-primary kuale-privacy-btn"
+                                style="background-color: #ed1c24; color: white; border-color: #ed1c24;"
+                                data-bs-toggle="modal" data-bs-target="#privacyModal"
+                                onmouseover="this.style.backgroundColor='#8e181a'; this.style.color='white'"
+                                onmouseout="this.style.backgroundColor='#ed1c24'; this.style.color='white'">
+                            Aviso de privacidad
+                        </button>
+                    </div> -->
+                    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                            <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none;">
+                                <!-- Header -->
+                                <div class="modal-header" style="background: #FA0000; border: none; padding: 1.25rem 1.5rem;">
+                                    <div>
+                                        <p style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.8); margin: 0 0 2px 0; font-family: 'Montserrat', sans-serif;">
+                                            SERVICIOS KUALE
+                                        </p>
+                                        <h5 class="modal-title" id="privacyModalLabel"
+                                            style="color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; margin: 0;">
+                                            Aviso de Privacidad — Clientes · Facturación
+                                        </h5>
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <!-- Body -->
+                                <div class="modal-body" style="font-family: 'Montserrat', sans-serif; font-size: 13px; color: #444; line-height: 1.7; padding: 1.5rem;">
+                                    <p>SERVICIOS KUALE, en cumplimiento con lo establecido en el artículo 15, 16, 17 y demás correlativos de la Ley Federal de Protección de Datos Personales en Posesión de Particulares publicada en el Diario Oficial de la Federación el día 5 de Julio de 2010 (en adelante la "Ley"), así como del Reglamento aplicable, extiende el presente Aviso de Privacidad y le informa lo siguiente:</p>
+                                    <p>Este aviso de privacidad corresponde al siguiente sitio web perteneciente a SERVICIOS KUALE:
+                                        <strong>facturakuale.mx</strong>
+                                    </p>
+                                    <p>El presente aviso de privacidad comprende y ampara a las siguientes empresas:</p>
+                                    <ul>
+                                        <li>Hamburguesas Mafis S.A. de C.V.</li>
+                                        <li>Helados Mafis, S.A. de C.V.</li>
+                                        <li>Tintocinco, S.A. de C.V.</li>
+                                        <li>Servicios Kuale, S.A. de C.V.</li>
+                                    </ul>
+                                    <p class="kuale-modal__section-title">I. Responsable del tratamiento de datos personales</p>
+                                    <p>SERVICIOS KUALE, S.A. DE C.V. (Denominada en lo sucesivo el "Responsable"), con domicilio ubicado en Calle Estadio No. 203, Col. Petrolera, C.P. 89110, Tampico, Tamaulipas, es el responsable del uso y protección de sus datos personales. Los datos personales que se recaben serán tratados confidencialmente y se utilizarán estrictamente para los fines que más adelante se señalan.</p>
+                                    <p>El Responsable recaba sus datos personales de manera directa por medios electrónicos, página web, medios escritos o de voz, ya sea a través de correo electrónico y/o por teléfono o a través de formatos establecidos, y de manera indirecta por medio de transferencias que le hacen llegar sus empresas filiales y/o terceros.</p>
+                                    <p>Le informamos que en nuestro sitio web utilizamos cookies y otras tecnologías a través de las cuales es posible monitorear su comportamiento a efecto de brindarle un mejor servicio y experiencia de usuario. Nuestro sitio web utiliza únicamente cookies de sesión, las cuales se borran al final de la sesión.</p>
+                                    <p class="kuale-modal__section-title">II. Finalidad del tratamiento de los datos personales</p>
+                                    <p>Los datos personales serán tratados estrictamente para alcanzar las siguientes finalidades:</p>
+                                    <ol>
+                                        <li>Confirmar su identidad.</li>
+                                        <li>Integración de base de datos de clientes.</li>
+                                        <li>Elaborar comprobantes fiscales.</li>
+                                        <li>Realizar la facturación electrónica.</li>
+                                        <li>Dar cumplimiento a los requerimientos hechos por las autoridades, cuando sea necesario para salvaguardar el interés público.</li>
+                                        <li>Presentar declaraciones ante el Servicio de Administración Tributaria (SAT) y ante la Secretaría de Hacienda y Crédito Público (SHCP).</li>
+                                        <li>La negociación, cumplimiento y terminación de la relación jurídica entre el Responsable y el Titular.</li>
+                                        <li>La gestión, administración y prestación de servicios proporcionados por el Responsable.</li>
+                                        <li>Para efectos de dar información a despachos que realizan auditorías.</li>
+                                        <li>Atender quejas, reclamaciones, solicitudes y/o sugerencias.</li>
+                                        <li>Realizar o modificar los contratos con el Titular y clientes.</li>
+                                    </ol>
+                                    <p>De manera adicional utilizaremos su información para las siguientes finalidades secundarias:</p>
+                                    <ol>
+                                        <li>Realizar encuestas de servicio y calidad, así como ofrecer o promover productos propios o de terceros.</li>
+                                        <li>Elaborar estadísticas y reportes de los servicios prestados.</li>
+                                        <li>Investigaciones de mercado.</li>
+                                        <li>Material de difusión, ofertas.</li>
+                                    </ol>
+                                    <p>En caso de no desear que se traten sus datos para publicidad, contáctenos al
+                                        <strong>(833) 217-18-18</strong>, lunes a viernes de 10:00 a 14:00 y de 15:00 a 18:00 hrs, o a
+                                        <strong>privacidad@grupokuale.com.mx</strong>.
+                                    </p>
+                                    <p>Los datos personales que el Responsable recaba son:</p>
+                                    <ul>
+                                        <li>Nombre completo y/o denominación o razón social.</li>
+                                        <li>Registro Federal de Contribuyentes (RFC).</li>
+                                        <li>Calle, número exterior, número interior, colonia, código postal, estado, municipio y ciudad.</li>
+                                        <li>E-Mail y teléfono.</li>
+                                        <li>Marca y sucursal donde se consumió o prestaron servicios.</li>
+                                        <li>Número de ticket, fecha de consumo y monto.</li>
+                                        <li>Comentarios.</li>
+                                    </ul>
+                                    <p class="kuale-modal__section-title">III. Limitación del uso o divulgación de datos personales</p>
+                                    <p>El Responsable resguarda los datos personales bajo programas de cómputo con acceso limitado mediante contraseñas de alta seguridad, únicamente accesibles a personas con facultades para ello. El Responsable se compromete a que todos los datos obtenidos serán tratados bajo las más estrictas medidas de seguridad que garanticen su confidencialidad.</p>
+                                    <p class="kuale-modal__section-title">IV. Encargado del tratamiento de los datos personales</p>
+                                    <p>Karen Astrid Flores Juárez, con domicilio en Calle Estadio No. 203, Col. Petrolera, C.P. 89110, Tampico, Tamaulipas. Horario de atención: lunes a viernes de 10:00 a 18:00 hrs.
+                                        <br/>
+                                    Correo:
+                                        <strong>privacidad@grupokuale.com.mx</strong> — Tel.
+                                        <strong>(833) 217 18 18</strong>
+                                    </p>
+                                    <p class="kuale-modal__section-title">V. Derechos ARCO</p>
+                                    <p>Los Titulares podrán ejercer los derechos de Acceso, Rectificación, Cancelación u Oposición (ARCO) mediante una solicitud por escrito presentada en las oficinas del Responsable o enviada a
+                                        <strong>privacidad@grupokuale.com.mx</strong>. La solicitud deberá contener:
+                                    </p>
+                                    <ol>
+                                        <li>El nombre y domicilio del Titular u otro medio para comunicarle la respuesta.</li>
+                                        <li>Los documentos que acrediten su identidad o representación legal.</li>
+                                        <li>La descripción clara y precisa de los datos personales respecto de los que se busca ejercer alguno de los derechos.</li>
+                                        <li>Cualquier otro elemento o documento que facilite la localización de los datos personales.</li>
+                                    </ol>
+                                    <p class="kuale-modal__section-title">VI. Transferencia de datos personales</p>
+                                    <p>El Responsable podrá transferir datos personales a terceros nacionales o extranjeros en los siguientes supuestos:</p>
+                                    <ol type="a">
+                                        <li>A la institución financiera en la que el Responsable tenga sus cuentas bancarias.</li>
+                                        <li>A terceros para la prestación de servicios de asesoría jurídica, contable, administrativa y/o fiscal.</li>
+                                        <li>A terceros que realicen auditorías legales, contables o de cualquier otra naturaleza.</li>
+                                        <li>Autoridades financieras, mexicanas y extranjeras, para cumplimiento de obligaciones legales.</li>
+                                        <li>Autoridades judiciales, mexicanas y extranjeras, para cumplimiento de notificaciones o requerimientos.</li>
+                                        <li>Autoridades fiscales, para cumplimiento de obligaciones tributarias.</li>
+                                        <li>Autoridades civiles, para cumplimiento de obligaciones derivadas de los servicios prestados.</li>
+                                        <li>Terceros con relaciones contractuales con el Responsable.</li>
+                                        <li>Terceros conocidos como PAC (Proveedores Autorizados de Certificación) para el timbrado de la factura electrónica.</li>
+                                    </ol>
+                                    <p>Salvo las excepciones previstas en el artículo 37 de la Ley, nos comprometemos a no transferir su información personal a terceros sin su consentimiento.</p>
+                                    <p class="kuale-modal__section-title">VII. Cambios al aviso de privacidad</p>
+                                    <p>Cualquier modificación al presente aviso estará disponible en el domicilio del Responsable y en el portal oficial:
+                                        <strong>www.servicioskuale.com.mx/facturacion</strong>.
+                                    </p>
+                                    <p>Con fundamento en el artículo 8 de la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, consiento en entregar a SERVICIOS KUALE mis datos personales a efecto de que sean tratados conforme a lo consignado en este aviso de privacidad. Asimismo, ACEPTO la transferencia de mis datos personales a los terceros que resulten necesarios conforme al numeral VI del presente aviso.</p>
+                                    <p style="font-size: 11px; color: #aaa; text-align: right; margin-top: 1.5rem;">
+                                        Última actualización: 27 de enero de 2017.
+                                    </p>
+                                </div>
+                                <!-- Footer -->
+                                <div class="modal-footer" style="border-top: 1px solid #f0f0f0; padding: 1rem 1.5rem;">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" style="background-color: #ed1c24; color: white; border-color: #ed1c24;">
+                                        Entendido
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="complaintModal" tabindex="-1" aria-labelledby="complaintModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <form id="complaint-form">
+                                        <div id="step1">
+                                            <div class="mb-3">
+                                                <h5 class="modal-title" id="complaintModalLabel"
+                                                    style="font-family: 'Montserrat', sans-serif;">
+                                                    <strong>¿Cuál es tu problema para facturar?</strong>
+                                                </h5>
+                                                <br/>
+                                                <select class="form-select custom-select" id="complaint_type"
+                                                        name="complaint_type">
+                                                    <option value="">Selecciona la opción que describa la situación
+                                                    </option>
+                                                    <option value="ticket">Arroja mensaje de "El ticket no existe"
+                                                    </option>
+                                                    <option value="branch">No aparece la sucursal</option>
+                                                    <option value="payment">La forma de pago es incorrecta</option>
+                                                    <option value="name">Arroja mensaje "Los datos deben coincidir con
+                                                        el RFC del receptor"
+                                                    </option>
+                                                    <option value="late">Mi ticket es de un mes anterior</option>
+                                                    <option value="data">Los datos de mi factura son incorrectos
+                                                    </option>
+                                                    <option value="specific">Requiero una refacturación por datos
+                                                    </option>
+                                                    <option value="register">No me permite registrar mis datos</option>
+                                                </select>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="continueToStep2()">
+                                                Continuar
+                                            </button>
+                                        </div>
+                                        <div id="step2" style="display:none;">
+                                            <!-- Se mostrará solo cuando el usuario haga clic en Continuar -->
+                                            <h4 id="selected_problem_text" class="text-muted mb-3"></h4>
+                                            <p>Completa los siguientes datos para ayudarte en tu solicitud:</p>
+                                            <!-- RFC con botón de búsqueda -->
+                                            <div class="row mb-3">
+                                                <div class="col-md-8">
+                                                    <label for="rfc2" class="form-label">RFC</label>
+                                                    <div class="d-flex">
+                                                        <input type="text" class="form-control" id="rfc2" name="rfc2"
+                                                            style="background-color: #f1f1f1;"/>
+                                                        <button type="button" class="btn btn-outline-danger"
+                                                                style="border-color: #ed1c24; color: #ed1c24; margin-left: 10px; text-decoration: none;"
+                                                                onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                                                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ed1c24'"
+                                                                onclick="searchRFC2()">Buscar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 d-flex flex-column align-items-start">
+                                                    <label for="cp2" class="form-label">Código Postal</label>
+                                                    <input type="text" class="form-control" id="cp2" name="cp2"
+                                                        maxlength="5"
+                                                        style="background-color: #f1f1f1;"/>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="receiver2" class="form-label">Nombre o razón social</label>
+                                                <input class="form-control" id="receiver2" name="receiver2"
+                                                       style="background-color: #f1f1f1;"></input>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label for="tax_regime2" class="form-label ">Régimen Fiscal</label>
+                                                    <select class="form-select custom-select" id="tax_regime2"
+                                                            name="tax_regime2" style="background-color: #f1f1f1;">
+                                                        <option value=""></option>
+                                                        <option t-foreach="request.env['cfdi.claveregimenfiscal'].sudo().search([])"
+                                                                t-as="regime"
+                                                                t-att-value="regime.Clave_regimenFiscal"
+                                                                t-att-data-moral="regime.Moral"
+                                                                t-att-data-fisica="regime.Fisica">
+                                                            <t t-esc="regime.Descripcion"/>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="cfdi_use2" class="form-label ">Uso de CFDI</label>
+                                                    <select class="form-select custom-select" id="cfdi_use2"
+                                                            name="cfdi_use2" style="background-color: #f1f1f1;">
+                                                        <option value=""></option>
+                                                        <option t-foreach="request.env['cfdi.claveusocfdi'].sudo().search([])"
+                                                                t-as="cfdi"
+                                                                t-att-value="cfdi.Clave_UsoCFDI"
+                                                                t-att-data-moral="cfdi.Moral"
+                                                                t-att-data-fisica="cfdi.Fisica"
+                                                                t-att-data-clave="cfdi.Clave_UsoCFDI">
+                                                            <t t-esc="cfdi.Descripcion"/>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Correo Electrónico</label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                       style="background-color: #f1f1f1;"/>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4 d-flex flex-column align-items-start">
+                                                    <label for="numTicket2" class="form-label">Numero de ticket</label>
+                                                    <input class="form-control" id="numTicket2" name="numTicket2"
+                                                        style="background-color: #f1f1f1;"/>
+                                                </div>
+
+                                                <div class="col-md-4 d-flex flex-column align-items-start">
+                                                    <label for="company2" class="form-label">Empresa</label>
+                                                    <select class="form-select custom-select" id="company2" name="company2"
+                                                            style="background-color: #f1f1f1;"
+                                                            onchange="loadBranches2(this.value)">
+                                                        <option value="">Seleccione una empresa</option>
+                                                        <t t-foreach="companies.filtered(lambda c: c.billable)" t-as="company">
+                                                            <option t-att-value="company.id">
+                                                                <t t-esc="company.trade_name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4 d-flex flex-column align-items-start">
+                                                    <label for="branch2" class="form-label">Sucursal</label>
+                                                    <select class="form-select custom-select" id="branch2" name="branch2"
+                                                            style="background-color: #f1f1f1;">
+                                                        <option value="">Seleccione una sucursal</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row mb-2">
+                                                <div class="col-md-1">
+                                                    <span class="kuale-optional-badge">Opcional</span>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <!-- Botón para subir archivo -->
+                                                        <button type="button" class="btn btn-outline-primary me-2"
+                                                                onclick="document.getElementById('invoice').click()"
+                                                                style="border-color: #f1f1f1; color: #000000;"
+                                                                onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                                                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#000000'">
+                                                            Adjuntar Constancia Fiscal (PDF)
+                                                            <img src="/contabilidad_kuale/static/src/img/Icono_subir.svg"
+                                                                 alt="Subir archivo"
+                                                                 style="width: 15px; height: 15px; margin-left: 8px;"/>
+                                                        </button>
+                                                        <input type="file" class="form-control d-none" id="invoice"
+                                                               name="invoice" accept=".pdf"
+                                                               onchange="previewFile('invoice')"/>
+                                                    </div>
+                                                    <!-- Archivo adjunto -->
+                                                    <div id="invoice-preview" class="mt-2 d-none">
+                                                        <img src="/contabilidad_kuale/static/src/img/Icono_Adjuntar.svg"
+                                                             alt="Archivo PDF" style="width: 15px; height: 15px;"
+                                                             class="me-2"/>
+                                                        <span id="invoice-name"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <!-- Botón para subir archivo -->
+                                                        <button type="button" class="btn btn-outline-primary me-2"
+                                                                onclick="document.getElementById('ticket_t').click()"
+                                                                style="border-color: #f1f1f1; color: #000000;"
+                                                                onmouseover="this.style.backgroundColor='#ed1c24'; this.style.color='white'"
+                                                                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#000000'">
+                                                            Subir foto(s) de ticket(s) (JPG/PNG)
+                                                            <img src="/contabilidad_kuale/static/src/img/Icono_subir.svg"
+                                                                 alt="Subir archivo" style="width: 15px; height: 15px;"
+                                                                 class="me-2"/>
+                                                        </button>
+                                                        <input type="file" class="form-control d-none" id="ticket_t"
+                                                               name="ticket_t" accept=".pdf,image/*"
+                                                               onchange="previewFile('ticket_t')"/>
+                                                    </div>
+                                                    <!-- Archivo adjunto -->
+                                                    <div id="ticket_t-preview" class="mt-2 d-none">
+                                                        <img src="/contabilidad_kuale/static/src/img/Icono_Adjuntar.svg"
+                                                             alt="Archivo adjunto" style="width: 20px; height: 20px;"
+                                                             class="me-2"/>
+                                                        <span id="ticket_t-name"></span> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="text-align: center;">
+                                                <button type="button" class="btn btn-primary"
+                                                        onclick="submitComplaint()">Enviar solicitud
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                </div>
+                <footer class="kuale-footer__wrap">
+                    <div class="container-fluid px-5">
+
+                        <!-- GRID 4 COLUMNAS -->
+                        <div class="row g-4 pb-3 border-bottom border-white border-opacity-25">
+
+                            
+                            <!-- COLUMNA 1: CONTACTO -->
+                            <div class="col-12 col-md-6 col-lg-3 border-end border-white border-opacity-25 d-flex flex-column">
+                                <h3 class="fw-bold fs-5 text-white mb-2">¿No pudiste realizar el proceso de facturación?</h3>
+                                <p class="text-white opacity-75 mb-3 flex-grow-1">Contáctanos y con gusto te ayudamos a resolver tu problema.</p>
+                                <div class="mt-auto text-start">
+                                    <button type="button"
+                                            onclick="openComplaintForm()"
+                                            class="kuale-footer__btn">
+                                        Contáctanos →
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- COLUMNA 2: VACANTES -->
+                            <div class="col-12 col-md-6 col-lg-3 border-end border-white border-opacity-25 d-flex flex-column">
+                                <h3 class="fw-bold fs-5 text-white mb-2">¿Te gustaría trabajar con nosotros?</h3>
+                                <p class="text-white opacity-75 mb-3 flex-grow-1">Conoce las vacantes disponibles en Grupo Kuale.</p>
+                                <div class="mt-auto text-start">
+                                    <a href="https://reclutamientokuale.mx" target="_blank" class="kuale-footer__link2">
+                                        reclutamientokuale.mx ↗
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- COLUMNA 3: AVISO -->
+                            <div class="col-12 col-md-6 col-lg-3 border-end border-white border-opacity-25 d-flex flex-column">
+                                <h3 class="fw-bold fs-5 text-white mb-2">Información legal</h3>
+                                <p class="text-white opacity-75 mb-3 flex-grow-1">Consulta nuestro aviso de privacidad y términos de uso.</p>
+                                <div class="mt-auto text-start">
+                                    <button type="button"
+                                            class="kuale-footer__btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#privacyModal">
+                                        Aviso de privacidad
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- COLUMNA 4: LOGO -->
+                            <div class="col-12 col-md-6 col-lg-3 d-flex align-items-center justify-content-center">
+                                <img src="/contabilidad_kuale/static/src/img/logoKuale.png"
+                                    alt="Grupo Kuale"
+                                    style="height: 80px; width: auto; filter: brightness(0) invert(1);"/>
+                            </div>
+
+                        </div>
+
+                        <!-- COPYRIGHT -->
+                        <div class="row pt-3">
+                            <div class="col text-center text-white opacity-75 small">
+                                &#169; 2026 Servicios Kuale, S.A. de C.V. · Tampico, Tamaulipas, México
+                            </div>
+                        </div>
+
+                    </div>
+                </footer>
+                
+                
+                
+                
+                <style>
+                    .progress-container {
+                    display: flex;
+                    justify-content: center;
+                    width: 100%;
+                    }
+                    .progress-step {
+                    width: 30%;
+                    height: 10px;
+                    background-color: #e0e0e0;
+                    border-radius: 5px;
+                    margin: 0 5px;
+                    }
+                    .progress-step.active {
+                    background-color: #007bff;
+                    }
+
+
+                    @media (max-width: 767px) {
+                    .progress-container {
+                    width: 80%;
+                    margin: 0 auto;
+                    }
+                    .progress-step {
+                    width: 25%;
+                    }
+                    }
+                </style>
+                <style>
+                    /* Tamaño reducido */
+                    .small-input {
+                    height: 36px; /* Altura adaptable */
+                    font-size: 14px;
+                    padding: 6px 10px;
+                    background-color: #f1f1f1;
+                    }
+
+                    /* Botón pequeño pero adaptable */
+                    .small-button {
+                    height: 36px;
+                    font-size: 14px;
+                    padding: 6px 12px;
+                    background-color: #ed1c24;
+                    color: white;
+                    border-color: #ed1c24;
+                    transition: all 0.3s ease;
+                    white-space: nowrap; /* Evita que el texto se divida */
+                    }
+
+                    /* Efecto hover */
+                    .small-button:hover {
+                    background-color: #8e181a;
+                    color: white;
+                    }
+                    .icon-check {
+                    width: 50px;
+                    height: 50px;
+                    }
+                    /* Botones de descarga */
+                    .btn-download {
+                    display: inline-block;
+                    width: 90px;
+                    height: 90px;
+                    background-color: #ffffff;
+
+                    border-radius: 10px;
+                    text-align: center;
+                    line-height: 60px;
+                    margin: 0 10px;
+                    transition: all 0.3s ease;
+                    }
+
+                    .btn-download img {
+                    width: 90px;
+                    height: 90px;
+                    }
+
+                    /* Efecto hover en botones de descarga */
+                    .btn-download:hover {
+                    background-color: #ddd;
+                    border-color: #bbb;
+                    }
+                    <!-- .card-container {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+
+                    overflow: hidden;
+                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .card-header-custom {
+                    background-color: #d6d6d6; /* Gris oscuro */
+                    padding: 10px;
+                    text-align: center;
+                    font-family: 'Montserrat', sans-serif;
+                    color: #495057;
+                    }
+
+                    .card-body-custom {
+                    background-color: #f1f1f1; /* Gris claro */
+                    padding: 20px;
+                    flex-grow: 1;
+                    min-height: 200px;
+                    } -->
+
+                    /* ── Summary Card ──────────────────────────────────── */
+                    .kuale-summary-card {
+                        border-radius: 10px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 12px rgba(0,0,0,.07);
+                        border: 1.5px solid #f0f0f0;
+                        height: 100%;
+                    }
+
+                    .kuale-summary-card__header {
+                        background: #BFBFBF;
+                        color: #fff;
+                        padding: 12px 16px;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        font-size: 13px;
+                        font-weight: 700;
+                        letter-spacing: .06em;
+                        text-transform: uppercase;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+
+                    .kuale-summary-card__icon {
+                        font-size: 16px;
+                    }
+
+                    .kuale-summary-card__body {
+                        background: #fff;
+                        padding: 8px 0;
+                    }
+
+                    /* ── Summary Row ───────────────────────────────────── */
+                    .kuale-summary-row {
+                        display: grid;
+                        grid-template-columns: 110px 1fr; /* label fijo, valor ocupa el resto */
+                        align-items: baseline;
+                        padding: 6px 12px;
+                        border-bottom: 1px solid #f5f5f5;
+                        gap: 8px;
+                    }
+                    .kuale-summary-row:last-child {
+                        border-bottom: none;
+                    }
+                    .kuale-summary-row__label {
+                        font-size: 11px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: .06em;
+                        color: #999;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        flex-shrink: 0;
+                    }
+                    .kuale-summary-row__value {
+                        font-size: 14px;
+                        color: #333;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        font-weight: 500;
+                        text-align: left;
+                        width: 100%;        /* ← esto fuerza el alineado */
+                        display: block;     /* ← asegura que sea bloque */
+                    }
+
+                    /* ── Total row destacado ───────────────────────────── */
+                    .kuale-summary-row--total {
+                        background: #fff5f5;
+                    }
+                    .kuale-summary-row--total .kuale-summary-row__label {
+                        color: #FA0000;
+                    }
+                    .kuale-summary-row--total .kuale-summary-row__value {
+                        color: #FA0000;
+                        font-weight: 700;
+                        font-size: 16px;
+                    }
+
+                    /* ── Email card ancho completo ─────────────────────── */
+                    
+                    .kuale-summary-card--email .kuale-summary-row__value {
+                        color: #333;
+                        font-weight: 600;
+                    }
+                    .row {
+                    display: flex;
+                    align-items: stretch;
+                    }
+
+                    .col-md-4 {
+                    display: flex;
+                    }
+                    /* Asegura que los inputs y botones estén alineados correctamente */
+                    .d-flex {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    }
+
+                    .d-flex .form-floating {
+                    flex: 1;
+                    }
+
+                    .d-flex .form-floating select,
+                    .d-flex .form-floating input {
+                    width: 100%;
+                    }
+
+                    /* Ajustes de estilo para el botón "Buscar" */
+                    #search-rfc {
+                    height: 40px; /* Asegura que el botón tenga la misma altura que el input */
+                    border-radius: 5px;
+                    }
+
+                    /* Aplica el borde solo en la parte inferior de los inputs */
+                    .form-floating input, .form-floating select {
+                    border: 2px solid #ADADAD;
+                    border-color: #ADADAD;
+                    /*border-bottom: 2px solid red;*/ /* Solo borde inferior rojo */
+                    border-radius: 12px 12px 12px 12px;
+                    box-shadow: none; /* Elimina cualquier sombra */
+                    padding-left: 10px; /* Espacio interno */
+                    padding-right: 10px; /* Sin espacio para los íconos en el input */
+                    height: 40px; /* Altura ajustada */
+                    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+                    margin-right: 5%;
+
+                    }
+
+                    /* Estilo para los inputs de tipo date y sucursal */
+                    .form-floating input[type="date"], .form-floating select {
+                    padding-right: 50px; /* Sin espacio adicional para los íconos */
+                    background-image: url('contabilidad_kuale/static/src/img/Flecha_desplegable.svg');
+                    background-repeat: no-repeat;
+                    background-position: right 10px center; /* Ajusta la posición de la imagen */
+
+                    }
+
+                    /* Contenedor de la imagen, la imagen va fuera del input */
+                    .input-icon {
+                    position: absolute;
+                    right: 10px; /* Coloca el ícono a la derecha */
+                    top: 50%;
+                    transform: translateY(-50%); /* Centra la imagen verticalmente */
+                    width: 20px;
+                    height: 20px;
+                    }
+
+                    /* Estilo general para los inputs */
+                    .form-floating {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px; /* Espaciado entre los inputs */
+                    }
+
+                    /* Ajuste de posición para las imágenes */
+                    .form-floating .input-icon {
+                    z-index: 1; /* Asegura que la imagen no se sobreponga con el input */
+                    }
+
+                    .custom-select {
+                    appearance: none; /* Oculta la flecha predeterminada */
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    background-image: url('contabilidad_kuale/static/src/img/Flecha_desplegable.svg');
+                    background-repeat: no-repeat;
+                    background-position: right 10px center; /* Ajusta la posición de la imagen */
+                    background-size: 10px; /* Ajusta el tamaño de la imagen */
+                    padding-right: 40px; /* Espacio para la imagen */
+                    border: 1px solid #ced4da; /* Borde para que coincida con el estilo */
+                    border-radius: 5px;
+                    height: 40px; /* Ajusta la altura */
+                    width: 100%; /* Ocupar todo el ancho disponible */
+                    }
+
+                    /* Contenedor principal */
+                    .upload-container {
+                    border: 2px dashed #d9534f;
+                    border-radius: 10px;
+                    padding: 20px;
+                    text-align: center;
+                    color: #d9534f;
+                    cursor: pointer;
+
+                    margin: auto;
+                    position: relative;
+                    }
+
+                    /* Icono de subir */
+                    .upload-icon {
+                    width: 50px;
+                    margin-bottom: 10px;
+                    }
+
+                    /* Input invisible */
+                    .upload-input {
+                    opacity: 0;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+                    }
+
+                    /* Pie de texto */
+                    .upload-footer {
+                    font-size: 12px;
+                    color: #555;
+                    margin-top: 10px;
+                    }
+
+                    .kuale-dropzone-wrapper {
+                    max-width: 250px;
+                    margin: 0 auto;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .kuale-dropzone-wrapper .upload-container {
+                    width: 100%;
+                    margin: 0; /* quitar el margin: auto anterior */
+                }
+
+                .kuale-optional-badge {
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: .08em;
+                    text-transform: uppercase;
+                    background-color: #e9ecef;
+                    color: #333;
+                    font-family: 'Montserrat', system-ui, sans-serif;
+                    border: 1.5px solid #e9ecef;
+                    border-radius: 4px;
+                    padding: 2px 0px;
+                    margin-bottom: 4px;
+                }
+                    .custom-select2 {
+                    appearance: none; /* Oculta la flecha predeterminada */
+                    background-color: #e9ecef; /* Fondo gris */
+                    border: none; /* Quitar borde */
+                    padding: 10px; /* Espaciado interno */
+                    font-size: 1rem; /* Tamaño del texto */
+                    width: 100%;
+                    position: relative;
+                    background-image: url('contabilidad_kuale/static/src/img/Flecha_desplegable.svg');
+                    background-repeat: no-repeat;
+                    background-position: right 10px center;
+                    background-size: 10px;
+                    }
+                </style>
+                <style>
+                    .form-control {
+                    border: none; /* Quitar bordes */
+                    border-radius: 0; /* Eliminar el redondeo de las esquinas */
+                    background-color: #0000; /* Gris claro (fondo visible siempre) */
+                    transition: border-bottom 0.3s ease-in-out; /* Transición suave para el borde */
+                    }
+
+                    /* Estilo para cuando el input está enfocado (seleccionado), con borde inferior rojo */
+                    .form-control:focus {
+                    outline: none; /* Quitar contorno */
+                    border-bottom: 2px solid #ed1c24; /* Borde inferior rojo */
+                    }
+                    .modal-dialog {
+                    max-width: 700px; /* Define el ancho máximo del modal */
+                    width: 80%; /* Establece el ancho del modal a un 80% del contenedor */
+                    }
+                    .btn-primary {
+                    background-color: #ed1c24 !important;
+                    border-color: #ed1c24 !important;
+                    color: white !important;
+                    }
+
+                    .btn-primary:hover {
+                    background-color: #c0171d !important; /* Un rojo más oscuro */
+                    border-color: #c0171d !important;
+                    }
+                    /* Aplica solo al select específico */
+                    #complaint_type {
+                    border: none;
+                    border-bottom: 2px solid red;
+                    background-color: #f5f5f5; /* Gris bajo */
+                    color: #333;
+                    }
+
+                    /* Cambiar el color de la flecha del select */
+                    #complaint_type::after {
+                    content: "▼"; /* Flecha personalizada */
+                    color: red; /* Color rojo */
+                    }
+
+                    /* Eliminar bordes predeterminados */
+                    #complaint_type:focus {
+                    outline: none;
+                    border-bottom: 2px solid red;
+                    }
+                    .form-select option[disabled] {
+                    color: #ed1c24;
+                    font-weight: bold;
+                    background: #fff;
+                    }
+
+                    /* ══════════════════════════════════════════
+                    FIELD WRAPPER
+                    ══════════════════════════════════════════ */
+                    .kuale-field {
+                        margin-top: 0.75rem;
+                    }
+                    .kuale-field__label {
+                        font-size: 12px;
+                        font-weight: 600;
+                        letter-spacing: .07em;
+                        text-transform: uppercase;
+                        color: #4F4F4F;
+                        margin-bottom: 6px;
+                        display: block;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                    }
+
+                    /* ══════════════════════════════════════════
+                    DROPDOWN
+                    ══════════════════════════════════════════ */
+                    .kuale-state-dropdown {
+                        position: relative;
+                        width: 100%;
+                    }
+                    .kuale-state-dropdown__trigger {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        background: #ffffff;
+                        border: 1.5px solid #d8d8d8;
+                        border-radius: 8px;
+                        padding: 0 1rem;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        color: #333;
+                        height: 50px;
+                        width: 100%;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        transition: border-color .2s, box-shadow .2s;
+                    }
+                    .kuale-state-dropdown__trigger:hover {
+                        border-color: #bbb;
+                        box-shadow: 0 0 0 3px rgba(0,0,0,.04);
+                    }
+                    .kuale-state-dropdown.is-open .kuale-state-dropdown__trigger {
+                        border-color: #bbb;
+                        box-shadow: 0 0 0 3px rgba(0,0,0,.06);
+                    }
+                    .kuale-state-dropdown__trigger .kuale-label {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        flex: 1;
+                        min-width: 0;
+                        text-align: left;
+                        color: #c0c0c0;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        font-size: .95rem;
+                        transition: color .15s;
+                    }
+                    .kuale-state-dropdown__trigger .kuale-label.has-value {
+                        color: #333;
+                    }
+                    .kuale-state-dropdown__arrow {
+                        color: #FA0000;
+                        font-size: 11px;
+                        flex-shrink: 0;
+                        margin-left: 8px;
+                        transition: transform .25s ease;
+                    }
+                    .kuale-state-dropdown.is-open .kuale-state-dropdown__arrow {
+                        transform: rotate(180deg);
+                        color: #999;
+                    }
+                    .kuale-state-dropdown__menu {
+                        display: none;
+                        position: absolute;
+                        top: calc(100% + 4px);
+                        left: 0;
+                        right: 0;
+                        background: #fff;
+                        box-shadow: 0 4px 16px rgba(0,0,0,.10);
+                        z-index: 9000;
+                        max-height: 200px;
+                        overflow-y: auto;
+                        border-radius: 8px;
+                        border: 1.5px solid #e8e8e8;
+                        opacity: 0;
+                        transform: translateY(-6px);
+                        transition: opacity .2s ease, transform .2s ease;
+                    }
+                    .kuale-state-dropdown.is-open .kuale-state-dropdown__menu {
+                        display: block;
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                    .kuale-state-dropdown__option {
+                        padding: 10px 14px;
+                        font-size: 14px;
+                        cursor: pointer;
+                        color: #333;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        transition: background .15s;
+                        border-left: 3px solid transparent;
+                    }
+                    .kuale-state-dropdown__option:hover {
+                        background: #fff5f5;
+                        border-left-color: #FA0000;
+                        color: #FA0000;
+                    }
+                    .kuale-state-dropdown__option.is-selected {
+                        background: #fdecea;
+                        border-left-color: #FA0000;
+                        color: #FA0000;
+                        font-weight: 600;
+                    }
+
+                    /* ══════════════════════════════════════════
+                    INPUT
+                    ══════════════════════════════════════════ */
+                    .kuale-input-wrapper {
+                        position: relative;
+                        width: 100%;
+                    }
+                    .kuale-input {
+                        width: 100%;
+                        height: 50px;
+                        background: #ffffff;
+                        border: 1.5px solid #d8d8d8;
+                        border-radius: 8px;
+                        padding: 0 2.5rem 0 1rem;
+                        font-size: .95rem;
+                        color: #333;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        outline: none;
+                        transition: border-color .2s, box-shadow .2s;
+                    }
+                    .kuale-input::placeholder {
+                        color: #c0c0c0;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                    }
+                    .kuale-input:hover {
+                        border-color: #bbb;
+                        box-shadow: 0 0 0 3px rgba(0,0,0,.04);
+                    }
+                    .kuale-input:focus {
+                        border-color: #bbb;
+                        box-shadow: 0 0 0 3px rgba(0,0,0,.06);
+                    }
+
+                    .kuale-field__row {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+
+                    /* Icono externo */
+                    .kuale-field__icon {
+                        width: 22px;
+                        height: 22px;
+                        flex-shrink: 0;
+                        margin-top: 18px; /* compensa la altura del label */
+                    }
+
+                    /* Input ocupa el espacio restante */
+                    .kuale-field__row .kuale-input-wrapper,
+                    .kuale-field__row .kuale-state-dropdown {
+                        flex: 1;
+                        min-width: 0;
+                    }
+
+                    /* Quitar padding izquierdo extra ahora que el icono es externo */
+                    .kuale-input {
+                        padding: 0 1rem;
+                    }
+
+                    .kuale-field__input-col {
+                        display: flex;
+                        flex-direction: column;
+                        flex: 1;
+                        min-width: 0;
+                    }
+
+                    /* Personalizar colores del calendario para que coincida con tu tema */
+                    .kuale-calendar .flatpickr-day.selected,
+                    .kuale-calendar .flatpickr-day.selected:hover {
+                        background: #FA0000;
+                        border-color: #FA0000;
+                    }
+                    .kuale-calendar .flatpickr-day:hover {
+                        background: #fff5f5;
+                        color: #FA0000;
+                    }
+
+                    .kuale-input-group {
+                        display: flex;
+                        gap: 0;
+                    }
+
+                    .kuale-input-group .kuale-input {
+                        border-radius: 8px 0 0 8px;
+                        flex: 1;
+                    }
+
+                    .kuale-input-group .kuale-btn-search {
+                        height: 50px;
+                        padding: 0 1.2rem;
+                        background: #FA0000;
+                        color: #fff;
+                        border: none;
+                        border-radius: 0 8px 8px 0;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        font-size: .9rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        white-space: nowrap;
+                        transition: background .2s;
+                    }
+
+                    .kuale-input-group .kuale-btn-search:hover {
+                        background: #c00000;
+                    }
+
+                    /* ── Toggle Switch ─────────────────────────────────── */
+                    .kuale-switch-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .kuale-switch {
+                        position: relative;
+                        display: inline-block;
+                        width: 44px;
+                        height: 24px;
+                        flex-shrink: 0;
+                    }
+                    .kuale-switch input {
+                        opacity: 0;
+                        width: 0;
+                        height: 0;
+                    }
+                    .kuale-switch__slider {
+                        position: absolute;
+                        inset: 0;
+                        background: #ccc;
+                        border-radius: 24px;
+                        cursor: pointer;
+                        transition: background .2s;
+                    }
+                    .kuale-switch__slider::before {
+                        content: '';
+                        position: absolute;
+                        width: 18px;
+                        height: 18px;
+                        left: 3px;
+                        top: 3px;
+                        background: #fff;
+                        border-radius: 50%;
+                        transition: transform .2s;
+                    }
+                    .kuale-switch input:checked + .kuale-switch__slider {
+                        background: #FA0000;
+                    }
+                    .kuale-switch input:checked + .kuale-switch__slider::before {
+                        transform: translateX(20px);
+                    }
+                    .kuale-switch__label {
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: #666;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        text-transform: uppercase;
+                        letter-spacing: .05em;
+                    }
+
+                    /* ── Address Box ───────────────────────────────────── */
+                    .kuale-address-box {
+                        border: none;
+                        border-radius: 10px;
+                        padding: 1.25rem;
+                        background: #fff;
+                    }
+                    .kuale-address-box__title {
+                        font-size: 11px;
+                        font-weight: 700;
+                        letter-spacing: .1em;
+                        text-transform: uppercase;
+                        color: #FA0000;
+                        margin-bottom: .75rem;
+                        font-family: 'Montserrat', system-ui, sans-serif;
+                        border-bottom: 1.5px solid #fff;
+                        padding-bottom: .5rem;
+                    }
+
+                    .kuale-summary-card--email {
+                        max-width: 350px;
+                        margin: 0 auto;
+                    }
+
+                    
+
+                #address-st2::-webkit-calendar-picker-indicator {
+                    opacity: 0.5;
+                    cursor: pointer;
+                }
+
+                #coloniaMenu {
+                    display: none;
+                }
+                #coloniaMenu.visible {
+                    display: block !important;
+                    opacity: 1 !important;
+                    transform: translateY(0) !important;
+                }
+
+                /* ── FAB ───────────────────────────────────────────────── */
+                .kuale-chat-fab {
+                    position: fixed;
+                    bottom: 48px;
+                    right: 40px;
+                    width: 70px;
+                    height: 70px;
+                    border-radius: 50%;
+                    background: #0000;
+                    border: none;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 99998;
+                    transition: background .2s, transform .2s, box-shadow .2s;
+                    padding: 3px;
+                    overflow: visible; /* ← cambio importante, era hidden */
+                }
+                .kuale-chat-fab:hover {
+                    background: #0000;
+                    transform: scale(1.1);
+                }
+                .kuale-chat-fab:active {
+                    transform: scale(.96);
+                }
+
+                /* Globito — visible al inicio, se oculta al hover */
+                .kuale-chat-fab::after {
+                    content: '¿Necesitas ayuda?';
+                    position: absolute;
+                    right: 90px;
+                    background: #222;
+                    color: #fff;
+                    font-family: 'Montserrat', sans-serif;
+                    font-size: 12px;
+                    font-weight: 600;
+                    white-space: nowrap;
+                    padding: 6px 12px;
+                    border-radius: 6px;
+                    pointer-events: none;
+                    opacity: 1;                  /* ← visible por defecto */
+                    transform: translateX(0);
+                    transition: opacity .2s, transform .2s;
+                }
+
+                /* Triangulito */
+                .kuale-chat-fab::before {
+                    content: '';
+                    position: absolute;
+                    right: 70px;
+                    border: 6px solid transparent;
+                    border-left-color: #222;
+                    pointer-events: none;
+                    opacity: 1;                  /* ← visible por defecto */
+                    transition: opacity .2s;
+                }
+
+                /* Al hacer hover se ocultan */
+                .kuale-chat-fab:hover::after {
+                    opacity: 0;
+                    transform: translateX(6px);
+                }
+                .kuale-chat-fab:hover::before {
+                    opacity: 0;
+                }
+
+                /* ── Ventana del chat ──────────────────────────────────── */
+                .kuale-chat {
+                    position: fixed;
+                    bottom: 150px;
+                    right: 28px;
+                    width: 360px;
+                    max-height: 520px;
+                    background: #fff;
+                    border-radius: 16px;
+                    box-shadow: 0 8px 40px rgba(0,0,0,.18);
+                    display: none;
+                    flex-direction: column;
+                    z-index: 99999;
+                    overflow: hidden;
+                    font-family: 'Montserrat', sans-serif;
+                    animation: kualeSlideUp .25s ease;
+                }
+                .kuale-chat.is-open {
+                    display: flex;
+                }
+
+                /* Ocultar globito cuando el chat está abierto */
+                .kuale-chat-fab.chat-open::after,
+                .kuale-chat-fab.chat-open::before {
+                    opacity: 0 !important;
+                }
+
+
+                @keyframes kualeSlideUp {
+                    from { opacity: 0; transform: translateY(16px); }
+                    to   { opacity: 1; transform: translateY(0); }
+                }
+
+                /* ── Header ────────────────────────────────────────────── */
+                .kuale-chat__header {
+                    background: #FA0000;
+                    padding: 14px 16px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    flex-shrink: 0;
+                }
+                .kuale-chat__header-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                .kuale-chat__avatar {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,.2);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    overflow: hidden;
+                }
+                .kuale-chat__name {
+                    color: #fff;
+                    font-weight: 700;
+                    font-size: 14px;
+                    margin: 0 0 2px 0;
+                }
+                .kuale-chat__status {
+                    color: rgba(255,255,255,.75);
+                    font-size: 11px;
+                    margin: 0;
+                }
+                .kuale-chat__close {
+                    background: rgba(255,255,255,.2);
+                    border: none;
+                    color: #fff;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 13px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: background .2s;
+                    flex-shrink: 0;
+                }
+                .kuale-chat__close:hover {
+                    background: rgba(255,255,255,.35);
+                }
+
+                /* ── Mensajes ──────────────────────────────────────────── */
+                .kuale-chat__messages {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 16px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    background: #fafafa;
+                }
+                .kuale-chat__msg {
+                    max-width: 82%;
+                    padding: 10px 14px;
+                    border-radius: 12px;
+                    font-size: 13px;
+                    line-height: 1.6;
+                }
+                .kuale-chat__msg p {
+                    margin: 0;
+                }
+                .kuale-chat__msg--bot {
+                    background: #fff;
+                    color: #333;
+                    border: 1.5px solid #f0f0f0;
+                    align-self: flex-start;
+                    border-bottom-left-radius: 4px;
+                }
+                .kuale-chat__msg--user {
+                    background: #FA0000;
+                    color: #fff;
+                    align-self: flex-end;
+                    border-bottom-right-radius: 4px;
+                }
+                .kuale-chat__msg--typing {
+                    background: #fff;
+                    border: 1.5px solid #f0f0f0;
+                    align-self: flex-start;
+                    border-bottom-left-radius: 4px;
+                    color: #999;
+                    font-style: italic;
+                    font-size: 12px;
+                }
+
+                /* ── Footer input ──────────────────────────────────────── */
+                .kuale-chat__footer {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 16px;
+                    border-top: 1px solid #f0f0f0;
+                    background: #fff;
+                    flex-shrink: 0;
+                }
+                .kuale-chat__input {
+                    flex: 1;
+                    height: 40px;
+                    border: 1.5px solid #e0e0e0;
+                    border-radius: 20px;
+                    padding: 0 16px;
+                    font-size: 13px;
+                    font-family: 'Montserrat', sans-serif;
+                    outline: none;
+                    transition: border-color .2s;
+                    color: #222;
+                }
+                .kuale-chat__input:focus {
+                    border-color: #FA0000;
+                }
+                .kuale-chat__input::placeholder {
+                    color: #999;
+                }
+                .kuale-chat__send {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: #FA0000;
+                    border: none;
+                    color: #fff;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    transition: background .2s, transform .15s;
+                }
+                .kuale-chat__send:hover {
+                    background: #c00000;
+                    transform: scale(1.05);
+                }
+
+
+                .dl-btn {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    border: 1px solid #e0e0e0;
+                    background: #f9f9f9;
+                    cursor: pointer;
+                    transition: background 0.15s, border-color 0.15s;
+                    text-decoration: none;
+                }
+
+                .dl-btn:hover {
+                    background: #f0f0f0;
+                    border-color: #bbb;
+                }
+
+                .dl-label {
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #555;
+                }
+
+                .dl-hint {
+                    font-size: 11px;
+                    color: #999;
+                }
+
+                /* ========================
+                FOOTER KUALE
+                ======================== */
+                .kuale-footer__wrap {
+                    background: #E10000;
+                }
+
+                
+
+                .kuale-footer__btn {
+                    background: #ffffff;
+                    color: #E10000;
+                    border: none;
+                    padding: 10px 22px;
+                    border-radius: 6px;
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                    transition: background 0.2s ease;
+                    white-space: nowrap;
+                    display: inline-block;        /* ← alinea a la izquierda */
+                    width: fit-content;    /* ← no ocupa todo el ancho */
+                }
+
+                
+
+                .kuale-footer__btn:hover {
+                    background: #f2f2f2;
+                }
+
+                .kuale-footer__link2 {
+                    color: #ffffff !important;
+                    text-decoration: none !important;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    transition: opacity 0.2s ease;
+                }
+
+                .kuale-footer__link2:hover {
+                    opacity: 0.75;
+                    text-decoration: underline !important;
+                }
+
+                .o_footer {
+                    display: none !important;
+                }
+
+                .kuale-footer__wrap h3,
+                .kuale-footer__wrap p,
+                .kuale-footer__wrap a,
+                .kuale-footer__wrap button,
+                .kuale-footer__wrap span,
+                .kuale-footer__wrap div {
+                    font-family: "Aloevera", sans-serif;
+                }
+
+
+                /* ── Mobile ────────────────────────────────────────────── */
+                @media (max-width: 480px) {
+                    .kuale-chat-fab {
+                        bottom: 16px;
+                        right: 16px;
+                    }
+                    .kuale-chat {
+                        width: calc(100vw - 32px);
+                        right: 16px;
+                        bottom: 96px;
+                    }
+                    .kuale-chat-fab::after {
+                        display: none;
+                    }
+                }
+                </style>
+                <t t-call-assets="web.contabilidad_kuale_invoice_backend" t-js="true"/>
+            </t>
+        </template>
+        <record id="menu_custom_page_invoice" model="website.menu">
+            <field name="name">Mi Factura</field>
+            <field name="url">/mi-factura</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" eval="100"/>
+        </record>
+    </data>
+</odoo>

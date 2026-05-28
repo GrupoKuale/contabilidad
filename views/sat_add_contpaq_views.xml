@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sat_xml_invoices_contpaq_view" model="ir.ui.view">
+        <field name="name">sat.xml.invoices.contpaq</field>
+        <field name="model">sat.xml.invoices</field>
+        <field name="arch" type="xml">
+            <add_contpaq>
+            </add_contpaq>
+        </field>
+    </record>
+
+    <!-- ========== Vista OWL para ADD ========== -->
+    <record id="action_sat_add_contpaq_view" model="ir.actions.act_window">
+        <field name="name">ADD - Vista ContPaq</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">add_contpaq,tree,form</field>
+        <field name="view_id" ref="sat_xml_invoices_contpaq_view"/>
+        <field name="domain">[]</field>
+        <field name="context">{
+            'default_add_status': 'available',
+            'search_default_available': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Vista ADD estilo ContPaq
+            </p>
+            <p>
+                Gestione sus documentos digitales con una interfaz familiar tipo ContPaq.
+                <br/>
+                Use los filtros laterales para navegar entre tipos de documentos.
+            </p>
+        </field>
+    </record>
+
+    <!-- ========== Mi ADD Vista OWL ========== -->
+    <record id="action_sat_my_add_contpaq_view" model="ir.actions.act_window">
+        <field name="name">Mi ADD - Vista ContPaq</field>
+        <field name="res_model">sat.xml.invoices</field>
+        <field name="view_mode">add_contpaq,tree,form</field>
+        <field name="view_id" ref="sat_xml_invoices_contpaq_view"/>
+        <field name="domain">[('add_user_id', '=', uid)]</field>
+        <field name="context">{
+            'default_add_user_id': uid,
+            'search_default_my_add': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Mi ADD - Vista ContPaq
+            </p>
+            <p>
+                Administre sus documentos digitales con interfaz ContPaq.
+            </p>
+        </field>
+    </record>
+
+    
+    <!-- Menú principal en sección ADD -->
+    <menuitem id="menu_sat_add_contpaq_view" 
+              name="Workspace ADD (ContPaq)" 
+              parent="menu_sat_add_section" 
+              action="action_sat_add_contpaq_view" 
+              sequence="3"/>
+
+    <!-- Menú en sección de herramientas -->
+    <menuitem id="menu_sat_my_add_contpaq" 
+              name="Mi ADD - Vista ContPaq" 
+              parent="menu_sat_add_section" 
+              action="action_sat_my_add_contpaq_view" 
+              sequence="4"/>
+
+</odoo>

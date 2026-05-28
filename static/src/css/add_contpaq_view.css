@@ -1,0 +1,229 @@
+/* Contenedor principal */
+.add_contpaq_view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #f5f5f5;
+}
+
+/* Barra de herramientas superior */
+.add_toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    gap: 10px;
+}
+
+.add_toolbar_buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.add_toolbar_buttons .btn {
+    font-size: 13px;
+    padding: 6px 12px;
+}
+
+.add_date_filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.add_date_filters input {
+    width: 140px;
+    font-size: 13px;
+    height: 32px;
+}
+
+.add_date_filters label {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Contenedor de 3 paneles */
+.add_main_container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Panel izquierdo: Árbol */
+.add_left_panel {
+    width: 200px;
+    background: #ffffff;
+    border-right: 1px solid #dee2e6;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.add_tree_view {
+    padding: 5px 0;
+}
+
+.add_tree_section {
+    margin-bottom: 5px;
+}
+
+.add_tree_divider {
+    height: 1px;
+    background: #dee2e6;
+    margin: 5px 0;
+}
+
+.add_tree_parent,
+.add_tree_item {
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+}
+
+.add_tree_parent:hover,
+.add_tree_item:hover {
+    background: #e9ecef;
+}
+
+.add_tree_parent.active,
+.add_tree_item.active {
+    background: #007bff;
+    color: #ffffff;
+}
+
+.add_tree_child {
+    padding: 6px 10px 6px 30px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.add_tree_child:hover {
+    background: #e9ecef;
+}
+
+.add_tree_child.active {
+    background: #007bff;
+    color: #ffffff;
+}
+
+.add_tree_subchild {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    font-size: 11px;
+    color: #6c757d;
+}
+
+.add_tree_subchild div {
+    padding: 2px 0;
+}
+
+/* Panel central: Tabla */
+.add_center_panel {
+    flex: 1;
+    overflow: auto;
+    background: #ffffff;
+}
+
+.add_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.add_table thead {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 10;
+}
+
+.add_table th {
+    padding: 8px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.add_table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.add_table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.add_table tbody tr.selected {
+    background: #cfe2ff;
+}
+
+.add_checkbox_col {
+    width: 30px;
+    text-align: center;
+}
+
+/* Panel derecho: Checkboxes */
+.add_right_panel {
+    width: 200px;
+    background: #ffffff;
+    border-left: 1px solid #dee2e6;
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 10px;
+}
+
+.add_right_section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add_right_section label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.add_right_section input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* Barra de estado inferior */
+.add_statusbar {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 10px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    font-size: 12px;
+    color: #495057;
+}
+
+.add_statusbar strong {
+    color: #212529;
+    margin-left: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .add_left_panel {
+        width: 180px;
+    }
+    
+    .add_right_panel {
+        width: 180px;
+    }
+}

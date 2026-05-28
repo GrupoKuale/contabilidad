@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Template para solicitud de autorización -->
+        <record id="mail_authorization_request" model="mail.template">
+            <field name="name">Solicitud de Autorización</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="subject">Solicitud de Autorización para orden: {{object.name}}</field>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.user_id.email or ''}}</field>
+            <field name="description">notificacion de correo para solicitar la aprovacion de las cotizaciones de compra</field>
+            <field name="body_html" type="html">
+                <p>Estimado/a,</p>
+                <p>Se requiere tu autorización para el siguiente documento:</p>
+                <ul>
+                    <li>
+                        <strong>Orden: </strong>
+                        <t t-out="object.name or ''">001</t>
+                    </li>
+                    <li>
+                        <strong>Solicitado por:</strong>
+                        <t t-out="user.name or ''">odoo user</t>
+                    </li>
+                </ul>
+                <p>Por favor, revisa los detalles en el sistema y autoriza la orden si todo está correcto.</p>
+                <p>Gracias,</p>
+                <p>Atentamente,</p>
+                <t t-out="user.company_id.name or ''">My company</t>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_ticket_discount_tree" model="ir.ui.view">
+        <field name="name">contabilidad_kuale.ticket_discount.tree</field>
+        <field name="model">contabilidad_kuale.ticket_discount</field>
+        <field name="arch" type="xml">
+            <tree string="Descuentos de Ticket">
+                <field name="clave"/>
+                <field name="alliance"/>
+                <field name="name"/>
+                <field name="discount_type"/>
+                <field name="department"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ticket_discount_form" model="ir.ui.view">
+        <field name="name">contabilidad_kuale.ticket_discount.form</field>
+        <field name="model">contabilidad_kuale.ticket_discount</field>
+        <field name="arch" type="xml">
+            <form string="Descuento de Ticket">
+                <sheet>
+                    <group>
+                        <field name="clave"/>
+                        <field name="alliance"/>
+                        <field name="name"/>
+                        <field name="company_ids" widget="many2many_tags"/>
+                        <field name="branch_ids" widget="many2many_tags"/>
+                        <field name="discount_type"/>
+                        <field name="discount_percentage" invisible="(discount_type != 'percentage')"/>
+                        <field name="discount_amount" invisible="(discount_type != 'amount')"/>
+                        <field name="apply_limitation" invisible="(discount_type != 'percentage')"/>
+                        <field name="limitation" invisible="not apply_limitation"/>
+                        <field name="limitation_amount" invisible="not apply_limitation"/>
+                        <field name="department"/>
+                        <field name="active" widget="boolean_toggle"/>
+                        <field name="details" widget="toolbar"/>
+                        <field name="use_once_per_day" widget="boolean_toggle"/>
+                    </group>
+                    <separator string="Tickets que usaron este descuento" invisible ="1"/>
+                        <field name="usage_ids" invisible="1" >
+                            <tree editable="false">
+                                <field name="date"/>
+                                <field name="ticket_id"/>
+                                <field name="discount_authorized"/>
+                                <field name="company_id"/>
+                                <field name="branch_id"/>
+                            </tree>
+                        </field>
+                    <notebook>
+                        <page string="Identificadores">
+
+                                <field name="image_ids" no_label="1">
+                                    <tree editable="bottom">
+                                        <field name="image" widget="image" options="{'size': [256, False]}"
+                                               style="max-width: 256px !important;max-height: 256px !important;"/>
+                                    </tree>
+                                    <form string="Imagen de Identificación">
+                                        <group>
+                                            <field name="image" widget="image"
+                                                   options="{'size': [256, False]}"
+                                               style="max-width: 256px !important;max-height: 256px !important;"/>
+                                        </group>
+                                    </form>
+                                </field>
+
+                        </page>
+                    </notebook>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ticket_discount_search" model="ir.ui.view">
+        <field name="name">contabilidad_kuale.ticket_discount.search</field>
+        <field name="model">contabilidad_kuale.ticket_discount</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Descuentos">
+                <field name="clave"/>
+                <field name="name"/>
+                <field name="department"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ticket_discount" model="ir.actions.act_window">
+        <field name="name">Descuentos de Ticket</field>
+        <field name="res_model">contabilidad_kuale.ticket_discount</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+</odoo>

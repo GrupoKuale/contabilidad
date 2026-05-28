@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_claveprodserv_filter" model="ir.ui.view">
+            <field name="name">filtro.claveprodserv</field>
+            <field name="model">cfdi.claveprodserv</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscan en todo">
+                    <field name="Clave_producto" string="Todo" filter_domain="['|',('Clave_producto','ilike',self)
+                              ,('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="claveprodserv_view_form" model="ir.ui.view">
+            <field name="name">claveprodserv form</field>
+            <field name="model">cfdi.claveprodserv</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_producto"/>
+                            <field name="Descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="claveprodserv_view_tree" model="ir.ui.view">
+            <field name="name">claveprodserv tree</field>
+            <field name="model">cfdi.claveprodserv</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_producto asc'  >
+                    <field name="Clave_producto"/>
+                    <field name="Descripcion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_claveprodserv">
+            <field name="name">claveProdServ</field>
+            <field name="res_model">cfdi.claveprodserv</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

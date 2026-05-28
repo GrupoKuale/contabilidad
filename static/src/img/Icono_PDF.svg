@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="52.243" height="75" viewBox="0 0 52.243 75">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectángulo_166" data-name="Rectángulo 166" width="52.243" height="72" fill="#fa0000"/>
+    </clipPath>
+  </defs>
+  <g id="Grupo_85" data-name="Grupo 85" transform="translate(-1019.756 -448)">
+    <g id="Grupo_84" data-name="Grupo 84" transform="translate(1019.756 448)">
+      <g id="Grupo_83" data-name="Grupo 83" clip-path="url(#clip-path)">
+        <path id="Trazado_199" data-name="Trazado 199" d="M29.556,0H4.351A4.356,4.356,0,0,0,0,4.35v63.3A4.356,4.356,0,0,0,4.351,72H47.893a4.356,4.356,0,0,0,4.351-4.35V21.957Zm.82,4.627L47.4,21.1H31.162a.787.787,0,0,1-.786-.786ZM4.351,2.755H27.621V20.314a3.545,3.545,0,0,0,3.541,3.541H49.489v31.5H2.755v-51a1.6,1.6,0,0,1,1.6-1.6" fill="#fa0000"/>
+        <rect id="Rectángulo_163" data-name="Rectángulo 163" width="31.266" height="3.973" transform="translate(10.618 29.054)" fill="#fa0000"/>
+        <rect id="Rectángulo_164" data-name="Rectángulo 164" width="31.266" height="3.973" transform="translate(10.618 35.839)" fill="#fa0000"/>
+        <rect id="Rectángulo_165" data-name="Rectángulo 165" width="31.266" height="3.973" transform="translate(10.618 42.67)" fill="#fa0000"/>
+      </g>
+    </g>
+    <text id="PDF" transform="translate(1045.758 517)" fill="#fff" font-size="16" font-family="AloeveraDisplay-SemiBold, Aloevera Display" font-weight="600"><tspan x="-14.128" y="0">PDF</tspan></text>
+  </g>
+</svg>

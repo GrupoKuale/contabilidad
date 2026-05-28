@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+  <t t-name="kuale_financial_position.Renderer">
+    <style>
+      .child-row { display: none; background-color: #E2EAF4; }
+      .calc-row  { background: #f6f6f6; font-weight: 600; }
+      .spacer-row td { border: 0 !important; height: 8px; }
+      .k-toggle-icon { display:inline-block; width:18px; }
+    </style>
+
+      <!-- Botones Excel y PDF -->
+      <div class="mb-3 d-flex align-items-end gap-3 flex-wrap">
+      <div class="ms-auto d-flex gap-2">
+        <button class="btn btn-sm btn-primary" t-on-click="exportToExcel">
+          <i class="fa fa-file-excel-o me-1"/>
+            Exportar a Excel
+        </button>
+        <button class="btn btn-sm btn-secondary" t-on-click="exportToPDF">
+          <i class="fa fa-file-pdf-o me-1"/>
+            Guardar PDF
+        </button>
+      </div>
+    </div>
+
+      <!-- Filtros -->
+      <div class="mb-3 d-flex align-items-center gap-3 flex-wrap">
+      <div>
+        <label class="form-label mb-1">Compañía:</label>
+          <select class="form-select form-select-sm w-auto" t-on-change="onCompanyChange">
+          <t t-foreach="state.companyList" t-as="c" t-key="c.id">
+            <option t-att-value="c.id" t-att-selected="state.selectedCompanyId === c.id"><t t-esc="c.name"/></option>
+          </t>
+        </select>
+      </div>
+
+      <div>
+        <label class="form-label mb-1">Sucursal:</label>
+          <select class="form-select form-select-sm w-auto" t-on-change="onBranchChange">
+          <t t-foreach="state.branchList" t-as="branch" t-key="branch.id or 'all'">
+            <option t-att-value="branch.id" t-att-selected="state.selectedBranchId === branch.id">
+              <t t-esc="branch.name"/>
+            </option>
+          </t>
+        </select>
+      </div>
+
+          <div class="form-check mt-4">
+        <input class="form-check-input" type="checkbox" id="incEmpty"
+               t-att-checked="state.includeEmpty ? 'checked' : null"
+               t-on-change="onIncludeEmptyToggle"/>
+              <label class="form-check-label" for="incEmpty">Incluir grupos/cuentas sin movimientos</label>
+      </div>
+          <div class="d-flex gap-3">
+        <div>
+          <label class="form-label mb-1">Desde:</label>
+            <input type="date" class="form-control form-control-sm" t-att-value="state.fromDate"
+                   t-on-change="onDateChange"/>
+        </div>
+              <div>
+          <label class="form-label mb-1">Hasta:</label>
+                  <input type="date" class="form-control form-control-sm" t-att-value="state.toDate"
+                         t-on-change="onDateChange"/>
+        </div>
+      </div>
+    </div>
+
+      <!-- Tabla -->
+      <table class="table table-sm table-hover" style="margin-bottom: 50px !important;">
+      <thead>
+        <tr>
+          <th style="width:14%">Código</th>
+            <th>Descripción</th>
+            <th class="text-end" style="width:16%">Periodo</th>
+            <th class="text-end" style="width:9%">%</th>
+            <th class="text-end" style="width:16%">Acumulado</th>
+            <th class="text-end" style="width:9%">%</th>
+        </tr>
+      </thead>
+
+          <tbody>
+        <t t-set="mx" t-value="props.model.state.mx"/>
+
+              <!-- === ACTIVO: 1.1.1 y 1.1.2 === -->
+              <t t-if="mx and mx.g111">
+          <t t-call="kuale_financial_position.GroupRow">
+            <t t-set="group" t-value="mx.g111"/>
+              <!-- % del grupo vs total de Activo -->
+              <t t-set="pbase" t-value="mx.t11.p"/>
+              <t t-set="ybase" t-value="mx.t11.y"/>
+              <t t-set="level" t-value="0"/>
+          </t>
+                  <tr class="calc-row">
+            <td></td>
+                      <td>Total de activos a corto plazo (1.1.1)</td>
+                      <td class="text-end"><t t-esc="fmt(mx.t111.p)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t111.p, mx.t11.p)"/></td>
+                      <td class="text-end"><t t-esc="fmt(mx.t111.y)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t111.y, mx.t11.y)"/></td>
+          </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+        </t>
+
+              <t t-if="mx and mx.g112">
+          <t t-call="kuale_financial_position.GroupRow">
+            <t t-set="group" t-value="mx.g112"/>
+              <t t-set="pbase" t-value="mx.t11.p"/>
+              <t t-set="ybase" t-value="mx.t11.y"/>
+              <t t-set="level" t-value="0"/>
+          </t>
+                  <tr class="calc-row">
+            <td></td>
+                      <td>Total de activos a largo plazo (1.1.2)</td>
+                      <td class="text-end"><t t-esc="fmt(mx.t112.p)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t112.p, mx.t11.p)"/></td>
+                      <td class="text-end"><t t-esc="fmt(mx.t112.y)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t112.y, mx.t11.y)"/></td>
+          </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+        </t>
+
+              <t t-if="mx">
+          <tr class="calc-row">
+            <td></td>
+              <td>Total de activo (1.1 = 1.1.1 + 1.1.2)</td>
+              <td class="text-end"><t t-esc="fmt(mx.t11.p)"/></td>
+              <td class="text-end"><t t-esc="pct(mx.t11.p, mx.t11.p)"/></td>
+              <td class="text-end"><t t-esc="fmt(mx.t11.y)"/></td>
+              <td class="text-end"><t t-esc="pct(mx.t11.y, mx.t11.y)"/></td>
+          </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+        </t>
+
+              <!-- === PASIVO: 1.2.1 y 1.2.2 === -->
+              <t t-if="mx and mx.g121">
+          <t t-call="kuale_financial_position.GroupRow">
+            <t t-set="group" t-value="mx.g121"/>
+              <t t-set="pbase" t-value="mx.t12.p"/>
+              <t t-set="ybase" t-value="mx.t12.y"/>
+              <t t-set="level" t-value="0"/>
+          </t>
+                  <tr class="calc-row">
+            <td></td>
+                      <td>Total de pasivos a corto plazo (1.2.1)</td>
+                      <td class="text-end"><t t-esc="fmt(mx.t121.p)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t121.p, mx.t12.p)"/></td>
+                      <td class="text-end"><t t-esc="fmt(mx.t121.y)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t121.y, mx.t12.y)"/></td>
+          </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+        </t>
+
+              <t t-if="mx and mx.g122">
+          <t t-call="kuale_financial_position.GroupRow">
+            <t t-set="group" t-value="mx.g122"/>
+              <t t-set="pbase" t-value="mx.t12.p"/>
+              <t t-set="ybase" t-value="mx.t12.y"/>
+              <t t-set="level" t-value="0"/>
+          </t>
+                  <tr class="calc-row">
+            <td></td>
+                      <td>Total de pasivos a largo plazo (1.2.2)</td>
+                      <td class="text-end"><t t-esc="fmt(mx.t122.p)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t122.p, mx.t12.p)"/></td>
+                      <td class="text-end"><t t-esc="fmt(mx.t122.y)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t122.y, mx.t12.y)"/></td>
+          </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+        </t>
+
+              <t t-if="mx">
+          <tr class="calc-row">
+            <td></td>
+              <td>Total de pasivo (1.2 = 1.2.1 + 1.2.2)</td>
+              <td class="text-end"><t t-esc="fmt(mx.t12.p)"/></td>
+              <td class="text-end"><t t-esc="pct(mx.t12.p, mx.t12.p)"/></td>
+              <td class="text-end"><t t-esc="fmt(mx.t12.y)"/></td>
+              <td class="text-end"><t t-esc="pct(mx.t12.y, mx.t12.y)"/></td>
+          </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+        </t>
+
+              <!-- === CAPITAL: 1.3 === -->
+              <t t-if="mx and mx.g13">
+          <t t-call="kuale_financial_position.GroupRow">
+            <t t-set="group" t-value="mx.g13"/>
+              <t t-set="pbase" t-value="mx.t13.p"/>
+              <t t-set="ybase" t-value="mx.t13.y"/>
+              <t t-set="level" t-value="0"/>
+          </t>
+                  <tr class="calc-row">
+            <td></td>
+                      <td>Total de capital contable (1.3)</td>
+                      <td class="text-end"><t t-esc="fmt(mx.t13.p)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t13.p, mx.t13.p)"/></td>
+                      <td class="text-end"><t t-esc="fmt(mx.t13.y)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.t13.y, mx.t13.y)"/></td>
+          </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+        </t>
+              <!-- === 2.7 === -->
+              <t t-if="mx and mx.g27">
+              <t t-call="kuale_financial_position.GroupRow">
+                  <t t-set="group" t-value="mx.g27"/>
+                  <t t-set="pbase" t-value="mx.t27.p"/>
+                  <t t-set="ybase" t-value="mx.t27.y"/>
+                  <t t-set="level" t-value="0"/>
+              </t>
+          </t>
+
+              <!-- === TOTAL PASIVO + CAPITAL === -->
+              <t t-if="mx">
+             <tr class="calc-row">
+                  <td></td>
+                 <td>Perdidas del Ejercicio</td>
+                 <td class="text-end"><t t-esc="fmt(mx.tOpLoss.p)"/></td>
+                 <td class="text-end"><t t-esc="pct(mx.tOpLoss.p, mx.tOpLoss.p)"/></td>
+                 <td class="text-end"><t t-esc="fmt(mx.tOpLoss.y)"/></td>
+                 <td class="text-end"><t t-esc="pct(mx.tOpLoss.y, mx.tOpLoss.y)"/></td>
+              </tr>
+                  <tr class="spacer-row"><td colspan="6"></td></tr>
+                  <tr class="calc-row">
+            <td></td>
+                      <td>Total del pasivo y capital contable (1.2 + 1.3)</td>
+                      <td class="text-end"><t t-esc="fmt(mx.tLiabEq.p)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.tLiabEq.p, mx.tLiabEq.p)"/></td>
+                      <td class="text-end"><t t-esc="fmt(mx.tLiabEq.y)"/></td>
+                      <td class="text-end"><t t-esc="pct(mx.tLiabEq.y, mx.tLiabEq.y)"/></td>
+          </tr>
+        </t>
+      </tbody>
+    </table>
+  </t>
+
+    <!-- ========== Fila recursiva grupo/cuentas/subgrupos (con %) ========= -->
+    <t t-name="kuale_financial_position.GroupRow" t-vars="group, pbase, ybase, level">
+    <tr
+            t-attf-class="#{(level &gt; 0 and group.group_id) ? ('child-row parent-g-' + group.group_id[0] + ' ') : ''}#{(((group.children ? group.children.length : 0) + (group.accounts ? group.accounts.length : 0)) &gt; 0) ? 'toggle ' : ''}level-#{level} fw-bold bg-light"
+            t-attf-data-id="g-#{group.id}"
+            t-on-click="onToggle">
+      <td><t t-esc="group.code_prefix_start or ''"/></td>
+        <td>
+        <span t-attf-style="padding-left: #{level * 20}px">
+          <t t-if="((group.children ? group.children.length : 0) + (group.accounts ? group.accounts.length : 0)) &gt; 0">
+            <span class="k-toggle-icon">[+]</span>
+          </t>
+            <t t-esc="group.name"/>
+        </span>
+      </td>
+        <td class="text-end"><t t-esc="fmt(group.period_total)"/></td>
+        <td class="text-end"><t t-esc="pct(group.period_total, pbase)"/></td>
+        <td class="text-end"><t t-esc="fmt(group.ytd_total)"/></td>
+        <td class="text-end"><t t-esc="pct(group.ytd_total, ybase)"/></td>
+    </tr>
+
+        <!-- cuentas directas -->
+        <t t-foreach="group.items" t-as="it" t-key="(it.kind == 'acc' and ('a-' + it.id)) or ('g-' + it.id)">
+      <t t-if="it.kind == 'acc'">
+        <tr class="child-row parent-g-#{group.id}" t-attf-data-id="a-#{it.id}">
+          <td><t t-esc="it.ref.code"/></td>
+            <td>
+            <span t-attf-style="padding-left: #{(level + 1) * 20}px">
+              <t t-esc="it.ref.name"/>
+            </span>
+          </td>
+            <td class="text-end"><t t-esc="fmt(it.ref.period)"/></td>
+            <td class="text-end"><t t-esc="pct(it.ref.period, group.period_total)"/></td>
+            <td class="text-end"><t t-esc="fmt(it.ref.ytd)"/></td>
+            <td class="text-end"><t t-esc="pct(it.ref.ytd, group.ytd_total)"/></td>
+        </tr>
+      </t>
+
+            <!-- subgrupo -->
+            <t t-if="it.kind == 'grp'">
+        <t t-call="kuale_financial_position.GroupRow">
+          <t t-set="group" t-value="it.ref"/>
+            <t t-set="pbase" t-value="group.period_total"/>
+            <t t-set="ybase" t-value="group.ytd_total"/>
+            <t t-set="level" t-value="level + 1"/>
+        </t>
+      </t>
+    </t>
+  </t>
+
+</templates>

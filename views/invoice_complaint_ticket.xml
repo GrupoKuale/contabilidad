@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <!-- Vista Tree -->
+        <record id="view_invoice_complaint_ticket_tree" model="ir.ui.view">
+            <field name="name">Problemas de Facturación Tree</field>
+            <field name="model">contabilidad_kuale.invoice_complaint_ticket</field>
+            <field name="arch" type="xml">
+                 <tree string="Tickets de Facturación" decoration-success="solved == True" decoration-muted="solved == False">
+                    <field name="create_date" string="Fecha"/>
+                    <field name="complaint_type" string="Tipo de Problema"/>
+                    <field name="ticket_id" string="Número de Ticket"/>
+                    <field name="empresa" string="Empresa"/>
+                    <field name="sucursal" string="Sucursal"/>
+                    <field name="rfc" string="RFC"/>
+                    <field name="receiver" string="Nombre o Razón Social"/>
+                    <field name="email" string="Correo Electrónico"/>
+                    <field name="solved" widget="boolean_toggle" string="Solucionado"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario -->
+        <record id="view_invoice_complaint_ticket_form" model="ir.ui.view">
+            <field name="name">Problemas de Facturación Form</field>
+            <field name="model">contabilidad_kuale.invoice_complaint_ticket</field>
+            <field name="arch" type="xml">
+                <form string="Ticket de Facturación">
+                    <sheet>
+                        <group string="Datos del Ticket">
+                            <group>
+                                <field name="complaint_type"/>
+                                <field name="ticket_id" readonly="1" string="Número de Ticket"/>
+                            </group>
+                            <group>
+                                <field name="empresa" readonly="1"/>
+                                <field name="sucursal" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Datos Fiscales">
+                            <group>
+                                <field name="rfc"/>
+                                <field name="receiver"/>
+                                <field name="cp"/>
+
+                            </group>
+                            <group>
+                                <field name="taxRegime"/>
+                                <field name="cfdiUse"/>
+                                <field name="email"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="solved" widget="boolean_toggle" string="Solucionado"/>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Archivos Adjuntos">
+                                <field name="additional_files">
+                                    <tree editable="bottom">
+                                        <field name="file_name" string="Nombre del Archivo"/>
+                                        <field name="file_type" invisible="1"/>
+                                        <field name="description" string="Descripción"/>
+                                        <field name="file" string="Archivo" filename="file_name" widget="download_binary"/>
+                                        <button name="action_view_file"
+                                                type="object"
+                                                icon="fa-eye"
+                                                title="Ver archivo"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Imágenes" invisible="not additional_files">
+                                <field name="additional_files" domain="[('file_type', '=', 'image')]">
+                                    <kanban>
+                                        <field name="file"/>
+                                        <field name="file_name"/>
+                                        <field name="file_type"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="o_kanban_record" style="width:200px; margin:8px;">
+                                                    <field name="file" widget="image" options="{'size': [200, 200]}"/>
+                                                    <div class="text-center mt-1">
+                                                        <field name="file_name"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Search -->
+        <record id="view_invoice_complaint_ticket_search" model="ir.ui.view">
+            <field name="name">Problemas de Facturación Search</field>
+            <field name="model">contabilidad_kuale.invoice_complaint_ticket</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Tickets">
+                    <field name="complaint_type"/>
+                    <field name="rfc"/>
+                    <field name="receiver"/>
+                    <field name="taxRegime"/>
+                    <field name="cfdiUse"/>
+                    <field name="email"/>
+                    <field name="solved"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción -->
+        <record id="action_invoice_complaint_ticket" model="ir.actions.act_window">
+            <field name="name">Problemas de Facturación</field>
+            <field name="res_model">contabilidad_kuale.invoice_complaint_ticket</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+        </record>
+
+    </data>
+</odoo>

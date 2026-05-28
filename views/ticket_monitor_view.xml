@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_ticket_monitor_tree" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.ticket_monitor.tree</field>
+            <field name="model">contabilidad_kuale.ticket_monitor</field>
+            <field name="arch" type="xml">
+                <tree js_class="adaptative_filter" create="false">
+                    <header>
+                        <button name="action_open_ticket_summary_wizard" type="object" string="Factura Global"
+                                class="oe_highlight" display="always"/>
+                        <button name="action_open_ticket_exterior_wizard" type="object" string="Cargar Timbrado Externo"
+                                class="btn-secondary" display="always"/>
+                    </header>
+                    <field name="company_id" optional="show"/>
+                    <field name="branch_id" optional="show"/>
+                    <field name="ticket_folio" optional="show"/>
+                    <field name="is_empty_ticket" optional="hide"/>
+                    <field name="date" optional="show"/>
+                    <field name="gross_sale" string="Bruto" optional="hide"/>
+                    <field name="discount" optional="hide"/>
+                    <field name="subtotal" optional="hide"/>
+                    <field name="iva" optional="hide"/>
+                    <field name="total" optional="show" sum="Total Filtrado Histórico"/>
+                    <field name="payment_type" optional="show"/>
+                    <field name="client_rfc" string="RFC" optional="hide"/>
+                    <field name="folio" optional="hide"/>
+                    <field name="client_name" string="Razón Social" optional="hide"/>
+                    <field name="invoice_uuid" optional="hide"/>
+                    <field name="client_email" optional="hide"/>
+                    <field name="ticket_status" widget="badge" decoration-warning="ticket_status == 'no_timbrado'" decoration-success="ticket_status == 'timbrado'"
+                           decoration-primary="ticket_status == 'timbrado_externo'"
+                           decoration-muted="ticket_status == 'global'" optional="hide"/>
+                    <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'vigente'"
+                           decoration-danger="invoice_status =='cancelado'"
+                           decoration-warning="invoice_status == 'refacturado'" optional="hide"/>
+
+                    <field name="client_tax_regimen_id" optional="hide"/>
+                    <field name="invoice_date" optional="hide"/>
+                    
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_ticket_monitor_form" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.ticket_monitor.form</field>
+            <field name="model">contabilidad_kuale.ticket_monitor</field>
+            <field name="arch" type="xml">
+                <form string="Monitoreo de Tickets" create="false">
+                    <header>
+                        <button name="action_invoice" type="object" string="Facturar"/>
+                        <button name="action_send_invoice_email" type="object" string="Enviar Factura"/>
+                        <button name="action_open_cancel_wizard"
+                                type="object"
+                                string="Cancelar CFDI"
+                                class="btn-danger"
+                                invisible="not invoiced"/>
+                        <button name="open_cfdi_wizard"
+                                type="object"
+                                string="Subir Constancia SAT"
+                                class="btn-primary"/>
+
+                    </header>
+                    <sheet>
+                        <group string="Datos Generales">
+                            <group>
+                                <group>
+                                    <field name="child_company_ids" invisible="1"/>
+                                    <field name="company_id" options="{'no_create': True, 'no_open': True}" readonly="1" force_save="1"/>
+                                    <field name="date" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="branch_id" options="{'no_create': True, 'no_open': True}" readonly="1" force_save="1"/>
+                                    <field name="closed_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="ticket_folio" readonly="1"/>
+                                    <field name="closing_time" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="sell_type" readonly="1" force_save="1" options="{'no_open': True}"/>
+                                    <field name="sale_order_id" readonly="1" options="{'no_open': True}"/>
+                                </group>
+                            </group>
+
+                        </group>
+                        <group string="Información de Pago">
+                            <group>
+                                <group>
+                                    <field name="payment_method" options="{'no_create': True, 'no_create_edit': True}"/>
+                                    <field name="discount_ids" widget="many2many_tags" readonly="1" force_save="1"/>
+                                    <field name="discount_authorized" invisible="not discount_ids" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="payment_type" options="{'no_create': True, 'no_create_edit': True}"/>
+                                    <field name="void_authorized" readonly="1"/>
+                                    <field name="iva_difference" readonly="1"/>
+                                    <field name="reprint_number" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="gross_sale" string="Bruto" readonly="1"/>
+                                    <field name="discount" readonly="1" force_save="1"/>
+                                </group>
+                                <group>
+                                    <field name="subtotal" readonly="1" force_save="1"/>
+                                    <field name="iva" readonly="1"/>
+                                    <field name="total" readonly="1"/>
+                                </group>
+                            </group>
+                        </group>
+                        <group string="Cajero">
+                            <group>
+                                <group>
+                                    <field name="sell_type_code" invisible="1"/>
+                                    <field name="cashier" readonly="1" force_save="1" options="{'no_create': True, 'no_edit': True}" invisible="sell_type_code == '1004'"/>
+                                    <field name="eoi_text" string="Cajero inicial" readonly="1" invisible="sell_type_code != '1004'"/>
+                                </group>
+                                <group>
+                                    <field name="closing_cashier" readonly="1" force_save="1" options="{'no_create': True, 'no_edit': True}" invisible="sell_type_code == '1004'"/>
+                                    <field name="eoi_text" string="Cajero final" readonly="1" invisible="sell_type_code != '1004'"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="invoice_status"/>
+                                </group>
+                                <group>
+                                    <field name="ticket_status" widget="badge" decoration-warning="ticket_status == 'no_timbrado'" decoration-success="ticket_status == 'timbrado'" decoration-primary="ticket_status == 'timbrado_externo'" decoration-muted="ticket_status == 'global' " />
+                                </group>
+                            </group>
+                        </group>
+                        <group string="Auditoria">
+                            <group>
+                                <field name="modification_status" readonly="1" force_save="1"/>
+                            </group>
+                            <group>
+                                <field name="modification_details" invisible="not modification_status"/>
+                                <field name="is_empty_ticket" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Productos">
+                                <field name="product_line" readonly="1">
+                                    <tree editable="bottom" create="false" delete="false" edit="false">
+                                        <field name="third_party_id" readonly="1" force_save="1"/>
+                                        <field name="description" readonly="1" force_save="1"/>
+                                        <field name="quantity" readonly="1" force_save="1"/>
+                                        <field name="uom" readonly="1" force_save="1"/>
+                                        <field name="unit_price" readonly="1" force_save="1" sum="Total Precio"/>
+                                        <field name="discount" readonly="1" force_save="1"/>
+                                        <field name="subtotal" readonly="1" force_save="1" sum="Subtotal"/>
+                                        <field name="total" readonly="1" force_save="1" sum="Total"/>
+                                    </tree>
+                                    <form>
+                                        <sheet>
+                                            <group>
+                                                <field name="third_party_id"/>
+                                                <field name="quantity"/>
+                                                <field name="unit_price"/>
+                                                <field name="discount"/>
+                                                <field name="subtotal"/>
+                                                <field name="total"/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+
+                            <page string="Desglose formas de pago">
+                                <field name="payments_ids" readonly="1">
+                                    <tree editable="bottom" create="false" delete="false" edit="false">
+                                        <field name="payment_type" options="{'no_create': True, 'no_create_edit': True}" readonly="1"/>
+                                        <field name="amount" readonly="1" sum="Total"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Facturación">
+                                <separator string="Estatus de Facturación"/>
+                                <group>
+                                    <group>
+                                        <field name="invoiced" widget="boolean_toggle"/>
+                                    </group>
+                                    <group>
+                                        <field name="invoiced_type"/>
+                                    </group>
+                                </group>
+                                <separator string="Cliente" invisible="not invoiced"/>
+                                <group invisible="not invoiced">
+                                    <group>
+                                        <field name="invoice_uuid"/>
+                                        <field name="client_rfc"/>
+                                        <field name="client_name"/>
+                                        <field name="client_tax_regimen_id" widget="selection"/>
+                                        <field name="client_cfdi_use_id" widget="selection"/>
+                                        <field name="payment_type" options="{'no_create': True, 'no_create_edit': True}"/>
+                                    </group>
+                                    <group>
+                                        <field name="invoice_date"/>
+                                        <field name="client_cp"/>
+                                        <field name="client_city"/>
+                                        <field name="client_street_1"/>
+                                        <field name="client_street_2"/>
+                                        <field name="client_phone"/>
+                                        <field name="client_email"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Archivos Digitales">
+                                <field name="additional_files">
+                                    <tree editable="bottom" delete="false">
+                                        <button name="action_view_file" type="object" icon="fa-eye" string="Ver archivo" title="Ver" />
+                                        <field name="file_name" string="Nombre del archivo"/>
+                                        <field name="description" string="Descripción"/>
+                                        <field name="file" string="Archivo" widget="download_binary"
+                                               filename="file_name"/>
+                                    </tree>
+                                    <form>
+                                        <sheet>
+                                            <group>
+                                                <field name="file_name"/>
+                                                <field name="description"/>
+                                                <field name="file" widget="binary" filename="file_name"/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="Bitacora">
+                                <field name="logbook_ids">
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="date"/>
+                                        <field name="description"/>
+                                        <field name="xml_content" column_invisible="1"/>
+                                        <button
+                                            name="action_view_xml_content"
+                                            type="object"
+                                            icon="fa-code"
+                                            string="Ver XML"
+                                            title="Ver XML generado para diagnóstico"
+                                            invisible="not xml_content"
+                                            class="btn-warning"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ticket_monitor_search" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.ticket_monitor.search</field>
+            <field name="model">contabilidad_kuale.ticket_monitor</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="ticket_folio"/>
+                    <field name="date"/>
+                    <field name="payment_method"/>
+                    <field name="ticket_status"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ticket_monitor" model="ir.actions.act_window">
+            <field name="name">Monitoreo de Tickets</field>
+            <field name="res_model">contabilidad_kuale.ticket_monitor</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'group_by': ''}</field>
+            <field name="domain">[('branch_id', 'in', allowed_company_ids)]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay tickets registrados aún.
+                </p>
+            </field>
+        </record>
+
+        <!--        wizard ticket cfdi read-->
+        <record id="view_ticket_wizard_cfdi_form" model="ir.ui.view">
+            <field name="name">ticket.wizard.cfdi.form</field>
+            <field name="model">ticket.wizard.cfdi</field>
+            <field name="arch" type="xml">
+                <form string="Cargar Constancia de Situación Fiscal" create="false" edit="false">
+
+                    <sheet>
+                        <group>
+                            <field name="ticket_id" readonly="1"/>
+                        </group>
+
+                        <group>
+                            <field name="file"
+                                   filename="constancia_sat.pdf"
+                                   widget="binary"
+                                   options="{'accepted_file_extensions': '.pdf'}"/>
+                        </group>
+
+                        <separator string="Información" colspan="4"/>
+
+                        <group>
+                            <div class="o_form_label">
+                                Sube la Constancia de Situación Fiscal (SAT) en formato PDF.
+                            </div>
+                            <div class="o_form_label">
+                                Los datos fiscales del cliente se cargarán automáticamente en el ticket.
+                            </div>
+                        </group>
+                    </sheet>
+
+                    <footer>
+                        <button name="action_apply_cfdi_data"
+                                type="object"
+                                string="Procesar constancia"
+                                class="btn-primary"/>
+                        <button string="Cancelar"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <!--   Visor de XML de diagnóstico (LogbookXmlViewer)  -->
+        <record id="view_logbook_xml_viewer_form" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.logbook_xml_viewer.form</field>
+            <field name="model">contabilidad_kuale.logbook_xml_viewer</field>
+            <field name="arch" type="xml">
+                <form string="XML Generado – Diagnóstico" create="false" edit="false">
+                    <sheet>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom:12px;">
+                            <strong>⚠ XML enviado al PAC al momento del error.</strong>
+                            Usa este contenido para verificar la estructura CFDI 4.0.
+                        </div>
+                        <group string="Información del error">
+                            <field name="logbook_date" string="Fecha"/>
+                            <field name="description" string="Descripción"/>
+                        </group>
+                        <separator string="Contenido del XML"/>
+                        <field name="xml_content"
+                               widget="text"
+                               readonly="1"
+                               style="font-family:monospace; font-size:12px; white-space:pre; background:#1e1e1e; color:#d4d4d4; padding:12px; border-radius:6px;"/>
+                    </sheet>
+                    <footer>
+                        <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

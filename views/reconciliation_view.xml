@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="view_bank_reconciliation_tree" model="ir.ui.view">
+        <field name="name">bank.reconciliation.tree</field>
+        <field name="model">bank.reconciliation</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="estado=='borrador'"
+                  decoration-warning="estado=='procesando'"
+                  decoration-success="estado=='completado'"
+                  decoration-muted="estado=='cancelado'">
+                <field name="name"/>
+                <field name="fecha_conciliacion"/>
+                <field name="banco_filtro"/>
+                <field name="fecha_desde"/>
+                <field name="fecha_hasta"/>
+                <field name="total_extractos"/>
+                <field name="total_conciliados_auto"/>
+                <field name="total_pendientes"/>
+                <field name="total_pagos_creados"/>
+                <field name="estado"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bank_reconciliation_form" model="ir.ui.view">
+        <field name="name">bank.reconciliation.form</field>
+        <field name="model">bank.reconciliation</field>
+        <field name="arch" type="xml">
+            <form string="Conciliación Bancaria">
+                <header>
+                    <button name="action_buscar_coincidencias"
+                            string=" Buscar Coincidencias"
+                            type="object"
+                            class="btn-primary"
+                            invisible="estado != 'borrador'"/>
+                    <button name="action_confirmar_conciliacion"
+                            string=" Confirmar Conciliación"
+                            type="object"
+                            class="btn-primary"
+                            invisible="estado != 'procesando'"
+                            confirm="¿Está seguro de confirmar la conciliación? Se crearán los pagos automáticamente."/>
+                    <button name="action_cancelar"
+                            string=" Cancelar"
+                            type="object"
+                            invisible="estado not in ['borrador', 'procesando']"/>
+                    <field name="estado" widget="statusbar" statusbar_visible="borrador,procesando,completado"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_ver_extractos" icon="fa-bank">
+                            <field string="Extractos" name="total_extractos" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_ver_pagos" icon="fa-money">
+                            <field string="Pagos" name="total_pagos_creados" widget="statinfo"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string=" Filtros de Facturas">
+                            <field name="journal_id" string="Diario de Facturas (Filtro)"
+                                   placeholder="Opcional: Filtrar facturas de un diario específico"/>
+                            <field name="fecha_desde"/>
+                            <field name="fecha_hasta"/>
+                        </group>
+                        <group string=" Configuración de Pagos">
+                            <field name="journal_pago_id" string="Diario Bancario (Pagos)" required="1"/>
+                            <field name="banco_filtro"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <!-- NUEVA SECCIÓN: Configuración de Tolerancias -->
+                    <group string=" Configuración de Coincidencias">
+                        <group string="Tolerancias Generales">
+                            <field name="tolerance_amount"/>
+                            <field name="tolerance_days"/>
+                            <field name="usar_referencias"/>
+                        </group>
+                        <group string=" Tolerancias SPEI">
+                            <field name="tolerance_spei_amount"/>
+                            <field name="tolerance_spei_days"/>
+                            <field name="usar_horas" help="Solo aplica para BBVA"/>
+                        </group>
+                    </group>
+
+                    <!-- NUEVA SECCIÓN: Estadísticas por Banco -->
+                    <group string=" Estadísticas por Banco" invisible="estado not in ['procesando', 'completado']">
+                        <group>
+                            <field name="total_santander" string=" Santander"/>
+                            <field name="total_bbva" string=" BBVA"/>
+                            <field name="total_banregio" string=" Banregio"/>
+                        </group>
+                        <group>
+                            <field name="total_conciliados_auto" string=" Automáticos"/>
+                            <field name="total_pendientes" string=" Pendientes"/>
+                        </group>
+                    </group>
+
+                    <!-- Pestañas con Líneas de Conciliación -->
+                    <notebook>
+                        <page string=" Líneas de Conciliación" name="lineas">
+                            <field name="linea_ids" context="{'default_reconciliation_id': active_id}">
+                                <tree editable="bottom"
+                                      decoration-success="conciliado==True"
+                                      decoration-warning="conciliado==False">
+
+                                    <!-- Información del Extracto -->
+                                    <field name="fecha_extracto"/>
+                                    <field name="banco_extracto" string=""/>
+                                    <field name="hora_extracto" optional="hide"/>
+                                    <field name="signo_extracto" widget="badge"
+                                           decoration-success="signo_extracto=='+'"
+                                           decoration-danger="signo_extracto=='-'"/>
+                                    <field name="monto_extracto" sum="Total"/>
+                                    <field name="descripcion_extracto"/>
+                                    <field name="referencia_extracto" optional="hide"/>
+
+                                    <!-- Información del Asiento/Factura -->
+                                    <field name="asiento_id"
+                                           domain="[('move_type', 'in', ['out_invoice', 'in_invoice', 'out_refund', 'in_refund'])]"/>
+                                    <field name="numero_asiento" optional="hide"/>
+                                    <field name="cliente_asiento"/>
+                                    <field name="fecha_asiento" optional="hide"/>
+                                    <field name="saldo_pendiente"/>
+
+                                    <!-- Información de Coincidencia -->
+                                    <field name="algoritmo_usado" widget="badge"
+                                           decoration-success="algoritmo_usado=='exacta'"
+                                           decoration-info="algoritmo_usado=='spei'"
+                                           decoration-warning="algoritmo_usado=='referencia'"/>
+                                    <field name="tipo_coincidencia" optional="hide"/>
+                                    <field name="diferencia_monto" optional="hide"/>
+                                    <field name="diferencia_dias" optional="hide"/>
+
+                                    <!-- Estado y Acciones -->
+                                    <field name="conciliado" widget="boolean_toggle"/>
+                                    <field name="es_automatico" readonly="1" optional="hide"/>
+                                    <field name="payment_id" readonly="1" optional="hide"/>
+
+                                    <!-- Botones de Acción -->
+                                    <button name="action_conciliar_manual"
+                                            string=""
+                                            type="object"
+                                            title="Conciliar Manualmente"
+                                            invisible="conciliado == True"/>
+                                    <button name="action_deshacer_conciliacion"
+                                            string=""
+                                            type="object"
+                                            title="Deshacer Conciliación"
+                                            invisible="(conciliado == False) or (payment_id != False)"/>
+                                    <button name="action_ver_pago"
+                                            string=""
+                                            type="object"
+                                            title="Ver Pago Creado"
+                                            invisible="payment_id == False"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <!-- NUEVA PÁGINA: Vista Resumida -->
+                        <page string=" Resumen" name="resumen" invisible="estado not in ['procesando', 'completado']">
+                            <group>
+                                <group string="Totales Generales">
+                                    <field name="total_extractos" readonly="1"/>
+                                    <field name="total_asientos" readonly="1"/>
+                                    <field name="total_conciliados_auto" readonly="1"/>
+                                    <field name="total_pendientes" readonly="1"/>
+                                    <field name="total_pagos_creados" readonly="1"/>
+                                </group>
+                                <group string="Por Banco">
+                                    <field name="total_santander" readonly="1"/>
+                                    <field name="total_bbva" readonly="1"/>
+                                    <field name="total_banregio" readonly="1"/>
+                                </group>
+                            </group>
+
+                            <!-- Gráficos o Información Adicional -->
+                            <separator string="Detalles de Procesamiento"/>
+                            <group>
+                                <field name="tolerance_amount" readonly="1" string="Tolerancia Aplicada (Monto)"/>
+                                <field name="tolerance_days" readonly="1" string="Tolerancia Aplicada (Días)"/>
+                                <field name="tolerance_spei_amount" readonly="1" string="Tolerancia SPEI (Monto)"/>
+                                <field name="tolerance_spei_days" readonly="1" string="Tolerancia SPEI (Días)"/>
+                            </group>
+                        </page>
+
+                        <!-- NUEVA PÁGINA: Log de Actividades -->
+                        <page string="Notas" name="notas">
+                            <group>
+                                <field name="create_date" readonly="1" string="Fecha de Creación"/>
+                                <field name="create_uid" readonly="1" string="Creado por"/>
+                                <field name="write_date" readonly="1" string="Última Modificación"/>
+                                <field name="write_uid" readonly="1" string="Modificado por"/>
+                            </group>
+
+                            <separator string="Configuración Utilizada"/>
+                            <group col="4">
+                                <field name="usar_referencias" readonly="1"/>
+                                <field name="usar_horas" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bank_reconciliation_line_tree" model="ir.ui.view">
+        <field name="name">bank.reconciliation.line.tree</field>
+        <field name="model">bank.reconciliation.line</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="conciliado==True"
+                  decoration-warning="conciliado==False"
+                  decoration-info="es_automatico==True">
+
+                <!-- Información de Conciliación -->
+                <field name="reconciliation_id"/>
+
+                <!-- Información del Extracto -->
+                <field name="fecha_extracto"/>
+                <field name="banco_extracto" string="Banco"/>
+                <field name="hora_extracto" optional="hide"/>
+                <field name="signo_extracto" widget="badge"
+                       decoration-success="signo_extracto=='+'"
+                       decoration-danger="signo_extracto=='-'"/>
+                <field name="monto_extracto" sum="Total Extractos"/>
+                <field name="descripcion_extracto"/>
+
+                <!-- Información del Asiento -->
+                <field name="numero_asiento"/>
+                <field name="cliente_asiento"/>
+                <field name="fecha_asiento" optional="hide"/>
+                <field name="saldo_pendiente" sum="Total Pendiente"/>
+                <field name="tipo_documento" optional="hide"/>
+
+                <!-- Análisis de Coincidencia -->
+                <field name="algoritmo_usado" widget="badge"
+                       decoration-success="algoritmo_usado=='exacta'"
+                       decoration-info="algoritmo_usado=='spei'"
+                       decoration-warning="algoritmo_usado=='referencia'"
+                       decoration-danger="algoritmo_usado=='ninguno'"/>
+                <field name="tipo_coincidencia"/>
+                <field name="diferencia_monto" optional="hide"/>
+                <field name="diferencia_dias" optional="hide"/>
+
+                <!-- Estado -->
+                <field name="conciliado" widget="boolean_toggle"/>
+                <field name="es_automatico" readonly="1" optional="hide"/>
+
+                <!-- Pago Creado -->
+                <field name="numero_pago" optional="hide"/>
+                <field name="estado_pago" widget="badge"
+                       decoration-success="estado_pago=='posted'"
+                       decoration-info="estado_pago=='reconciled'"
+                       optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bank_reconciliation_line_form" model="ir.ui.view">
+        <field name="name">bank.reconciliation.line.form</field>
+        <field name="model">bank.reconciliation.line</field>
+        <field name="arch" type="xml">
+            <form string="Línea de Conciliación">
+                <header>
+                    <button name="action_conciliar_manual"
+                            string=""
+                            type="object"
+                            title="Conciliar Manualmente"
+                            invisible="conciliado == True"/>
+                    <button name="action_deshacer_conciliacion"
+                            string=""
+                            type="object"
+                            title="Deshacer Conciliación"
+                            invisible="(conciliado == False) or (payment_id != False)"/>
+                    <button name="action_ver_pago"
+                            string=""
+                            type="object"
+                            title="Ver Pago Creado"
+                            invisible="payment_id == False"/>
+                    <field name="conciliado" widget="statusbar"
+                           statusbar_visible="False,True"
+                           statusbar_colors='{"False":"red","True":"green"}'/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group string="Información General">
+                            <field name="reconciliation_id" readonly="1"/>
+                            <field name="es_automatico" readonly="1"/>
+                            <field name="algoritmo_usado" readonly="1"/>
+                            <field name="tipo_coincidencia" readonly="1"/>
+                        </group>
+                        <group string="Diferencias Calculadas">
+                            <field name="diferencia_monto" readonly="1"/>
+                            <field name="diferencia_dias" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string=" Extracto Bancario" name="extracto">
+                            <group>
+                                <group string="Información Básica">
+                                    <field name="extracto_id" readonly="1"/>
+                                    <field name="fecha_extracto" readonly="1"/>
+                                    <field name="banco_extracto" readonly="1"/>
+                                    <field name="hora_extracto" readonly="1"/>
+                                </group>
+                                <group string="Detalles Financieros">
+                                    <field name="signo_extracto" readonly="1"/>
+                                    <field name="monto_extracto" readonly="1"/>
+                                    <field name="descripcion_extracto" readonly="1"/>
+                                    <field name="referencia_extracto" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string=" Factura/Asiento" name="asiento">
+                            <group>
+                                <group string="Selección de Factura">
+                                    <field name="asiento_id"
+                                           domain="[('move_type', 'in', ['out_invoice', 'in_invoice', 'out_refund', 'in_refund'])]"/>
+                                    <field name="numero_asiento" readonly="1"/>
+                                    <field name="tipo_documento" readonly="1"/>
+                                </group>
+                                <group string="Detalles Financieros">
+                                    <field name="fecha_asiento" readonly="1"/>
+                                    <field name="monto_asiento" readonly="1"/>
+                                    <field name="saldo_pendiente" readonly="1"/>
+                                    <field name="cliente_asiento" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string=" Pago Creado" name="pago" invisible="payment_id == False">
+                            <group>
+                                <field name="payment_id" readonly="1"/>
+                                <field name="numero_pago" readonly="1"/>
+                                <field name="estado_pago" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <page string="Notas" name="notas">
+                            <field name="notas" placeholder="Agregue notas sobre esta conciliación..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bank_reconciliation_search" model="ir.ui.view">
+        <field name="name">bank.reconciliation.search</field>
+        <field name="model">bank.reconciliation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="fecha_conciliacion"/>
+                <field name="banco_filtro"/>
+
+                <filter name="borrador" string=" Borrador" domain="[('estado', '=', 'borrador')]"/>
+                <filter name="procesando" string=" Procesando" domain="[('estado', '=', 'procesando')]"/>
+                <filter name="completado" string=" Completado" domain="[('estado', '=', 'completado')]"/>
+
+                <separator/>
+                <filter name="santander" string=" Santander" domain="[('banco_filtro', '=', 'santander')]"/>
+                <filter name="bbva" string=" BBVA" domain="[('banco_filtro', '=', 'bbva')]"/>
+                <filter name="banregio" string=" Banregio" domain="[('banco_filtro', '=', 'banregio')]"/>
+
+                <separator/>
+                <filter name="este_mes" string=" Este Mes"
+                        domain="[('fecha_conciliacion', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                 ('fecha_conciliacion', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                <filter name="mes_pasado" string=" Mes Pasado"
+                        domain="[('fecha_conciliacion', '&gt;=', (context_today() - relativedelta(months=1, day=1)).strftime('%Y-%m-%d')),
+                                 ('fecha_conciliacion', '&lt;=', (context_today() - relativedelta(months=1, day=31)).strftime('%Y-%m-%d'))]"/>
+
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado" name="group_estado" domain="[]" context="{'group_by': 'estado'}"/>
+                    <filter string="Banco" name="group_banco" domain="[]" context="{'group_by': 'banco_filtro'}"/>
+                    <filter string="Fecha" name="group_fecha" domain="[]" context="{'group_by': 'fecha_conciliacion'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_bank_reconciliation_line_search" model="ir.ui.view">
+        <field name="name">bank.reconciliation.line.search</field>
+        <field name="model">bank.reconciliation.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="descripcion_extracto"/>
+                <field name="cliente_asiento"/>
+                <field name="numero_asiento"/>
+                <field name="banco_extracto"/>
+
+                <filter name="conciliados" string=" Conciliados" domain="[('conciliado', '=', True)]"/>
+                <filter name="pendientes" string=" Pendientes" domain="[('conciliado', '=', False)]"/>
+                <filter name="automaticos" string=" Automáticos" domain="[('es_automatico', '=', True)]"/>
+                <filter name="manuales" string=" Manuales" domain="[('es_automatico', '=', False)]"/>
+
+                <separator/>
+                <filter name="exacta" string=" Exacta" domain="[('algoritmo_usado', '=', 'exacta')]"/>
+                <filter name="spei" string=" SPEI" domain="[('algoritmo_usado', '=', 'spei')]"/>
+                <filter name="referencia" string=" Referencia" domain="[('algoritmo_usado', '=', 'referencia')]"/>
+
+                <separator/>
+                <filter name="santander_lines" string=" Santander" domain="[('banco_extracto', '=', 'SANTANDER')]"/>
+                <filter name="bbva_lines" string=" BBVA" domain="[('banco_extracto', '=', 'BBVA')]"/>
+                <filter name="banregio_lines" string=" Banregio" domain="[('banco_extracto', '=', 'BANREGIO')]"/>
+
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado Conciliación" name="group_conciliado" domain="[]"
+                            context="{'group_by': 'conciliado'}"/>
+                    <filter string="Algoritmo" name="group_algoritmo" domain="[]"
+                            context="{'group_by': 'algoritmo_usado'}"/>
+                    <filter string="Banco" name="group_banco" domain="[]" context="{'group_by': 'banco_extracto'}"/>
+                    <filter string="Tipo Coincidencia" name="group_tipo" domain="[]"
+                            context="{'group_by': 'tipo_coincidencia'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bank_reconciliation" model="ir.actions.act_window">
+        <field name="name">Conciliaciones Bancarias</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bank.reconciliation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_bank_reconciliation_tree"/>
+        <field name="search_view_id" ref="view_bank_reconciliation_search"/>
+        <field name="context">{
+            'search_default_borrador': 1,
+            'search_default_este_mes': 1
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay conciliaciones bancarias
+            </p>
+            <p>
+                Cree una nueva conciliación para empatar extractos bancarios con facturas pendientes de pago.
+                El sistema creará automáticamente los pagos correspondientes.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_bank_reconciliation_lines" model="ir.actions.act_window">
+        <field name="name">Líneas de Conciliación</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bank.reconciliation.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_bank_reconciliation_line_tree"/>
+        <field name="search_view_id" ref="view_bank_reconciliation_line_search"/>
+        <field name="context">{
+            'search_default_pendientes': 1
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay líneas de conciliación
+            </p>
+            <p>
+                Las líneas se crean automáticamente al procesar una conciliación bancaria.
+                Desde aquí puede ver los pagos creados y su estado.
+            </p>
+        </field>
+    </record>
+
+
+
+
+
+    <record id="sequence_bank_reconciliation" model="ir.sequence">
+        <field name="name">Conciliación Bancaria</field>
+        <field name="code">bank.reconciliation.sequence</field>
+        <field name="prefix">CONC/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="sequence_bank_reconciliation" model="ir.sequence">
+        <field name="name">Conciliación Bancaria</field>
+        <field name="code">bank.reconciliation.sequence</field>
+        <field name="prefix">CONC/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+
+</odoo>

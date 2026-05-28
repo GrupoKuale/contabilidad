@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="report_invoice" model="ir.actions.report">
+        <field name="name">Ticket Report</field>
+        <field name="model">contabilidad_kuale.ticket_monitor</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">contabilidad_kuale.report_invoice_template</field>
+        <field name="report_file">contabilidad_kuale.report_invoice_template</field>
+        <field name="print_report_name">'Ticket - ' + object.name</field>
+        <field name="binding_model_id" ref="model_contabilidad_kuale_ticket_monitor"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

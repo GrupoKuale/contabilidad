@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!--WIZARD -->
+        <record id="view_bank_transaction_ftp_wizard_form" model="ir.ui.view">
+            <field name="name">bank.transaction.ftp.wizard.form</field>
+            <field name="model">contabilidad_kuale.bank_transaction_ftp_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Importar transacciones desde FTP">
+                    <group>
+                        <group>
+                            <field name="ftp_host"/>
+                            <field name="ftp_port"/>
+                        </group>
+                        <group>
+                            <field name="ftp_user"/>
+                            <field name="ftp_pass" password="True"/>
+                            <field name="ftp_dir"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Importar" type="object" name="action_download_and_process" class="btn-primary"/>
+                        <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_bank_transaction_ftp_wizard" model="ir.actions.act_window">
+            <field name="name">Importar desde FTP</field>
+            <field name="res_model">contabilidad_kuale.bank_transaction_ftp_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- VIEWS -->
+         <record id="view_bank_transaction_tree" model="ir.ui.view">
+            <field name="name">bank.transaction.tree</field>
+            <field name="model">contabilidad_kuale.bank_transaction</field>
+            <field name="arch" type="xml">
+                <tree string="Estados de Cuenta">
+                    <header>
+                        <button name="%(action_bank_transaction_ftp_wizard)d"
+                                type="action"
+                                string="Descargar estado de cuenta"
+                                icon="fa-download"
+                                display="always"/>
+                    </header>
+                    <field name="date"/>
+                    <field name="file_reference"/>
+                    <field name="company_id"/>
+                    <field name="branch_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_bank_transaction_form" model="ir.ui.view">
+            <field name="name">bank.transaction.form</field>
+            <field name="model">contabilidad_kuale.bank_transaction</field>
+            <field name="arch" type="xml">
+                <form string="Estado de Cuenta">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="file_reference"/>
+                            </group>
+                            <group>
+                                <field name="company_id"/>
+                                <field name="branch_id"/>
+                            </group>
+                        </group>
+                        <field name="transaction_line">
+                            <tree>
+                                <field name="operation_datetime"/>
+                                <field name="operation_number"/>
+                                <field name="reference"/>
+                                <field name="card_holder"/>
+                                <field name="amount"/>
+                                <field name="net_amount"/>
+                                <field name="card_brand"/>
+                                <field name="issuing_bank"/>
+                                <field name="deposit_date"/>
+                                <field name="payment_reference"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_bank_transaction" model="ir.actions.act_window">
+            <field name="name">Estados de Cuenta</field>
+            <field name="res_model">contabilidad_kuale.bank_transaction</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+</odoo>

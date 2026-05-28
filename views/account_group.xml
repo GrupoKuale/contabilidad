@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="account_group_kuale_view_form_inherit" model="ir.ui.view">
+        <field name="name">Account.group.kuale.view.form.inherit</field>
+        <field name="model">account.group</field>
+        <field name="inherit_id" ref="account.view_account_group_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="replace">
+                <form>
+                    <sheet>
+                        <div>
+                            <h1 style="font-size: 1.5rem;">
+                                <div class="row">
+                                    <div class="col col-md-auto">
+                                        <label for="code" string="Código"/>
+                                        <div>
+                                            <field name="code" placeholder="e.g. 101000" class="oe_inline"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="font-size: 1.9rem;">
+
+                                    <div class="col col-md-8">
+                                        <label for="name" string="Nombre de la cuenta"/>
+                                        <div>
+                                            <field name="name" placeholder="e.g. Current Assets"
+                                                   style="width:80% !important;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <field name="company_id" invisible="1"/>
+                            </h1>
+                        </div>
+                        <separator string="Contabilidad"/>
+                        <group>
+                            <group>
+                                <field name="accountable"/>
+                                <field name="tax_ids" widget="many2many_tags"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="allowed_journal_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="currency_id"/>
+                                <field name="deprecated"/>
+                                <label for="code_prefix_start" string="Prefijo de código"/>
+                                <div>
+                                    Desde
+                                    <field name="code_prefix_start" class="oe_inline"/>
+                                    a
+                                    <field name="code_prefix_end" class="oe_inline"/>
+                                </div>
+                                <field name="company_id" options="{'no_create': True}"
+                                       groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Configuración contable">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="sat_nivel"/>
+                                        <br/>
+                                        <field name="sat_nivel" class="w-100"/>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="group_id" string="Concepto acumulador"/>
+                                        <br/>
+                                        <field name="group_id" class="w-100"/>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="naturaleza"/>
+                                        <br/>
+                                        <field name="naturaleza" class="w-100"/>
+                                    </div>
+                                </div>
+                            </page>
+                            <page string="Código agrupador de cuentas SAT">
+                                <field name="codigo_sat">
+                                    <tree>
+                                        <field name="level"/>
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                </form>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account_group_kuale_view_tree_inherit" model="ir.ui.view">
+        <field name="name">account.group.kuale.view.tree.inherit</field>
+        <field name="model">account.group</field>
+        <field name="inherit_id" ref="account.view_account_group_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code_prefix_start']" position="before">
+                <field name="sat_nivel" optional="show"/>
+                <field name="code" optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="group_id" optional="hide"/>
+                <field name="tax_ids" optional="hide" widget="many2many_tags"/>
+                <field name="allowed_journal_ids" optional="hide" widget="many2many_tags"/>
+                <field name="codigo_sat" optional="hide" widget="many2many_tags"/>
+                <field name="naturaleza" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="action_account_group" model="ir.actions.act_window">
+        <field name="name">Account Groups</field>
+        <field name="res_model">account.group</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_account_group" name="Grupo de cuenta"
+              action="action_account_group" sequence="10"
+              parent="account.account_account_menu"/>
+
+    <!--  CRON  -->
+    <record id="ir_cron_copy_account_group" model="ir.cron">
+        <field name="name">[MANUAL] Copiar account groups a todas las empresas</field>
+        <field name="model_id" ref="model_account_group"/>
+        <field name="state">code</field>
+        <!-- Ejecuta tomando la empresa actual como fuente -->
+        <field name="code">model.copy_groups_to_companies(company_id=env.company.id)</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">0</field>
+    </record>
+</odoo>

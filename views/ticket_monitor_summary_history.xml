@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_ticket_monitor_summary_history_tree" model="ir.ui.view">
+        <field name="name">ticket.monitor.summary.history.tree</field>
+        <field name="model">contabilidad_kuale.ticket_monitor_summary_history</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="company_id"/>
+                <field name="branch_id"/>
+                <field name="month"/>
+                <field name="year"/>
+                <field name="uuid"/>
+                <field name="fecha_timbrado"/>
+                <field name="estado_timbrado" widget="badge" decoration-info="estado_timbrado == 'en_proceso'" decoration-success="estado_timbrado == 'timbrado'" decoration-danger="estado_timbrado == 'error'"/>
+                <field name="total"/>
+                <field name="ticket_count"/>
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ticket_monitor_summary_history_form" model="ir.ui.view">
+        <field name="name">ticket.monitor.summary.history.form</field>
+        <field name="model">contabilidad_kuale.ticket_monitor_summary_history</field>
+        <field name="arch" type="xml">
+            <form string="Historial de Facturas Globales">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="branch_id"/>
+                            <field name="month"/>
+                            <field name="year"/>
+                            <field name="serie"/>
+                            <field name="folio"/>
+                            <field name="estado_timbrado" widget="badge" decoration-info="estado_timbrado == 'en_proceso'" decoration-success="estado_timbrado == 'timbrado'" decoration-danger="estado_timbrado == 'error'"/>
+                        </group>
+                        <group>
+                            <field name="uuid"/>
+                            <field name="total"/>
+                            <field name="subtotal"/>
+                            <field name="iva"/>
+                            <field name="ticket_count"/>
+                            <field name="fecha_timbrado"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="xml_timbrado" widget="binary"/>
+                        </group>
+                        <group>
+                            <field name="pdf" widget="binary"/>
+                        </group>
+                    </group>
+                    <div class="container">
+                    <div class="row">
+                            <div class="col">
+                                <separator string="Sistema"/>
+                                <div class="row">
+                                    <div class="col">
+                                        <div>
+                                            <label for="tickets_quantity" string="No. de tickets"/>
+                                            <br/>
+                                            <field name="tickets_quantity" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <label for="invoice_tickets_quantity" string="Facturado(s)"/>
+                                            <br/>
+                                            <field name="invoice_tickets_quantity" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <label for="non_invoiced_quantity" string="Sin facturar"/>
+                                            <br/>
+                                            <field name="non_invoiced_quantity" readonly="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="total_tickets" string="Total"/>
+                                            <br/>
+                                            <field name="total_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="total_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="total_non_invoiced" readonly="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="subtotal_tickets"/>
+                                            <br/>
+                                            <field name="subtotal_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="subtotal_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="subtotal_non_invoiced" readonly="1"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="iva_tickets"/>
+                                            <br/>
+                                            <field name="iva_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="iva_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="iva_non_invoiced" readonly="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <separator string="PIXL"/>
+                                <div class="row">
+                                    <div class="col">
+                                        <div>
+                                            <label for="system_tickets_quantity" string="No. de tickets"/>
+                                            <br/>
+                                            <field name="system_tickets_quantity" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <label for="system_invoice_tickets_quantity" string="Facturado(s)"/>
+                                            <br/>
+                                            <field name="system_invoice_tickets_quantity" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <label for="system_non_invoiced_quantity" string="Sin facturar"/>
+                                            <br/>
+                                            <field name="system_non_invoiced_quantity" readonly="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="system_total_tickets" string="Total"/>
+                                            <br/>
+                                            <field name="system_total_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="system_total_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="system_total_non_invoiced" readonly="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="system_subtotal_tickets"/>
+                                            <br/>
+                                            <field name="system_subtotal_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="system_subtotal_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="system_subtotal_non_invoiced" readonly="1"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="system_iva_tickets"/>
+                                            <br/>
+                                            <field name="system_iva_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="system_iva_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="system_iva_non_invoiced" readonly="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <separator string="Diferencia"/>
+                                <div class="row">
+                                    <div class="col">
+                                        <div>
+                                            <label for="difference_tickets_quantity" string="No. de tickets"/>
+                                            <br/>
+                                            <field name="difference_tickets_quantity" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <label for="difference_invoice_tickets_quantity" string="Facturado(s)"/>
+                                            <br/>
+                                            <field name="difference_invoice_tickets_quantity" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <label for="difference_non_invoiced_quantity" string="Sin facturar"/>
+                                            <br/>
+                                            <field name="difference_non_invoiced_quantity" readonly="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="difference_total_tickets" string="Total"/>
+                                            <br/>
+                                            <field name="difference_total_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="difference_total_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="difference_total_non_invoiced" readonly="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="difference_subtotal_tickets"/>
+                                            <br/>
+                                            <field name="difference_subtotal_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="difference_subtotal_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="difference_subtotal_non_invoiced" readonly="1"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="col">
+                                        <div>
+                                            <label for="difference_iva_tickets"/>
+                                            <br/>
+                                            <field name="difference_iva_tickets" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="difference_iva_invoiced" readonly="1"/>
+                                        </div>
+                                        <div>
+                                            <br/>
+                                            <field name="difference_iva_non_invoiced" readonly="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ticket_monitor_summary_history_search" model="ir.ui.view">
+        <field name="name">ticket.monitor.summary.history.search</field>
+        <field name="model">contabilidad_kuale.ticket_monitor_summary_history</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="company_id"/>
+                <field name="branch_id"/>
+                <field name="month"/>
+                <field name="year"/>
+                <field name="uuid"/>
+                <field name="folio"/>
+                <field name="estado_timbrado"/>
+                <field name="fecha_timbrado"/>
+                <field name="total"/>
+                <field name="ticket_count"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ticket_monitor_summary_history" model="ir.actions.act_window">
+        <field name="name">Historial de Facturas Globales</field>
+        <field name="res_model">contabilidad_kuale.ticket_monitor_summary_history</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay facturas globales registradas aún.
+            </p>
+        </field>
+    </record>
+
+</odoo>

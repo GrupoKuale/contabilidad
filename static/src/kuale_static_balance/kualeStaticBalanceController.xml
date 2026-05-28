@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+  <t t-name="kuale_static_balance.View">
+    <Layout display="props.display" className="'h-100 overflow-auto'" actionContext="props.actionContext">
+        <t t-component="props.Renderer"  model="model" records="model.records"/>
+    </Layout>
+  </t>
+</templates>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_claveunidad_filter" model="ir.ui.view">
+            <field name="name">filtro.claveunidad</field>
+            <field name="model">cfdi.claveunidad</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_unidad" string="Todo" filter_domain="['|',('Clave_unidad','ilike',self),
+                              '|',('Nombre','ilike',self),
+                              '|',('Descripcion','ilike',self),
+                              ('Simolo','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="claveunidad_view_form" model="ir.ui.view">
+            <field name="name">claveunidad form</field>
+            <field name="model">cfdi.claveunidad</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_unidad"/>
+                            <field name="Nombre"/>
+                            <field name="Descripcion"/>
+                            <field name="Simolo"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="claveunidad_view_tree" model="ir.ui.view">
+            <field name="name">claveunidad tree</field>
+            <field name="model">cfdi.claveunidad</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_unidad asc'  >
+                    <field name="Clave_unidad"/>
+                    <field name="Nombre"/>
+                    <field name="Descripcion"/>
+                    <field name="Simolo"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_claveunidad">
+            <field name="name">claveunidad</field>
+            <field name="res_model">cfdi.claveunidad</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

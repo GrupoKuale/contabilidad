@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="action_account_asset_report_pivot">
+        <field name="name">asset.asset.report.pivot</field>
+        <field name="model">asset.asset.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de activos" disable_linking="True">
+                <field name="asset_category_id" type="row"/>
+                <field name="gross_value" type="measure"/>
+                <field name="unposted_value" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="action_account_asset_report_graph">
+        <field name="name">asset.asset.report.graph</field>
+        <field name="model">asset.asset.report</field>
+        <field name="arch" type="xml">
+            <graph string="Análisis de activos">
+                <field name="asset_category_id" type="row"/>
+                <field name="gross_value" type="measure"/>
+                <field name="unposted_value" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_asset_asset_report_search" model="ir.ui.view">
+        <field name="name">asset.asset.report.search</field>
+        <field name="model">asset.asset.report</field>
+        <field name="arch" type="xml">
+            <search string="Análisis de activos">
+                <field name="date"/>
+                <field name="depreciation_date"/>
+                <filter string="Borrador" name="draft"
+                        domain="[('state','=','draft')]"
+                        help="Activos en estado de borrador"/>
+                <filter string="En ejecución" name="running"
+                        domain="[('state','=','open')]"
+                        help="Activos en ejecución"/>
+                <filter string="No archivado" name="only_active"
+                        domain="[('asset_id.active','=', True)]"/>
+                <separator/>
+                <filter string="Contabilizadas" name="posted"
+                        domain="[('move_check','=',True)]"
+                        help="Líneas de depreciación contabilizadas"
+                        context="{'unposted_value_visible': 0}"/>
+                <field name="asset_id"/>
+                <field name="asset_category_id"/>
+                <group expand="0" string="Filtros extendidos...">
+                    <field name="partner_id"
+                           filter_domain="[('partner_id','child_of',self)]"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </group>
+                <group expand="1" string="Agrupar por">
+                    <filter string="Activos" name="asset"
+                            context="{'group_by':'asset_id'}"/>
+                    <filter string="Categoría de activo" name="asset_category"
+                            context="{'group_by':'asset_category_id'}"/>
+                    <filter string="Compañía" name="company"
+                            context="{'group_by':'company_id'}"
+                            groups="base.group_multi_company"/>
+                    <separator/>
+                    <filter string="Mes de compra" name="purchase_month"
+                            help="Fecha de compra del activo"
+                            context="{'group_by':'date:month'}"/>
+                    <filter string="Mes de depreciación" name="deprecation_month"
+                            help="Fecha de depreciación"
+                            context="{'group_by':'depreciation_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_asset_asset_report">
+        <field name="name">Análisis de activos</field>
+        <field name="res_model">asset.asset.report</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="search_view_id" ref="view_asset_asset_report_search"/>
+        <field name="domain">[('asset_category_id.type', '=', 'purchase')]
+        </field>
+        <field name="context">{'search_default_only_active': 1}</field>
+        <field name="help" type="html">
+            <p>
+                Desde este informe, puede obtener una descripción general de todas las depreciaciones.
+                La
+                barra de búsqueda también se puede utilizar para personalizar los informes de depreciación de sus activos.
+            </p>
+        </field>
+    </record>
+    <menuitem name="Análisis de activos" action="action_asset_asset_report"
+              id="menu_action_asset_asset_report"
+              parent="account.account_reports_management_menu" sequence="21"/>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+        <record id="view_codigo_agrupador_sat_tree" model="ir.ui.view">
+        <field name="name">codigo.agrupador.sat.tree</field>
+        <field name="model">codigo.agrupador.sat</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="level"/>
+                <field name="code"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_codigo_agrupador_sat_form" model="ir.ui.view">
+        <field name="name">codigo.agrupador.sat.form</field>
+        <field name="model">codigo.agrupador.sat</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="level"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_codigo_agrupador_sat_search" model="ir.ui.view">
+        <field name="name">codigo.agrupador.sat.search</field>
+        <field name="model">codigo.agrupador.sat</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="level"/>
+            </search>
+        </field>
+    </record>
+
+     <record id="action_codigo_agrupador_sat" model="ir.actions.act_window">
+        <field name="name">Agrupadores SAT</field>
+        <field name="res_model">codigo.agrupador.sat</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_codigo_agrupador_sat_search"/>
+    </record>
+
+
+</odoo>

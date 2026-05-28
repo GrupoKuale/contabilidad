@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="verifications_dashboard_kanban_view" model="ir.ui.view">
+            <field name="name">verifications.dashboard.kanban</field>
+            <field name="model">verifications.dashboard</field>
+            <field name="arch" type="xml">
+
+                <kanban create="false"
+                        class="o_kanban_dashboard"
+                        js_class="verifications_dashboard_kanban">
+
+                    <field name="name"/>
+                    <field name="module_type"/>
+                    <field name="kanban_dashboard"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+
+                            <t t-set="db" t-value="JSON.parse(record.kanban_dashboard.raw_value)"/>
+
+                            <div class="o_kanban_card_header">
+
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <span t-esc="db.title"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_dropdown dropdown">
+                                    <a data-bs-toggle="dropdown">⋮</a>
+
+                                    <ul class="dropdown-menu">
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                               type="object"
+                                               name="open_records">
+                                                Ver registros
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                               type="object"
+                                               name="open_missing">
+                                                Registros sin clave
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                               type="object"
+                                               name="open_valid">
+                                                Registros con clave
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                            <div class="o_kanban_card_content">
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Total:</div>
+                                    <div class="metric-value">
+                                        <a type="object" name="open_records">
+                                            <span t-esc="db.total"/>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Sin clave:</div>
+                                    <div class="metric-value">
+                                        <a type="object" name="open_missing">
+                                            <span t-esc="db.missing"/>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Con clave:</div>
+                                    <div class="metric-value">
+                                        <a type="object" name="open_valid">
+                                            <span t-esc="db.valid"/>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <button type="object"
+                                        name="open_records"
+                                        class="o_btn_full">
+                                    Ver Registros
+                                </button>
+                            </div>
+
+                        </t>
+                    </templates>
+
+                </kanban>
+
+            </field>
+        </record>
+
+
+
+        <record id="verifications_dashboard_action" model="ir.actions.act_window">
+            <field name="name">Validaciones</field>
+            <field name="res_model">verifications.dashboard</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="verifications_dashboard_kanban_view"/>
+        </record>
+
+
+    </data>
+</odoo>

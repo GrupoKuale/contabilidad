@@ -1,0 +1,22 @@
+<odoo>
+    <record id="view_sat_xml_view_wizard_form" model="ir.ui.view">
+        <field name="name">sat.xml.view.wizard.form</field>
+        <field name="model">sat.xml.view.wizard</field>
+        <field name="arch" type="xml">
+            <form string="XML CFDI">
+                <sheet>
+                    <group>
+                        <field name="xml_code"
+                               widget="text"
+                               nolabel="1"
+                               readonly="1"
+                               style="height:500px; font-family: monospace;"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Cerrar" class="btn-primary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

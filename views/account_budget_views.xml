@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--    Budgetary Position views and actions-->
+    <record id="view_budget_post_search" model="ir.ui.view">
+        <field name="name">account.budget.post.search</field>
+        <field name="model">account.budget.post</field>
+        <field name="arch" type="xml">
+            <search string="Situación presupuestaria">
+                <field name="name" filter_domain="[('name','ilike',self)]"
+                       string="Situación presupuestaria"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_budget_post_tree" model="ir.ui.view">
+        <field name="name">account.budget.post.tree</field>
+        <field name="model">account.budget.post</field>
+        <field name="arch" type="xml">
+            <tree string="Situación presupuestaria">
+                <field name="name"/>
+                <field name="company_id" options="{'no_create': True}"
+                       groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="open_budget_post_form" model="ir.actions.act_window">
+        <field name="name">Situación presupuestaria</field>
+        <field name="res_model">account.budget.post</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_id" ref="view_budget_post_tree"/>
+        <field name="search_view_id" ref="view_budget_post_search"/>
+    </record>
+
+    <menuitem action="open_budget_post_form" id="menu_budget_post_form"
+              parent="account.account_management_menu"
+              sequence="5"/>
+
+    <record model="ir.ui.view" id="view_budget_post_form">
+        <field name="name">account.budget.post.form</field>
+        <field name="model">account.budget.post</field>
+        <field name="arch" type="xml">
+            <form string="Situación presupuestaria">
+                <sheet>
+                    <group col="4">
+                        <field name="name"/>
+                        <field name="company_id"
+                               groups="base.group_multi_company"
+                               options="{'no_create': True}"/>
+                    </group>
+                    <notebook>
+                        <page string="Cuentas">
+                            <field name="account_ids">
+                                <tree>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crossovered_budget_view_form">
+        <field name="name">budget.view.form</field>
+        <field name="model">budget.budget</field>
+        <field name="arch" type="xml">
+            <form string="Budget">
+                <header>
+                    <button string="Confirmar" name="action_budget_confirm"
+                            invisible="state != 'draft'" type="object"
+                            class="oe_highlight"/>
+                    <button string="Aprobar" name="action_budget_validate"
+                            invisible="state != 'confirm'" type="object"
+                            class="oe_highlight"/>
+                    <button string="Hecho" name="action_budget_done"
+                            invisible="state != 'validate'" type="object"
+                            class="oe_highlight"/>
+                    <button string="Restablecer al borrador" name="action_budget_draft"
+                            invisible="state != 'cancel'" type="object"/>
+                    <button string="Cancelar presupuesto" name="action_budget_cancel"
+                            invisible="state not in ('confirm','validate')"
+                            type="object"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirm"/>
+                </header>
+                <sheet string="Presupuesto">
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" readonly="state != 'draft'"
+                                   placeholder="Nombre del presupuesto"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="creating_user_id"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <label for="date_from" string="Período"/>
+                            <div>
+                                <field name="date_from" placeholder="Desde"
+                                       class="oe_inline"
+                                       readonly="state != 'draft'"/>
+                                -
+                                <field name="date_to" placeholder="Hasta"
+                                       class="oe_inline"
+                                       readonly="state != 'draft'"
+                                       nolabel="1"/>
+                            </div>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Líneas presupuestarias">
+                            <field name="budget_line"
+                                   context="{'default_date_from': date_from,'default_date_to': date_to}"
+                                   colspan="4"
+                                   nolabel="1" readonly="state != 'draft'">
+                                <tree string="Líneas presupuestarias">
+                                    <field name="general_budget_id"/>
+                                    <field name="analytic_account_id"
+                                           groups="analytic.group_analytic_accounting"
+                                           required="1"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="paid_date"
+                                           groups="base.group_no_one"/>
+                                    <field name="planned_amount"
+                                           sum="Planned Amount"
+                                           widget="monetary"/>
+                                    <field name="practical_amount"
+                                           sum="Practical Amount"
+                                           widget="monetary"/>
+                                    <field name="theoretical_amount"
+                                           sum="Theoretical Amount"
+                                           widget="monetary"/>
+                                    <field name="percentage"/>
+                                </tree>
+                                <form string="Líneas presupuestarias">
+                                    <group>
+                                        <group>
+                                            <field name="general_budget_id"/>
+                                            <field name="planned_amount"
+                                                   widget="monetary"/>
+                                            <field name="analytic_account_id"
+                                                   groups="analytic.group_analytic_accounting"
+                                                   required="1"/>
+                                        </group>
+                                        <group>
+                                            <label for="date_from"
+                                                   string="Período"/>
+                                            <div>
+                                                <field name="date_from"
+                                                       placeholder="Desde"
+                                                       class="oe_inline"/>
+                                                -
+                                                <field name="date_to"
+                                                       placeholder="Hasta"
+                                                       class="oe_inline"/>
+                                            </div>
+                                            <field name="paid_date"
+                                                   groups="base.group_no_one"/>
+                                            <field name="company_id"
+                                                   options="{'no_create': True}"
+                                                   groups="base.group_multi_company"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"
+                           groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="budget_budget_view_tree">
+        <field name="name">budget.view.tree</field>
+        <field name="model">budget.budget</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'draft'"
+                  decoration-muted="state in ('done','cancel')"
+                  string="Presupuesto">
+                <field name="name" colspan="1"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="company_id" options="{'no_create': True}"
+                       groups="base.group_multi_company"/>
+                <field name="creating_user_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_budget_kanban" model="ir.ui.view">
+        <field name="name">budget.kanban</field>
+        <field name="model">budget.budget</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="creating_user_id"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="row mb4">
+                                <div class="col-8">
+                                    <strong>
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <div class="col-4">
+                                    <span class="float-right">
+                                        <field name="state"
+                                               widget="label_selection"
+                                               options="{'classes': {'draft': 'default', 'done': 'success'}}"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-10">
+                                    <i class="fa fa-clock-o"/>
+                                    <t t-esc="record.date_from.value"/>-
+                                    <t t-esc="record.date_to.value"/>
+                                </div>
+                                <div class="col-xs-2">
+                                    <span class="float-right">
+                                        <img alt=""
+                                             t-att-src="kanban_image('res.users', 'image_small', record.creating_user_id.raw_value)"
+                                             t-att-title="record.creating_user_id.value"
+                                             width="24" height="24"
+                                             class="oe_kanban_avatar float-right"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="act_budget_view">
+        <field name="name">Presupuestos</field>
+        <field name="res_model">budget.budget</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_id" ref="budget_budget_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Haga clic para crear un nuevo presupuesto.
+            </p>
+            <p>
+                Un presupuesto es una previsión de los ingresos y/o gastos
+                previstos de su empresa para un período futuro. Un presupuesto se define en
+                algunas
+                cuentas financieras y/o cuentas analíticas (que pueden representar
+                proyectos, departamentos, categorías de productos, etc.)
+            </p>
+            <p>
+                Si lleva un registro de dónde gasta su dinero, tendrá menos
+                probabilidades de gastar de más y más probabilidades de alcanzar sus objetivos
+                financieros. Prevea un presupuesto detallando los ingresos esperados por
+                cuenta analítica y controle su evolución en función de los ingresos reales
+                obtenidos durante ese período.
+            </p>
+        </field>
+    </record>
+    <menuitem parent="account.menu_finance_entries_management"
+              id="menu_act_budget_view"
+              name="Presupuestos"
+              action="act_budget_view" sequence="60"
+              groups="account.group_account_user"/>
+
+    <record id="view_budget_line_search" model="ir.ui.view">
+        <field name="name">account.budget.line.search</field>
+        <field name="model">budget.lines</field>
+        <field name="arch" type="xml">
+            <search string="Líneas presupuestarias">
+                <field name="analytic_account_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_budget_line_tree">
+        <field name="name">budget.line.tree</field>
+        <field name="model">budget.lines</field>
+        <field name="arch" type="xml">
+            <tree string="Líneas presupuestarias">
+                <field name="budget_id" invisible="1"/>
+                <field name="general_budget_id"/>
+                <field name="analytic_account_id"
+                       groups="analytic.group_analytic_accounting"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="paid_date" groups="base.group_no_one"/>
+                <field name="planned_amount" widget="monetary"/>
+                <field name="practical_amount" widget="monetary"/>
+                <field name="theoretical_amount" widget="monetary"/>
+                <field name="percentage"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="view_budget_line_form">
+        <field name="name">budget.line.form</field>
+        <field name="model">budget.lines</field>
+        <field name="arch" type="xml">
+            <form string="Líneas presupuestarias">
+                <sheet>
+                    <group col="4">
+                        <field name="budget_id"/>
+                        <field name="analytic_account_id"/>
+                        <field name="general_budget_id"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="paid_date"/>
+                        <field name="planned_amount" widget="monetary"/>
+                        <field name="practical_amount" widget="monetary"/>
+                        <field name="theoretical_amount" widget="monetary"/>
+                        <field name="percentage"/>
+                        <field name="company_id" options="{'no_create': True}"
+                               groups="base.group_multi_company"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="act_budget_lines_view">
+        <field name="name">Presupuestos</field>
+        <field name="res_model">budget.lines</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_budget_line_tree"/>
+    </record>
+
+    <menuitem parent="account.account_reports_management_menu"
+              id="menu_act_crossovered_budget_lines_view"
+              action="act_budget_lines_view" sequence="20"/>
+
+</odoo>

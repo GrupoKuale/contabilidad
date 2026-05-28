@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="view_account_move_batch_form" model="ir.ui.view">
+        <field name="name">account.move.batch.form</field>
+        <field name="model">account.move.batch</field>
+        <field name="arch" type="xml">
+            <form string="Lote de Asientos Contables">
+                <header>
+                    <button name="action_confirm" string="Confirmar Lote" type="object"
+                            invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_create_payment" string="Crear Pago" type="object"
+                            invisible="state != 'confirmed'" class="oe_highlight"/>
+                    <button name="action_cancel" string="Cancelar" type="object"
+                            invisible="state not in ['draft', 'confirmed']"
+                            confirm="¿Está seguro de cancelar este lote?"/>
+                    <button name="action_reset_to_draft" string="Regresar a Borrador" type="object"
+                            invisible="state != 'cancelled'"/>
+
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_moves" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="move_count" widget="statbutton" string="Facturas"/>
+                        </button>
+                        <button name="action_view_payment" type="object" class="oe_stat_button"
+                                icon="fa-money" invisible="not payment_id">
+                            <span>Ver Pago</span>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="state != 'draft'"/>
+                            <field name="partner_type" readonly="state != 'draft'"/>
+                            <field name="payment_mode" widget="radio" readonly="state != 'draft'"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="amount_total" widget="monetary"/>
+                            <field name="amount_residual" widget="monetary"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <group string="Configuración de Pago">
+                        <group>
+                            <label for="bank_statement_id"
+                                   invisible="payment_mode != 'immediate'"/>
+                            <div invisible="payment_mode != 'immediate'" class="o_row">
+                                <field name="matching_bank_statement_ids" invisible="1"/>
+                                <field name="bank_statement_id"
+                                       domain="[('id', 'in', matching_bank_statement_ids)]"
+                                       required="payment_mode == 'immediate' and state != 'draft'"
+                                       readonly="state != 'draft'"
+                                       class="oe_inline"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       placeholder="Seleccione un movimiento..."/>
+                                <button name="action_find_matching_bank_statement"
+                                        string="Buscar Movimiento Coincidente"
+                                        type="object"
+                                        class="btn-secondary"
+                                        invisible="state != 'draft'"
+                                        title="Buscar movimiento coincidente automáticamente"/>
+                            </div>
+
+                            <field name="scheduled_payment_date"
+                                   invisible="payment_mode != 'scheduled'"
+                                   required="payment_mode == 'scheduled' and state != 'draft'"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="payment_id" readonly="1" invisible="not payment_id"/>
+                        </group>
+                    </group>
+
+
+                    <notebook>
+                        <page string="Facturas" name="invoices">
+                            <field name="move_ids" readonly="state != 'draft'">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="invoice_date"/>
+                                    <field name="partner_id"/>
+                                    <field name="amount_total" sum="Total"/>
+                                    <field name="amount_residual" sum="Pendiente"/>
+                                    <field name="payment_state"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <!-- Desglose Detallado -->
+                        <page string="Desglose Detallado" name="breakdown" invisible="state == 'draft'">
+                            <group>
+                                <group string="Totales">
+                                    <field name="total_subtotal" widget="monetary"/>
+                                    <field name="total_tax" widget="monetary"/>
+                                    <field name="total_with_tax" widget="monetary"/>
+                                </group>
+                            </group>
+
+                            <field name="batch_line_ids" readonly="1">
+                                <tree string="Detalle de Productos/Servicios" decoration-muted="move_type == 'credit'"
+                                      decoration-info="move_type == 'debit'">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="invoice_name"/>
+                                    <field name="invoice_date"/>
+                                    <field name="product_name"/>
+                                    <field name="quantity" sum="Total Cantidad"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal" sum="Subtotal"/>
+                                    <field name="tax_rate"/>
+                                    <field name="tax_amount" sum="Total IVA"/>
+                                    <field name="price_total" sum="Total"/>
+                                    <field name="account_code"/>
+                                    <field name="account_name"/>
+                                    <field name="move_type"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <!-- Información Bancaria -->
+                        <page string="Info Bancaria" name="bank_info"
+                              invisible="not bank_statement_id or state == 'draft'">
+                            <group string="Movimiento Bancario">
+                                <group>
+                                    <field name="bank_info_id" invisible="1"/>
+                                    <label for="bank_statement_id"/>
+                                    <div>
+                                        <field name="bank_statement_id" readonly="1"/>
+                                    </div>
+                                </group>
+                            </group>
+
+                            <group col="4">
+                                <field name="bank_statement_id" invisible="1"/>
+                                <group string="Datos del Movimiento" invisible="not bank_statement_id">
+                                    <field name="bank_statement_id" widget="many2one" options="{'no_open': True}"
+                                           readonly="1"/>
+                                    <label for="bank_statement_id" invisible="1"/>
+                                </group>
+                            </group>
+
+                            <!-- Información detallada del movimiento -->
+                            <group string="Detalle del Movimiento" invisible="not bank_statement_id">
+                                <group>
+                                    <label for="bank_statement_id" string="Fecha"/>
+                                    <div>
+                                        <field name="bank_statement_id" readonly="1" invisible="1"/>
+                                        <span invisible="not bank_statement_id">
+                                            <field name="bank_statement_id" readonly="1" invisible="1"/>
+                                        </span>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Notas" name="notes">
+                            <field name="notes" placeholder="Agregue notas sobre este lote..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_account_move_batch_line_tree" model="ir.ui.view">
+        <field name="name">account.move.batch.line.tree</field>
+        <field name="model">account.move.batch.line</field>
+        <field name="arch" type="xml">
+            <tree string="Desglose de Facturas" create="0" edit="0" delete="0">
+                <field name="batch_id"/>
+                <field name="invoice_name"/>
+                <field name="invoice_date"/>
+                <field name="partner_id"/>
+                <field name="product_name"/>
+                <field name="quantity" sum="Total"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" sum="Subtotal"/>
+                <field name="tax_rate"/>
+                <field name="tax_amount" sum="IVA"/>
+                <field name="price_total" sum="Total"/>
+                <field name="account_code"/>
+                <field name="move_type"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_account_move_batch_line_search" model="ir.ui.view">
+        <field name="name">account.move.batch.line.search</field>
+        <field name="model">account.move.batch.line</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Desglose">
+                <field name="batch_id"/>
+                <field name="invoice_id"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Lote" name="group_by_batch" context="{'group_by': 'batch_id'}"/>
+                    <filter string="Factura" name="group_by_invoice" context="{'group_by': 'invoice_id'}"/>
+                    <filter string="Partner" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Producto" name="group_by_product" context="{'group_by': 'product_id'}"/>
+                    <filter string="Cuenta" name="group_by_account" context="{'group_by': 'account_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_account_move_batch_tree" model="ir.ui.view">
+        <field name="name">account.move.batch.tree</field>
+        <field name="model">account.move.batch</field>
+        <field name="arch" type="xml">
+            <tree string="Lotes de Asientos Contables"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'paid'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="partner_type"/>
+                <field name="move_count"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="amount_residual" sum="Pendiente"/>
+                <field name="payment_mode"/>
+                <field name="state"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_account_move_batch_search" model="ir.ui.view">
+        <field name="name">account.move.batch.search</field>
+        <field name="model">account.move.batch</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Lotes">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <filter string="Borrador" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmado" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Pagado" name="paid" domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter string="Clientes" name="customers" domain="[('partner_type', '=', 'customer')]"/>
+                <filter string="Proveedores" name="suppliers" domain="[('partner_type', '=', 'supplier')]"/>
+                <separator/>
+                <filter string="Liquidación Inmediata" name="immediate" domain="[('payment_mode', '=', 'immediate')]"/>
+                <filter string="Liquidación Programada" name="scheduled" domain="[('payment_mode', '=', 'scheduled')]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Proveedor/Cliente" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Modo de Pago" name="group_payment_mode" context="{'group_by': 'payment_mode'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_account_move_batch_wizard_form" model="ir.ui.view">
+        <field name="name">account.move.batch.wizard.form</field>
+        <field name="model">account.move.batch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Crear Lote de Facturas">
+                <group>
+                    <group>
+                        <field name="partner_id" readonly="1"/>
+                        <field name="partner_type" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="payment_mode" widget="radio"/>
+                    </group>
+                </group>
+
+                <group string="Configuración de Pago">
+                    <field name="bank_statement_id"
+                           invisible="payment_mode != 'immediate'"
+                           required="payment_mode == 'immediate'"/>
+                    <field name="scheduled_payment_date"
+                           invisible="payment_mode != 'scheduled'"
+                           required="payment_mode == 'scheduled'"/>
+                </group>
+
+                <group string="Facturas Seleccionadas">
+                    <field name="move_ids" nolabel="1" readonly="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="invoice_date"/>
+                            <field name="amount_total" sum="Total"/>
+                            <field name="amount_residual" sum="Pendiente"/>
+                        </tree>
+                    </field>
+                </group>
+
+                <footer>
+                    <button string="Crear Lote" name="action_create_batch" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_move_batch_line" model="ir.actions.act_window">
+        <field name="name">Desglose de Lotes</field>
+        <field name="res_model">account.move.batch.line</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'search_default_group_by_batch': 1}</field>
+    </record>
+
+    <record id="action_account_move_batch_wizard" model="ir.actions.act_window">
+        <field name="name">Crear Lote de Facturas</field>
+        <field name="res_model">account.move.batch.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <record id="action_account_move_batch" model="ir.actions.act_window">
+        <field name="name">Lotes de Facturas</field>
+        <field name="res_model">account.move.batch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Cree un lote de facturas
+            </p>
+            <p>
+                Los lotes permiten agrupar varias facturas del mismo proveedor/cliente
+                <br/>
+                para realizar un pago único consolidado.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_account_move_batch_line"
+              name="Desglose de Lotes"
+              parent="account.menu_finance_payables"
+              action="action_account_move_batch_line"
+              sequence="51"/>
+
+    <menuitem id="menu_account_move_batch"
+              name="Lotes de Facturas"
+              parent="account.menu_finance_payables"
+              action="action_account_move_batch"
+              sequence="50"/>
+
+</odoo>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_order_form_custom" model="ir.ui.view">
+            <field name="name">sale.order.form.custom</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="immediate_product_release" widget="boolean_toggle"/>
+                </xpath>
+
+                <!-- original -->
+                <xpath expr="//button[@name='action_confirm' and hasclass('btn-primary')]" position="attributes">
+                    <attribute name="invisible">(state != 'approved' and requires_authorization) or state == 'sale'
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm' and not(@class)]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_cancel']" position="attributes">
+                    <attribute name="invisible">state not in ['draft', 'sent', 'sale','approved'] or not id or locked
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//header" position="inside">
+                    <field name="requires_authorization" invisible="1"/>
+                    <button name="action_request_approval" type="object" string="Solicitar Autorizacion"
+                            invisible="(not requires_authorization and state !='to_approve') or state == 'sale'"/>
+                    <button name="action_approve" type="object" string="Aprobar"
+                            groups="base.group_system" class="oe_highlight"
+                            invisible=" (state == 'approved' or state == 'sale' or not requires_authorization)"/>
+
+                    <button name="duplicate_as_quotation" string="Duplicar orden" type="object"
+                            groups="base.group_system"/>
+                </xpath>
+
+                <xpath expr="//group[@name='sale_header']" position="before">
+                    <div class="container m-0">
+                        <div class="row">
+                            <div class="col full-w">
+                                <label for="user_id" string="Vendedor" class="form-label"/>
+                                <br/>
+                                <field name="user_id" widget="many2one_avatar_user" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="team_id" string="Equipo de ventas"/>
+                                <br/>
+                                <field name="team_id" context="{'kanban_view_ref': 'sales_team.crm_team_view_kanban'}"
+                                       options="{'no_create': True}" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="company_id" string="Empresa"/>
+                                <br/>
+                                <field name="company_id" options="{'no_create': True}"
+                                       readonly="1" class="w-100"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col">
+                                <label for="date_order" string="Fecha de cotización"/>
+                                <field name="date_order" nolabel="1" groups="base.group_no_one"
+                                       invisible="state in ['sale', 'cancel']"
+                                       readonly="state in ['cancel', 'sale']" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="validity_date" string="Vencimiento"/>
+                                <field name="validity_date" invisible="state == 'sale'"
+                                       readonly="state in ['cancel', 'sale']" class="w-100"/>
+                            </div>
+                            <div class="col align-content-center text-center">
+                                <div>
+                                    <label for="require_signature" string="Firma en linea"/>
+                                    <field name="require_signature" readonly="state in ['cancel', 'sale']"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <separator string="Datos de contacto"/>
+                    <div class="container m-0">
+                        <div class="row">
+                            <div class="col">
+                                <label for="partner_id" string="Cliente"/>
+                                <br/>
+                                <field name="partner_id" widget="res_partner_many2one"
+                                       context="{'res_partner_search_mode': 'customer', 'show_address': False, 'show_vat': True}"
+                                       placeholder="Type to find a customer..." readonly="state in ['cancel', 'sale']"
+                                       class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="client_order_ref" string="Referencia del cliente"/>
+                                <br/>
+                                <field name="client_order_ref" class="w-100"/>
+                                <field name="reference" readonly="1" invisible="not reference"/>
+                            </div>
+                            <div class="col" invisible="1">
+                                <label for="fiscal_position_id" string="Posición Fiscal"/>
+                                <br/>
+                                <field name="fiscal_position_id" options="{'no_create': True}" class="w-100"/>
+                                <button name="action_update_taxes" type="object" string=" Update Taxes"
+                                        help="Recompute all taxes based on this fiscal position"
+                                        class="btn-link mb-1 px-0" icon="fa-refresh"
+                                        confirm="This will update all taxes based on the currently selected fiscal position."
+                                        invisible="not show_update_fpos or state in ['sale', 'cancel']"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row" groups="sale_management.group_sale_order_template">
+                            <div class="col">
+                                <label for="sale_order_template_id" string="Plantilla de cotización"/>
+                                <br/>
+                                <field name="sale_order_template_id" options="{'no_create': True}"
+                                       readonly="state in ['cancel', 'sale']" class="w-100"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col" invisible="1">
+                                <label for="journal_id" string="Diario de facturación"/>
+                                <br/>
+                                <field name="journal_id" groups="base.group_no_one"
+                                       readonly="invoice_count != 0 and state == 'sale'" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="pricelist_id" groups="product.group_product_pricelist"
+                                       invisible="not has_active_pricelist"/>
+                                <br/>
+                                <div groups="product.group_product_pricelist" class="o_row"
+                                     invisible="not has_active_pricelist">
+                                    <field name="pricelist_id" options="{'no_open':True,'no_create': True}"
+                                           readonly="state in ['cancel', 'sale']"/>
+                                    <button name="action_update_prices" type="object" string=" Update Prices"
+                                            help="Recompute all prices based on this pricelist"
+                                            class="btn-link mb-1 px-0" icon="fa-refresh"
+                                            confirm="This will update the unit price of all products based on the new pricelist."
+                                            invisible="not show_update_pricelist or state in ['sale', 'cancel']"/>
+                                </div>
+                            </div>
+                            <div class="col" invisible="not exchange_view">
+                                <field name="exchange_view" invisible="1"/>
+                                <label for="exchange_rate" string="Tipo de cambio"/>
+                                <br/>
+                                <field name="exchange_rate" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="payment_term_id" string="Términos de pago"/>
+                                <br/>
+                                <field name="payment_term_id" options="{'no_open': True, 'no_create': True}"
+                                       class="w-100"/>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br/>
+                    <br/>
+                </xpath>
+
+                <xpath expr="//group[@name='sale_header']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//group[@name='sales_person']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='sale_info']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='other_information']" position="attributes">
+                    <attribute name="string">Adicional</attribute>
+                </xpath>
+                <xpath expr="//group[@name='sale_reporting']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='sale_shipping']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='other_information']" position="inside">
+                    <separator string="Seguimiento"/>
+                    <div class="container m-0">
+                        <div class="row">
+                            <div class="col">
+                                <label for="origin" string="Documento origen"/>
+                                <br/>
+                                <field name="origin" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="campaign_id" string="Campaña"/>
+                                <br/>
+                                <field name="campaign_id" options="{'create_name_field': 'title'}" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="medium_id" string="Medio"/>
+                                <br/>
+                                <field name="medium_id" class="w-100"/>
+                            </div>
+                            <div class="col">
+                                <label for="source_id" string="Origen"/>
+                                <br/>
+                                <field name="source_id" class="w-100"/>
+                            </div>
+                        </div>
+                    </div>
+                    <separator string="Envio"/>
+                    <div class="container">
+                        <div class="row d-flex align-items-center justify-content-between">
+                            <div class="w-50">
+                                <label for="commitment_date" string="Delivery Date"/>
+                                <div name="commitment_date_div" class="o_row">
+                                    <field name="commitment_date" readonly="state == 'cancel' or locked"/>
+                                    <span name="expected_date_span" class="text-muted">Expected:
+                                        <field name="expected_date" class="oe_inline" widget="date"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="w-50">
+                                <label for="immediate_product_release"/>
+                                <field name="immediate_product_release" widget="boolean_toggle"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

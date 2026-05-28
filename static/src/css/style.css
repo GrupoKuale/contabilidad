@@ -1,0 +1,30 @@
+#complaint_type {
+    background-color: #f5f5f5; /* Gris claro */
+    border: none; /* Quitamos todos los bordes */
+    border-bottom: 2px solid red; /* Solo borde inferior en rojo */
+    border-radius: 0; /* Sin bordes redondeados */
+    padding: 10px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    appearance: none; /* Quitar estilos nativos del sistema */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    width: 100%;
+}
+
+/* Estilo para la flecha roja */
+#complaint_type::after {
+    content: "▼"; /* Flecha personalizada */
+    color: red; /* Flecha roja */
+    font-size: 18px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Para algunos navegadores que no permiten modificar la flecha nativa */
+#complaint_type::-ms-expand {
+    display: none;
+}

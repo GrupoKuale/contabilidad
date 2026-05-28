@@ -1,0 +1,1608 @@
+<odoo>
+
+    <!-- ========================= -->
+    <!-- ACCIÓN REGISTRA ORDEN -->
+    <!-- ========================= -->
+
+    <record id="action_stp_registra_orden" model="ir.actions.act_window">
+        <field name="name">Registra Orden</field>
+        <field name="res_model">stp.order.register.wizard</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay Ordenes de Pago Creadas aun.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_stp_ws_payment_without_reference" model="ir.actions.act_window">
+        <field name="name">Registrar Pago Sin Referencia</field>
+        <field name="res_model">stp.payment.service.without.reference</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay Pagos creados aun.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_stp_ws_payment_with_reference" model="ir.actions.act_window">
+        <field name="name">Registrar Pago Con Referencia</field>
+        <field name="res_model">stp.payment.service.with.reference</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay Pagos creados aun.
+            </p>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- ACCIÓN DE LAS CONSULTAS -->
+    <!-- ========================= -->
+    <record id="action_stp_consult_current_date" model="ir.actions.act_window">
+        <field name="name">Consulta de Operaciones con Fecha Actual</field>
+        <field name="res_model">stp.consult.order.current.date</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_historical" model="ir.actions.act_window">
+        <field name="name">Consulta de Operaciones Historica</field>
+        <field name="res_model">stp.consult.order.historical</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_natural" model="ir.actions.act_window">
+        <field name="name">Consulta de Operaciones Natural</field>
+        <field name="res_model">stp.consult.order.natural</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_account_balance" model="ir.actions.act_window">
+        <field name="name">Consulta Saldo en Cuenta</field>
+        <field name="res_model">stp.consult.account.balance</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_account_balance_historical" model="ir.actions.act_window">
+        <field name="name">Consulta Saldo en Cuenta Historico</field>
+        <field name="res_model">stp.consult.account.balance.historical</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_receipt_natural_date" model="ir.actions.act_window">
+        <field name="name">Consulta de Comprobante</field>
+        <field name="res_model">stp.consult.receipt.naturaldate</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_receipt_operation_date" model="ir.actions.act_window">
+        <field name="name">Consulta de Comprobante</field>
+        <field name="res_model">stp.consult.receipt.operation.date</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_balance_conciliation_historical" model="ir.actions.act_window">
+        <field name="name">Consulta de Conciliación Historica</field>
+        <field name="res_model">stp.consult.balance.conciliation.historical</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_balance_conciliation" model="ir.actions.act_window">
+        <field name="name">Consulta de Conciliación</field>
+        <field name="res_model">stp.consult.balance.conciliation</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_institutions" model="ir.actions.act_window">
+        <field name="name">Consulta de Instituciones</field>
+        <field name="res_model">stp.consult.institutions</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_ws_services" model="ir.actions.act_window">
+        <field name="name">Consulta de Servicios</field>
+        <field name="res_model">stp.consult.ws.services</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_ws_reference_verification" model="ir.actions.act_window">
+        <field name="name">Verificación de Referencia</field>
+        <field name="res_model">stp.consult.ws.reference.verification</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_ws_payment_service_validation" model="ir.actions.act_window">
+        <field name="name">Validación de Pago de Servicio (Estado)</field>
+        <field name="res_model">stp.consult.ws.payment.service.validation</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_consult_ws_ticket_reprint" model="ir.actions.act_window">
+        <field name="name">Reimpresión de Ticket</field>
+        <field name="res_model">stp.consult.ws.ticket.reprint</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <!-- ========================= -->
+    <!-- ACCIÓN DE LOS CATALOGOS -->
+    <!-- ========================= -->
+
+    <!-- Empresa -->
+    <record id="action_stp_empresa" model="ir.actions.act_window">
+        <field name="name">Empresas STP</field>
+        <field name="res_model">stp.empresa</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tu primer registro de Empresa para STP
+            </p>
+        </field>
+    </record>
+
+    <!-- Instituciones -->
+    <record id="action_stp_instituciones" model="ir.actions.act_window">
+        <field name="name">Instituciones STP</field>
+        <field name="res_model">stp.institucion</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay instituciones registradas aun.
+            </p>
+        </field>
+    </record>
+
+    <!-- Tipo de Cuenta -->
+    <record id="action_stp_tipo_cuenta" model="ir.actions.act_window">
+        <field name="name">Tipos de Cuenta STP</field>
+        <field name="res_model">stp.tipo.cuenta</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay cuentas registradas aun.
+            </p>
+        </field>
+    </record>
+
+    <!-- Catalogo WS -->
+    <record id="action_stp_ws_type_catalog" model="ir.actions.act_window">
+        <field name="name">Tipos de Cuenta STP</field>
+        <field name="res_model">stp.ws.type.catalog</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay catalogos registrados aun.
+            </p>
+        </field>
+    </record>
+
+    <!-- Servicios WS -->
+    <record id="action_stp_consult_ws_services_catalog" model="ir.actions.act_window">
+        <field name="name">WS Servicios Web</field>
+        <field name="res_model">stp.consult.ws.services.catalog</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">
+            {
+                "toolbar": {
+                    "action": [
+                        {
+                            "name": "Sincronizar Catálogo",
+                            "type": "ir.actions.act_window",
+                            "res_model": "stp.consult.ws.services",
+                            "view_mode": "form",
+                            "target": "new"
+                        }
+                    ]
+                }
+            }
+        </field>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay instituciones guardadas.
+            </p>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- VISTA -->
+    <!-- ========================= -->
+
+    <record id="view_stp_registra_orden_form" model="ir.ui.view">
+        <field name="name">stp.registra.orden.form</field>
+        <field name="model">stp.order.register.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Registra Orden STP">
+                <sheet>
+
+                    <group string="Datos Generales">
+                        <field name="empresa_id"/>
+                        <field name="clave_rastreo_preview"/>
+                        <field name="monto"/>
+                        <field name="referencia_numerica"/>
+                        <field name="concepto_pago"/>
+                    </group>
+
+                    <group string="Ordenante">
+                        <field name="institucion_operante_id"/>
+                        <field name="tipo_cuenta_ordenante_id"/>
+                        <field name="nombre_ordenante"/>
+                        <field name="cuenta_ordenante"/>
+                        <field name="rfc_curp_ordenante"/>
+                    </group>
+
+                    <group string="Beneficiario">
+                        <field name="institucion_contraparte_id"/>
+                        <field name="tipo_cuenta_beneficiario_id"/>
+                        <field name="nombre_beneficiario"/>
+                        <field name="cuenta_beneficiario"/>
+                        <field name="rfc_curp_beneficiario"/>
+                    </group>
+
+                    <group string="Geolocalización">
+                        <field name="latitud"/>
+                        <field name="longitud"/>
+                    </group>
+
+                    <button name="action_enviar_stp"
+                                string="Enviar a STP"
+                                type="object"
+                                class="btn-primary"/>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stp_registra_orden_tree" model="ir.ui.view">
+        <field name="name">stp.registra.orden.tree</field>
+        <field name="model">stp.order.register.wizard</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="clave_rastreo"/>
+                <field name="cuenta_ordenante"/>
+                <field name="cuenta_beneficiario"/>
+                <field name="monto"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Consulta de Orden Fecha Actual-->
+    <record id="view_stp_consult_order_current_date_form" model="ir.ui.view">
+        <field name="name">stp.consult.current.date.form</field>
+        <field name="model">stp.consult.order.current.date</field>
+        <field name="arch" type="xml">
+            <form string="Consulta Fecha Actual">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group>
+                        <field name="total" readonly="1"/>
+                        <field name="pagina" readonly="1"/>
+                        <field name="total_paginas" readonly="1"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree decoration-success="estado == 'Autorizada'" decoration-danger="estado == 'Rechazada'" decoration-warning="estado == 'Pendiente'">
+                        <field name="clave_rastreo"/>
+                        <field name="monto"/>
+                        <field name="estado" widget="badge"/>
+                        <field name="nombre_beneficiario"/>
+                        <field name="cuenta_beneficiario"/>
+                        <field name="fecha_operacion"/>
+                        <field name="ts_captura"/>
+                        <button name="action_open_cep"
+                                type="object"
+                                string="Ver CEP"
+                                class="btn-primary"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_current_date"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Orden Historico-->
+    <record id="view_stp_consult_order_historical_form" model="ir.ui.view">
+        <field name="name">stp.consult.historical.form</field>
+        <field name="model">stp.consult.order.historical</field>
+        <field name="arch" type="xml">
+            <form string="Consulta Historica">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="operation_date"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group>
+                        <field name="total" readonly="1"/>
+                        <field name="pagina" readonly="1"/>
+                        <field name="total_paginas" readonly="1"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree decoration-success="estado == 'Autorizada'" decoration-danger="estado == 'Rechazada'" decoration-warning="estado == 'Pendiente'">
+                        <field name="clave_rastreo"/>
+                        <field name="monto"/>
+                        <field name="estado" widget="badge"/>
+                        <field name="nombre_beneficiario"/>
+                        <field name="cuenta_beneficiario"/>
+                        <field name="fecha_operacion"/>
+                        <field name="ts_captura"/>
+                        <button name="action_open_cep_historical"
+                                type="object"
+                                string="Ver CEP"
+                                class="btn-primary"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_historical_date"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Orden Natural-->
+    <record id="view_stp_consult_order_natural_form" model="ir.ui.view">
+        <field name="name">stp.consult.natural.form</field>
+        <field name="model">stp.consult.order.natural</field>
+        <field name="arch" type="xml">
+            <form string="Consulta Natural">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="natural_date"/>
+                    </group>
+                    <group>
+                        <field name="time_capture_start"/>
+                        <field name="time_capture_end"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group>
+                        <field name="total" readonly="1"/>
+                        <field name="pagina" readonly="1"/>
+                        <field name="total_paginas" readonly="1"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree decoration-success="estado == 'Autorizada'" decoration-danger="estado == 'Rechazada'" decoration-warning="estado == 'Pendiente'">
+                        <field name="clave_rastreo"/>
+                        <field name="monto"/>
+                        <field name="estado" widget="badge"/>
+                        <field name="nombre_beneficiario"/>
+                        <field name="cuenta_beneficiario"/>
+                        <field name="fecha_operacion"/>
+                        <field name="ts_captura"/>
+                        <button name="action_open_cep_natural"
+                                type="object"
+                                string="Ver CEP"
+                                class="btn-primary"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_natural"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Saldo en Cuenta -->
+    <record id="view_stp_consult_account_balance_form" model="ir.ui.view">
+        <field name="name">stp.consult.account.balance.form</field>
+        <field name="model">stp.consult.account.balance</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Saldo en Cuenta">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                    <group>
+                        <field name="ordering_account"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree>
+                        <field name="cargos_pendientes"/>
+                        <field name="saldo"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_account_balance"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Saldo en Cuenta Historico -->
+    <record id="view_stp_consult_account_balance_historical_form" model="ir.ui.view">
+        <field name="name">stp.consult.account.balance.historical.form</field>
+        <field name="model">stp.consult.account.balance.historical</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Saldo en Cuenta Historico">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="date"/>
+                    </group>
+                    <group>
+                        <field name="ordering_account"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree>
+                        <field name="cargos_pendientes"/>
+                        <field name="saldo"/>
+                        <field name="date"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_account_balance_historical"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Saldo en Comprobante Fecha Natural -->
+    <record id="view_stp_consult_receipt_naturaldate_form" model="ir.ui.view">
+        <field name="name">stp.consult.receipt.naturaldate.form</field>
+        <field name="model">stp.consult.receipt.naturaldate</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Comprobante">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="tracking_key"/>
+                    </group>
+                    <group>
+                        <field name="natural_date"/>
+                    </group>
+                </group>
+
+<!--                <field name="line_ids">-->
+<!--                    <tree>-->
+<!--                        <field name="cargos_pendientes"/>-->
+<!--                        <field name="saldo"/>-->
+<!--                        <field name="date"/>-->
+<!--                    </tree>-->
+<!--                </field>-->
+
+                <footer>
+                    <button name="action_consult_receipt_naturaldate"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Saldo en Comprobante Fecha Operación -->
+    <record id="view_stp_consult_receipt_operation_date_form" model="ir.ui.view">
+        <field name="name">stp.consult.receipt.operation.date.form</field>
+        <field name="model">stp.consult.receipt.operation.date</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Comprobante">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="tracking_key"/>
+                    </group>
+                    <group>
+                        <field name="operation_date"/>
+                    </group>
+                </group>
+
+                <footer>
+                    <button name="action_consult_receipt_operation_date"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Conciliacion de Saldo Historico -->
+    <record id="view_stp_consult_balance_conciliation_historical_form" model="ir.ui.view">
+        <field name="name">stp.consult.balance.conciliation.historical.form</field>
+        <field name="model">stp.consult.balance.conciliation.historical</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Conciliacion Historica">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                    <group>
+                        <field name="operation_date"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group>
+                        <field name="total" readonly="1"/>
+                        <field name="pagina" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="total_paginas" readonly="1"/>
+                        <field name="saldo_inicial" readonly="1"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree decoration-success="estado == 'Autorizada'" decoration-danger="estado == 'Rechazada'" decoration-warning="estado == 'Pendiente'">
+                        <field name="clave_rastreo"/>
+                        <field name="tipo_orden"/>
+                        <field name="estado" widget="badge"/>
+                        <field name="concepto_pago"/>
+                        <field name="fecha_operacion"/>
+                        <field name="fecha_natural"/>
+                        <field name="fecha_liquidacion"/>
+                        <field name="cargo"/>
+                        <field name="abono"/>
+                        <field name="saldo"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_balance_conciliation_historical"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Conciliacion de Saldo -->
+    <record id="view_stp_consult_balance_conciliation_form" model="ir.ui.view">
+        <field name="name">stp.consult.balance.conciliation.form</field>
+        <field name="model">stp.consult.balance.conciliation</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Conciliacion">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                </group>
+
+                <group>
+                    <group>
+                        <field name="total" readonly="1"/>
+                        <field name="pagina" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="total_paginas" readonly="1"/>
+                        <field name="saldo_inicial" readonly="1"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree decoration-success="estado == 'Autorizada'" decoration-danger="estado == 'Rechazada'" decoration-warning="estado == 'Pendiente'">
+                        <field name="clave_rastreo"/>
+                        <field name="tipo_orden"/>
+                        <field name="estado" widget="badge"/>
+                        <field name="concepto_pago"/>
+                        <field name="fecha_operacion"/>
+                        <field name="fecha_natural"/>
+                        <field name="fecha_liquidacion"/>
+                        <field name="cargo"/>
+                        <field name="abono"/>
+                        <field name="saldo"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_balance_conciliation"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+        <!-- Consulta de Instituciones -->
+    <record id="view_stp_consult_institutions_form" model="ir.ui.view">
+        <field name="name">stp.consult.institutions.form</field>
+        <field name="model">stp.consult.institutions</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Instituciones">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree>
+                        <field name="clave"/>
+                        <field name="participante"/>
+                        <field name="estado" widget="badge"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_intitutions"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- ========================= -->
+    <!-- VISTA DE CODI -->
+    <!-- ========================= -->
+    <record id="view_stp_codi_consult_form" model="ir.ui.view">
+        <field name="name">stp.codi.consult.form</field>
+        <field name="model">stp.codi.consult</field>
+        <field name="arch" type="xml">
+            <form string="Consulta Estado de CoDi">
+                <group>
+                    <field name="company_id"/>
+                    <field name="folio_codi"/>
+                </group>
+
+
+                <field name="line_ids">
+                    <tree>
+                        <field name="estado_codi"/>
+                        <field name="folio_codi"/>
+                        <field name="estado_peticion" widget="badge"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stp_codi_register_qr_tree" model="ir.ui.view">
+        <field name="name">stp.codi.register.qr.tree</field>
+        <field name="model">stp.codi.register.qr</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="company_id"/>
+                <field name="beneficiary_name"/>
+                <field name="beneficiary_bank"/>
+                <field name="amount"/>
+                <field name="stp_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_stp_codi_register_qr_form" model="ir.ui.view">
+        <field name="name">stp.codi.register.qr.form</field>
+        <field name="model">stp.codi.register.qr</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <form string="Registra Cobro QR">
+                <sheet>
+                    <header>
+                        <button name="action_enviar"
+                                type="object"
+                                string="Generar QR"
+                                class="btn-primary"/>
+                    </header>
+                    <!-- Información General -->
+                    <group string="Información General">
+                        <group>
+                            <field name="company_id"/>
+                            <field name="commerce_reference"/>
+                            <field name="concept"/>
+                        </group>
+
+                        <group>
+                            <field name="time_limit_minutes"/>
+                            <field name="amount"/>
+                            <field name="spei_payment_type"/>
+                        </group>
+                    </group>
+
+                    <!-- Beneficiario -->
+                    <group string="Información del Beneficiario">
+                        <group>
+                            <field name="beneficiary_name"/>
+                            <field name="beneficiary_bank"/>
+                        </group>
+
+                        <group>
+                            <field name="beneficiary_account_type"/>
+                            <field name="beneficiary_account"/>
+                        </group>
+                    </group>
+
+                    <group string="Codigo QR CoDi">
+                        <field name="qr_image" widget="image" nolabel="1" options="{'size': [500, 500]}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stp_codi_qr_popup_form" model="ir.ui.view">
+        <field name="name">stp.codi.qr.popup.form</field>
+        <field name="model">stp.codi.register.qr</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form string="Escanea el QR para pagarlo" create="false" edit="false" delete="false">
+                <sheet>
+                    <div style="text-align: center; padding: 20px;">
+                        <h2>Escanea el QR para completar el pago</h2>
+                        <field name="qr_image" widget="image" nolabel="1"
+                               options="{'size': [400, 400]}"/>
+                        <p style="margin-top: 20px; font-size: 16px;">
+                            Por favor escanea el QR usando tu aplicación bancaria.
+                        </p>
+                        <br/>
+                        <field name="stp_id" readonly="1"/>
+                    </div>
+                    <footer>
+                        <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- ACCIÓN DE CODI -->
+    <!-- ========================= -->
+    <record id="action_stp_codi_consult" model="ir.actions.act_window">
+        <field name="name">Consulta de Estado</field>
+        <field name="res_model">stp.codi.consult</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_stp_codi_cobro_qr" model="ir.actions.act_window">
+        <field name="name">Registro de Cobro QR</field>
+        <field name="res_model">stp.codi.register.qr</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay cobros generados aun.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_stp_codi_cobro_qr_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_stp_codi_register_qr_tree"/>
+        <field name="act_window_id" ref="action_stp_codi_cobro_qr"/>
+    </record>
+
+    <record id="action_stp_codi_cobro_qr_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_stp_codi_register_qr_form"/>
+        <field name="act_window_id" ref="action_stp_codi_cobro_qr"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- VISTAS PARA WS SERVICIOS WEB -->
+    <!-- ========================= -->
+
+    <!-- Consulta de Catalogo de Servicios -->
+    <record id="view_stp_consult_ws_services_form" model="ir.ui.view">
+        <field name="name">stp.consult.ws.services.form</field>
+        <field name="model">stp.consult.ws.services</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de WS Servicios">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                    <group>
+                        <field name="filter_catalog"/>
+                    </group>
+                </group>
+
+                <field name="line_ids" domain="[('catalog_title', '=', filter_catalog)]">
+                    <tree default_group_by="catalog_title">
+                        <!-- Imagen del logo -->
+                        <field name="producto_logo" widget="image" string="Logo"/>
+                                <!-- Datos clave -->
+                        <field name="catalog_title" string="Catálogo"/>
+                        <field name="servicio_nombre" string="Servicio"/>
+                        <field name="producto_nombre" string="Producto"/>
+                        <field name="precio"/>
+                        <field name="producto_ubicacion" string="Ubicación"/>
+
+                        <!-- Referencia -->
+                        <field name="tipo_dato_referencia" string="Tipo Dato Ref."/>
+                        <field name="longitud_referencia" string="Long. Ref."/>
+                        <field name="has_digito_verificador"/>
+
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_ws_services"
+                            type="object"
+                            string="Consultar"
+                            class="oe_highlight"/>
+                    <button name="action_save_catalog"
+                            type="object"
+                            string="Guardar Catálogo"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Pago Sin Referencia -->
+    <record id="view_stp_ws_payment_without_reference_form" model="ir.ui.view">
+        <field name="name">stp.ws.payment.without.reference.form</field>
+        <field name="model">stp.payment.service.without.reference</field>
+        <field name="arch" type="xml">
+            <form string="Registra Pago Sin referencia">
+                <sheet>
+                    <group string="Datos Generales">
+                        <field name="company_id"/>
+                        <field name="catalog"/>
+                        <field name="product_id"/>
+                        <field name="monto"/>
+                        <field name="ordering_account"/>
+                        <field name="phone"/>
+                    </group>
+
+                    <group string="Geolocalización">
+                        <field name="latitud"/>
+                        <field name="longitud"/>
+                    </group>
+                <!-- RESPUESTA STP -->
+                    <group string="Resultado STP">
+                        <field name="estado" readonly="1"/>
+                        <field name="mensaje" readonly="1"/>
+                        <field name="num_autorizacion" readonly="1"/>
+                        <field name="clave_rastreo" readonly="1"/>
+                        <field name="referencia_respuesta" readonly="1"/>
+                        <field name="servicio_respuesta" readonly="1"/>
+                        <field name="monto" readonly="1"/>
+                    </group>
+
+                    <!-- PIN Y UPC (solo si vienen) -->
+                    <group string="Datos de Canje">
+                        <field name="pin" readonly="1"/>
+                        <field name="upc" readonly="1"/>
+                    </group>
+
+                    <!-- LEYENDA -->
+                    <group string="Leyenda">
+                        <field name="leyenda" readonly="1"/>
+                    </group>
+
+                    <!-- JSON completo (para debug) -->
+                    <notebook>
+                        <page string="Respuesta JSON">
+                            <field name="response" readonly="1"/>
+                        </page>
+                    </notebook>
+                    <button name="action_send_ws_payment"
+                            string="Generar Pago"
+                            type="object"
+                            class="btn-primary"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stp_ws_payment_without_reference_tree" model="ir.ui.view">
+        <field name="name">stp.ws.payment.service.without.reference.tree</field>
+        <field name="model">stp.payment.service.without.reference</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="company_id"/>
+                <field name="servicio_respuesta"/>
+                <field name="monto"/>
+                <field name="num_autorizacion"/>
+                <field name="clave_rastreo"/>
+            </tree>
+        </field>
+    </record>
+
+        <!-- Pago Con Referencia -->
+    <record id="view_stp_ws_payment_with_reference_form" model="ir.ui.view">
+        <field name="name">stp.ws.payment.with.reference.form</field>
+        <field name="model">stp.payment.service.with.reference</field>
+        <field name="arch" type="xml">
+            <form string="Registra Pago Con referencia">
+                <sheet>
+                    <group string="Datos Generales">
+                        <field name="company_id"/>
+                        <field name="catalog_id"/>
+                        <field name="product_id"/>
+                        <field name="monto"/>
+                        <field name="ordering_account"/>
+                        <field name="reference"/>
+                    </group>
+
+                    <group string="Geolocalización">
+                        <field name="latitud"/>
+                        <field name="longitud"/>
+                    </group>
+                    <!-- ========================= -->
+                    <!-- RESPUESTA STP -->
+                    <!-- ========================= -->
+                    <group string="Resultado STP" col="2">
+
+                        <field name="estado" readonly="1"/>
+                        <field name="mensaje" readonly="1"/>
+
+                        <field name="num_autorizacion" readonly="1"/>
+                        <field name="clave_rastreo" readonly="1"/>
+
+                        <field name="referencia_respuesta" readonly="1"/>
+                        <field name="servicio_respuesta" readonly="1"/>
+
+                        <field name="cuenta_respuesta" readonly="1"/>
+                        <field name="monto_respuesta" readonly="1"/>
+
+                        <field name="fecha_respuesta" readonly="1"/>
+                        <field name="hora_respuesta" readonly="1"/>
+
+                    </group>
+
+                    <!-- ========================= -->
+                    <!-- DATOS ADICIONALES -->
+                    <!-- ========================= -->
+                    <group string="Datos de Canje">
+                        <field name="upc" readonly="1"/>
+                    </group>
+
+
+                    <!-- ========================= -->
+                    <!-- LEYENDA -->
+                    <!-- ========================= -->
+                    <group string="Leyenda">
+                        <field name="leyenda" readonly="1"/>
+                    </group>
+
+
+                    <!-- ========================= -->
+                    <!-- JSON COMPLETO (DEBUG) -->
+                    <!-- ========================= -->
+                    <notebook>
+                        <page string="Respuesta JSON">
+                            <field name="response" readonly="1" nolabel="1"/>
+                        </page>
+                    </notebook>
+                    <button name="action_send_ws_payment"
+                            string="Generar Pago"
+                            type="object"
+                            class="btn-primary"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stp_ws_payment_with_reference_tree" model="ir.ui.view">
+        <field name="name">stp.ws.payment.service.with.reference.tree</field>
+        <field name="model">stp.payment.service.with.reference</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="company_id"/>
+                <field name="num_autorizacion"/>
+                <field name="referencia_respuesta"/>
+                <field name="monto"/>
+                <field name="clave_rastreo"/>
+                <field name="fecha_respuesta"/>
+                <field name="hora_respuesta"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Verificacion de Referencia -->
+    <record id="view_stp_consult_ws_services_form" model="ir.ui.view">
+        <field name="name">stp.consult.ws.reference.verification.form</field>
+        <field name="model">stp.consult.ws.reference.verification</field>
+        <field name="arch" type="xml">
+            <form string="Verificación de Referencia WS">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="id_service"/>
+                    </group>
+                    <group>
+                        <field name="reference"/>
+                    </group>
+                </group>
+
+                <field name="line_ids">
+                    <tree>
+                        <field name="mensaje"/>
+                        <field name="monto"/>
+                        <field name="estado" widget="badge"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_consult_ws_reference_verification"
+                            type="object"
+                            string="Consultar"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Validación de Pago de Servicio (Estatus) -->
+    <record id="view_stp_consult_ws_payment_service_validation_form" model="ir.ui.view">
+        <field name="name">stp.consult.ws.payment.service.validation.form</field>
+        <field name="model">stp.consult.ws.payment.service.validation</field>
+        <field name="arch" type="xml">
+            <form string="Consulta de Validación de Pago de Servicio">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="tracking_key"/>
+                    </group>
+                    <group>
+                        <field name="operation_date"/>
+                        <field name="phone_reference"/>
+                    </group>
+                </group>
+
+                <field name="line_ids" readonly="1">
+                    <tree>
+                        <field name="estado"/>
+                        <field name="mensaje"/>
+                        <field name="descripcion" string="Estatus Pago"/>
+                        <field name="num_autorizacion"/>
+                        <field name="clave_rastreo"/>
+                        <field name="referencia"/>
+                        <field name="servicio"/>
+                        <field name="producto"/>
+                        <field name="monto"/>
+                        <field name="fecha"/>
+                        <field name="hora"/>
+                        <field name="upc"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_ws_consult"
+                            type="object"
+                            string="Consultar"
+                            class="oe_highlight"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reimpresión de Ticket -->
+    <record id="view_stp_consult_ws_ticket_reprint_form" model="ir.ui.view">
+        <field name="name">stp.consult.ws.ticket.reprint.form</field>
+        <field name="model">stp.consult.ws.ticket.reprint</field>
+        <field name="arch" type="xml">
+            <form string="Reimpresión de Ticket">
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="tracking_key"/>
+                    </group>
+                    <group>
+                        <field name="operation_date"/>
+                        <field name="authorization_number"/>
+                    </group>
+                </group>
+
+                <field name="line_ids" readonly="1">
+                    <tree>
+                        <field name="estado"/>
+                        <field name="mensaje"/>
+                        <field name="num_autorizacion"/>
+                        <field name="leyenda"/>
+                        <field name="clave_rastreo"/>
+                        <field name="referencia"/>
+                        <field name="servicio"/>
+                        <field name="cuenta"/>
+                        <field name="monto"/>
+                        <field name="fecha"/>
+                        <field name="hora"/>
+                        <field name="upc"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button name="action_ws_consult"
+                            type="object"
+                            string="Consultar"
+                            class="oe_highlight"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- VISTAS PARA LOS CATALOGOS -->
+    <!-- ========================= -->
+
+    <!-- Empresa -->
+    <record id="view_stp_empresa_tree" model="ir.ui.view">
+        <field name="name">stp.empresa.tree</field>
+        <field name="model">stp.empresa</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="nombre"/>
+                <field name="activa"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_stp_empresa_form" model="ir.ui.view">
+        <field name="name">stp.empresa.form</field>
+        <field name="model">stp.empresa</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="nombre"/>
+                        <field name="activa"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Institucion -->
+    <record id="view_stp_institucion_tree" model="ir.ui.view">
+        <field name="name">stp.institucion.tree</field>
+        <field name="model">stp.institucion</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="clave"/>
+                <field name="participante"/>
+                <field name="activa"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_stp_institucion_form" model="ir.ui.view">
+        <field name="name">stp.institucion.form</field>
+        <field name="model">stp.institucion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="clave"/>
+                        <field name="participante"/>
+                        <field name="activa"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tipo de Cuenta -->
+    <record id="view_stp_tipo_cuenta_tree" model="ir.ui.view">
+        <field name="name">stp.tipo.cuenta.tree</field>
+        <field name="model">stp.tipo.cuenta</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="clave"/>
+                <field name="descripcion"/>
+                <field name="activa"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_stp_tipo_cuenta_form" model="ir.ui.view">
+        <field name="name">stp.tipo.cuenta.form</field>
+        <field name="model">stp.tipo.cuenta</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="clave"/>
+                        <field name="descripcion"/>
+                        <field name="activa"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tipo de Catalogo -->
+    <record id="view_stp_ws_type_catalog_tree" model="ir.ui.view">
+        <field name="name">stp.ws.type.catalog.tree</field>
+        <field name="model">stp.ws.type.catalog</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="id_catalog"/>
+                <field name="type"/>
+                <field name="activa"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_stp_ws_type_catalog_form" model="ir.ui.view">
+        <field name="name">stp.ws.type.catalog.form</field>
+        <field name="model">stp.ws.type.catalog</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="id_catalog"/>
+                        <field name="type"/>
+                        <field name="activa"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consulta de Catalogo de Servicios -->
+    <record id="view_stp_consult_ws_services_catalog_form" model="ir.ui.view">
+    <field name="name">stp.service.catalog.form</field>
+    <field name="model">stp.consult.ws.services.catalog</field>
+    <field name="arch" type="xml">
+        <form string="Catálogo Servicio STP">
+            <sheet>
+                <group>
+                    <field name="empresa_id"/>
+                    <field name="catalog_title"/>
+                    <field name="servicio_nombre"/>
+                    <field name="producto_nombre"/>
+                    <field name="precio"/>
+                </group>
+                <group>
+                    <field name="tipo_dato_referencia"/>
+                    <field name="longitud_referencia"/>
+                    <field name="show_ayuda"/>
+                </group>
+                <group>
+                    <field name="producto_logo" widget="image"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+    <record id="view_stp_consult_ws_services_catalog_tree" model="ir.ui.view">
+    <field name="name">stp.consult.ws.services.catalog.tree</field>
+    <field name="model">stp.consult.ws.services.catalog</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="producto_logo" widget="image"/>
+            <field name="catalog_title"/>
+            <field name="servicio_nombre"/>
+            <field name="producto_nombre"/>
+            <field name="precio"/>
+
+        </tree>
+    </field>
+</record>
+
+    <!-- ========================= -->
+    <!-- MENÚ APP ROOT -->
+    <!-- ========================= -->
+
+    <menuitem
+        id="menu_stp_root"
+        name="STP / CoDi"
+        sequence="40"
+        web_icon="contabilidad_kuale,static/description/stp.png"
+        groups="account.group_account_user"/>
+
+    <!-- ========================= -->
+    <!-- MENÚ INTERMEDIO -->
+    <!-- ========================= -->
+
+    <menuitem id="menu_stp_operaciones"
+              name="Operaciones"
+              parent="menu_stp_root"
+              sequence="1"
+              groups="account.group_account_user"/>
+
+    <menuitem id="menu_stp_codi"
+              name="CoDi"
+              parent="menu_stp_root"
+              sequence="2"/>
+
+    <menuitem id="menu_stp_ws"
+              name="Servicios Web"
+              parent="menu_stp_root"
+              sequence="3"/>
+
+    <menuitem id="menu_stp_catalogos"
+          name="Catálogos"
+          parent="menu_stp_root"
+          sequence="4"/>
+
+    <!-- ========================= -->
+    <!-- MENÚ CON REGISTRA ORDEN -->
+    <!-- ========================= -->
+
+    <menuitem id="menu_stp_registra_orden"
+              name="Registra Orden"
+              parent="menu_stp_operaciones"
+              action="action_stp_registra_orden"
+              sequence="1"/>
+
+    <!-- ========================= -->
+    <!-- SUBMENÚ DE CONSULTAS -->
+    <!-- ========================= -->
+
+    <!--    Consulta de Operaciones  -->
+    <menuitem id="menu_stp_consulta_operaciones"
+              name="Consulta de Operaciones"
+              parent="menu_stp_operaciones"
+              sequence="10"/>
+
+    <menuitem id="menu_stp_fecha_actual"
+          name="Fecha Actual"
+          parent="menu_stp_consulta_operaciones"
+          action="action_stp_consult_current_date"/>
+
+    <menuitem id="menu_stp_historical"
+          name="Historico"
+          parent="menu_stp_consulta_operaciones"
+          action="action_stp_consult_historical"/>
+
+    <menuitem id="menu_stp_natural"
+          name="Natural"
+          parent="menu_stp_consulta_operaciones"
+          action="action_stp_consult_natural"/>
+
+    <!--    Consulta de Cuenta  -->
+    <menuitem id="menu_stp_consulta_cuenta"
+              name="Consulta de Cuenta"
+              parent="menu_stp_operaciones"
+              sequence="10"/>
+
+    <menuitem id="menu_stp_account_balance"
+              name="Saldo Actual"
+              parent="menu_stp_consulta_cuenta"
+              action="action_stp_account_balance"/>
+
+    <menuitem id="menu_stp_account_balance_historical"
+              name="Saldo Historico"
+              parent="menu_stp_consulta_cuenta"
+              action="action_stp_account_balance_historical"/>
+
+    <!--    Consulta de Comprobante  -->
+    <menuitem id="menu_stp_consulta_comprobante"
+              name="Consulta de Comprobante"
+              parent="menu_stp_operaciones"
+              sequence="10"/>
+
+    <menuitem id="menu_stp_receipt_natural_date"
+              name="Fecha Natural"
+              parent="menu_stp_consulta_comprobante"
+              action="action_stp_consult_receipt_natural_date"/>
+
+    <menuitem id="menu_stp_receipt_operation_date"
+              name="Fecha Operativa"
+              parent="menu_stp_consulta_comprobante"
+              action="action_stp_consult_receipt_operation_date"/>
+
+        <!--    Consulta de Conciliacion  -->
+    <menuitem id="menu_stp_consulta_conciliacion"
+              name="Consulta de Conciliacion de Saldo"
+              parent="menu_stp_operaciones"
+              sequence="10"/>
+
+    <menuitem id="menu_stp_balance_conciliation_historical"
+              name="Conciliacion Historica"
+              parent="menu_stp_consulta_conciliacion"
+              action="action_stp_consult_balance_conciliation_historical"/>
+
+    <menuitem id="menu_stp_balance_conciliation"
+              name="Conciliacion Actual"
+              parent="menu_stp_consulta_conciliacion"
+              action="action_stp_consult_balance_conciliation"/>
+
+            <!--    Consulta de Instituciones  -->
+    <menuitem id="menu_stp_consulta_instituciones"
+              name="Consulta de Instituciones"
+              parent="menu_stp_operaciones"
+              sequence="10"/>
+
+    <menuitem id="menu_stp_institutions"
+              name="Instituciones"
+              parent="menu_stp_consulta_instituciones"
+              action="action_stp_consult_institutions"/>
+
+    <!-- ========================= -->
+    <!-- SUBMENÚ DE CODI -->
+    <!-- ========================= -->
+
+    <!--    Consulta de Instituciones  -->
+    <menuitem id="menu_stp_codi_service_consult"
+              name="Consultas"
+              parent="menu_stp_codi"
+              sequence="10"/>
+
+    <menuitem id="menu_stp_codi_consult"
+          name="Consulta de Estado CoDi"
+          parent="menu_stp_codi_service_consult"
+          action="action_stp_codi_consult"/>
+
+    <!--    Registros de Cobros  -->
+    <menuitem id="menu_stp_codi_service_cobros"
+              name="Registro de Cobros"
+              parent="menu_stp_codi"
+              sequence="10"/>
+
+    <menuitem id="menu_stp_codi_register_qr"
+          name="Cobro Por QR"
+          parent="menu_stp_codi_service_cobros"
+          action="action_stp_codi_cobro_qr"/>
+
+    <!-- ========================= -->
+    <!-- SUBMENÚ DE WS SERVICIOS WEB -->
+    <!-- ========================= -->
+    <menuitem id="menu_stp_ws_services"
+              name="Catalogo de Servicios"
+              parent="menu_stp_ws"
+              action="action_stp_consult_ws_services"
+              sequence="1"/>
+
+    <menuitem id="menu_stp_ws_payment_without_reference"
+              name="Pago Sin Referencia"
+              parent="menu_stp_ws"
+              action="action_stp_ws_payment_without_reference"/>
+
+    <menuitem id="menu_stp_ws_payment_with_reference"
+              name="Pago Con Referencia"
+              parent="menu_stp_ws"
+              action="action_stp_ws_payment_with_reference"/>
+
+    <menuitem id="menu_stp_ws_reference_verification"
+              name="Verificación de Referencia"
+              parent="menu_stp_ws"
+              action="action_stp_consult_ws_reference_verification"/>
+
+    <menuitem id="menu_stp_ws_payment_service_validation"
+              name="Validación de Pago de Servicio"
+              parent="menu_stp_ws"
+              action="action_stp_consult_ws_payment_service_validation"/>
+
+    <menuitem id="menu_stp_ws_ticket_reprint"
+              name="Reimpresión de Ticket"
+              parent="menu_stp_ws"
+              action="action_stp_consult_ws_ticket_reprint"/>
+
+    <!-- ========================= -->
+    <!-- SUBMENÚ DE CATALOGO -->
+    <!-- ========================= -->
+    <!-- Empresa -->
+    <menuitem id="menu_stp_empresas"
+          name="Empresas"
+          parent="menu_stp_catalogos"
+          action="action_stp_empresa"/>
+
+    <!-- Institucion -->
+    <menuitem id="menu_stp_institucion"
+          name="Instituciones"
+          parent="menu_stp_catalogos"
+          action="action_stp_instituciones"/>
+
+    <!-- Tipo de Cuenta -->
+    <menuitem id="menu_stp_tipo_cuenta"
+          name="Tipo de Cuenta"
+          parent="menu_stp_catalogos"
+          action="action_stp_tipo_cuenta"/>
+
+    <menuitem id="menu_stp_ws_catalogo"
+              name="Servicios Web"
+              parent="menu_stp_catalogos"
+              sequence="10"/>
+
+    <!-- Tipo de Catalogo -->
+    <menuitem id="menu_stp_ws_type_catalog"
+          name="Tipo de Catalogo"
+          parent="menu_stp_ws_catalogo"
+          action="action_stp_ws_type_catalog"/>
+
+    <!-- WS Servicios Web -->
+    <menuitem id="menu_stp_ws_services_catalog"
+              name="Servicios"
+              parent="menu_stp_ws_catalogo"
+              action="action_stp_consult_ws_services_catalog"/>
+</odoo>

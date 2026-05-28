@@ -1,0 +1,33 @@
+<odoo>
+
+    <record id="verification_dashboard_products" model="verifications.dashboard">
+        <field name="name">Productos</field>
+        <field name="module_type">product</field>
+    </record>
+
+    <record id="verification_dashboard_discounts" model="verifications.dashboard">
+        <field name="name">Descuentos</field>
+        <field name="module_type">discount</field>
+    </record>
+
+    <record id="verification_dashboard_employees" model="verifications.dashboard">
+        <field name="name">Empleados</field>
+        <field name="module_type">employee</field>
+    </record>
+
+    <record id="verification_dashboard_payform" model="verifications.dashboard">
+        <field name="name">Formas de pago</field>
+        <field name="module_type">payment_form</field>
+    </record>
+
+    <record id="verification_dashboard_paymethod" model="verifications.dashboard">
+        <field name="name">Métodos de pago</field>
+        <field name="module_type">payment_method</field>
+    </record>
+
+    <record id="verification_dashboard_selltype" model="verifications.dashboard">
+        <field name="name">Tipos de venta</field>
+        <field name="module_type">sell_type</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_pixl_price_history_tree" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.pixl_price_history.tree</field>
+            <field name="model">contabilidad_kuale.pixl_price_history</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="date"/>
+                    <field name="product_id"/>
+                    <field name="price_a"/>
+                    <field name="price_b"/>
+                    <field name="price_c"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_pixl_price_history_form" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.pixl_price_history.form</field>
+            <field name="model">contabilidad_kuale.pixl_price_history</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date"/>
+                        <field name="product_id"/>
+                        <field name="third_party_id"/>
+                        <field name="price_a"/>
+                        <field name="price_b"/>
+                        <field name="price_c"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_pixl_price_history_search" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.pixl_price_history.search</field>
+            <field name="model">contabilidad_kuale.pixl_price_history</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="date"/>
+                    <field name="product_id"/>
+                    <field name="third_party_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_pixl_history" model="ir.actions.act_window">
+            <field name="name">Historial de costos PIXL</field>
+            <field name="res_model">contabilidad_kuale.pixl_price_history</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'group_by':'product_id'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay tickets registrados aún.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_product_pixl_cost_history" name="Historial de Costos PIXL"
+                  parent="stock.menu_stock_inventory_control" action="action_pixl_history"/>
+
+    </data>
+</odoo>

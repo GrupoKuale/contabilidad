@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavepais_filter" model="ir.ui.view">
+            <field name="name">filtro.clavepais</field>
+            <field name="model">cfdi.clavepais</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_pais" string="Todo" filter_domain="['|',('Clave_pais','ilike',self),
+                              ('Nombre','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavepais_view_form" model="ir.ui.view">
+            <field name="name">clavepais form</field>
+            <field name="model">cfdi.clavepais</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_pais"/>
+                            <field name="Nombre"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavepais_view_tree" model="ir.ui.view">
+            <field name="name">clavepais tree</field>
+            <field name="model">cfdi.clavepais</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_pais asc'  >
+                    <field name="Clave_pais"/>
+                    <field name="Nombre"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavepais">
+            <field name="name">clavepais</field>
+            <field name="res_model">cfdi.clavepais</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

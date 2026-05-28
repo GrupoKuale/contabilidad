@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <menuitem name="Contabilidad kuale" id="contabilidad_kuale_menu"
+                  web_icon="contabilidad_kuale,static/description/contabilidad.png">
+
+            <menuitem id="contabilidad_kuale_custom_sales" name="Ventas y Facturacion" sequence="1">
+                <menuitem id="ticket_monitor_sales_menu" name="Ventas de mostrador" action="action_ticket_monitor"/>
+                <menuitem id="invoice_complaint_tickets" name="Problemas de facturación"
+                          action="action_invoice_complaint_ticket"/>
+                <menuitem id="ticket_monitor_audit_menu" name="Auditoria venta de mostrador"
+                          action="action_ticket_monitor_audit"/>
+                <menuitem id="menu_ticket_discount" name="Catálogo de descuentos"
+                          action="action_ticket_discount"/>
+                <menuitem id="menu_ticket_monitor_summary_history" name="Historial de Facturas Globales"
+                          action="action_ticket_monitor_summary_history"/>
+                <menuitem id="menu_ticket_monitor_summary" name="Resumen de Tickets Mensuales(validacion)"
+                          action="action_ticket_monitor_summary"/>
+                <menuitem id="menu_sales_system_summary_dashboard" name="Resumen de Ventas"
+                          action="action_sales_system_summary_dashboard"/>
+                <menuitem id="menu_cash_cut_main" name="Cortes de Caja" action="action_cash_cut"/>
+                <menuitem id="menu_bank_transaction" name="Estados de Cuenta FTP" action="action_bank_transaction"/>
+            </menuitem>
+
+            <menuitem id="menu_accounting_kuale_custom_account" name="Contabilidad" sequence="2">
+                <menuitem id="menu_finance_entries_accounting_miscellaneous" name="Diarios">
+                    <menuitem id="menu_action_move_journal_line_form" action="account.action_move_journal_line"
+                              groups="account.group_account_readonly" name="Asientos contables" sequence="1"/>
+                    <menuitem id="menu_action_account_moves_all" action="account.action_account_moves_all"
+                              groups="account.group_account_readonly" name="Apuntes contables" sequence="2"/>
+                    <menuitem id="menu_action_account_journal_form" action="account.action_account_journal_form"
+                              name="Diarios" groups="account.group_account_manager" sequence="3"/>
+                </menuitem>
+                <menuitem id="menu_accounting_kuale_custom_banks" name="Bancos">
+                    <menuitem id="menu_account_supplier_accounts" name="Cuentas Bancarias"
+                              action="account.action_account_supplier_accounts"/>
+                    <menuitem id="menu_action_account_form" name="Cuentas Contables"
+                              action="account.action_account_form"/>
+                    <menuitem id="menu_account_group" name="Grupos de cuenta" action="action_account_group"/>
+                    <menuitem id="menu_codigo_agrupador_sat_root" name="Códigos Agrupadores SAT"
+                              action="action_codigo_agrupador_sat"/>
+                </menuitem>
+                <!-- Menu principal conciliaciones -->
+                <menuitem id="menu_bank_statements_root" name="Extractos Bancarios"/>
+
+                <menuitem id="menu_accounting_kuale_custom_add" name="Adicional">
+                    <menuitem id="menu_action_currency_form" action="base.action_currency_form" name="Divisas"/>
+                    <menuitem id="menu_action_account_fiscal_position_form"
+                              action="account.action_account_fiscal_position_form" name="Posiciones fiscales"/>
+                    <menuitem id="menu_action_tax_group" action="action_account_financial_report_tree"
+                              name="Informes financieros"
+                              groups="base.group_no_one"/>
+
+                </menuitem>
+            </menuitem>
+
+            <menuitem id="menu_accounting_kuale_custom_sat" name="SAT">
+                <menuitem id="menu_action_sat_uploads_form" action="action_sat_uploads_form"
+                          sequence="1" groups="account.group_account_user"/>
+                <menuitem id="menu_action_sat_product_codes_form" sequence="2"
+                          action="action_sat_product_codes_form" groups="account.group_account_user"/>
+                <menuitem id="menu_action_sat_xml_invoices_form" sequence="3"
+                          action="action_sat_xml_invoices_form" groups="account.group_account_user"/>
+
+                <menuitem id="menu_action_supplier_info_sumup" name="Vinculacion productos - xml"
+                          action="action_supplierinfo_sumup"
+                          sequence="4" groups="account.group_account_user"/>
+
+            </menuitem>
+
+            <menuitem id="approvals_dashboard_menu" name="Aprobaciones" action="approvals_dashboard_action"/>
+
+            <menuitem id="menu_verifications_dashboard" name="Validaciones" action="verifications_dashboard_action"/>
+
+            <menuitem id="contabilidad_kuale_custom_configuration" name="Configuracion" sequence="99">
+                <menuitem id="menu_ticket_sell_types_root" name="Tipos de Venta"
+                          action="action_ticket_sell_types"/>
+                <menuitem id="menu_payment_account_types" name="Tipos de Cuenta en venta"
+                          action="action_payment_account_types"/>
+                <menuitem id="cfdi_submenu_catalogos_cfdi" name="Catálogos SAT" sequence="99"/>
+            </menuitem>
+
+        </menuitem>
+
+
+        <!-- menu catalogos SAT -->
+        <menuitem id="cfdi_submenu_claveformadepago" name="Forma de pago" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveformadepago"/>
+        <menuitem id="cfdi_submenu_clavemoneda" name="Moneda" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavemoneda"/>
+        <menuitem id="cfdi_submenu_claveexportacion" name="Exportacion" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveexportacion"/>
+        <menuitem id="cfdi_submenu_clavemetododepago" name="Metodo de pago" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavemetododepago"/>
+        <menuitem id="cfdi_submenu_claveregimenfiscal" name="Regimen fiscal" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveregimenfiscal"/>
+        <menuitem id="cfdi_submenu_clavepais" name="Pais" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavepais"/>
+        <menuitem id="cfdi_submenu_claveusocfdi" name="Uso cfdi" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveusocfdi"/>
+        <menuitem id="cfdi_submenu_claveprodserv" name="Producto servicio" parent="cfdi_submenu_catalogos_cfdi"
+                  action="action_sat_product_codes_form"/>
+        <menuitem id="cfdi_submenu_claveunidad" name="Unidad" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveunidad"/>
+        <menuitem id="cfdi_submenu_claveobjetoimp" name="Objeto impuesto" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveobjetoimp"/>
+        <menuitem id="cfdi_submenu_claveimpuesto" name="Impuesto" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveimpuesto"/>
+        <menuitem id="cfdi_submenu_clavecolonia" name="Colonia" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavecolonia"/>
+        <menuitem id="cfdi_submenu_claveestado" name="Estado" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveestado"/>
+        <menuitem id="cfdi_submenu_clavelocalidad" name="Localidad" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavelocalidad"/>
+        <menuitem id="cfdi_submenu_clavemunicipio" name="Municipio" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavemunicipio"/>
+
+        <!--menuitems conciliaciones-->
+        <menuitem id="menu_bank_reconciliation_main" name=" Conciliación Bancaria" parent="menu_bank_statements_root" sequence="30"/>
+
+        <menuitem id="menu_bank_reconciliation" name="Conciliaciones" parent="menu_bank_reconciliation_main"
+                  action="action_bank_reconciliation" sequence="10"/>
+
+        <menuitem id="menu_bank_reconciliation_lines" name="Líneas de Conciliación"
+                  parent="menu_bank_reconciliation_main" action="action_bank_reconciliation_lines" sequence="20"/>
+
+
+        <!-- Submenú principal -->
+        <menuitem id="menu_bank_statements" name="Movimientos Bancarios"
+                  parent="menu_bank_statements_root" sequence="10"
+                  action="action_santander_bank_statement"/>
+        <!-- Submenú de importación -->
+        <menuitem id="menu_import_statements" name="Importar Extractos"
+                  parent="menu_bank_statements_root" sequence="20"/>
+        <menuitem id="menu_import_santander" name="Importar Santander (TXT)"
+                  parent="menu_import_statements" sequence="10"
+                  action="action_santander_statement_importer"/>
+        <menuitem id="menu_import_santander_csv" name="Importar Santander (CSV)"
+                  parent="menu_import_statements" sequence="15"
+                  action="action_santander_csv_statement_importer"/>
+        <menuitem id="menu_import_banregio" name="Importar Banregio (CSV)"
+                  parent="menu_import_statements" sequence="20"
+                  action="action_banregio_statement_importer"/>
+        <menuitem id="menu_import_imbursa_xlsx" name="Importar Inbursa Excel(XLSX)" parent="menu_import_statements"
+                  sequence="26" action="action_inbursa_xlsx_statement_importer"/>
+
+        <menuitem id="menu_import_bbva_xlsx" name="Importar BBVA Excel (XLSX)"
+                  parent="menu_import_statements" sequence="25"
+                  action="action_bbva_xlsx_statement_importer"/>
+        <menuitem id="menu_import_banamex_csv" name="Importar Banamex(CSV)"
+                  parent="menu_import_statements" sequence="27" action="action_banamex_csv_statement_importer"/>
+        <menuitem id="menu_by_bank" name="Por Banco" parent="menu_bank_statements_root" sequence="30"/>
+        <menuitem id="menu_santander_only" name="Solo Santander" parent="menu_by_bank" sequence="10"
+                  action="action_santander_only"/>
+        <menuitem id="menu_banregio_only" name="Solo Banregio" parent="menu_by_bank" sequence="20"
+                  action="action_banregio_only"/>
+
+    </data>
+</odoo>

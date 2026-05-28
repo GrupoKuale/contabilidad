@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- Vista del formulario para el wizard de verificación masiva CheckID - Versión Final -->
+        <record id="checkid_mass_wizard_form_final" model="ir.ui.view">
+            <field name="name">CheckID Mass Verification Wizard Final</field>
+            <field name="model">checkid.mass.verification.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Verificación Masiva CheckID">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+
+                    <group>
+                        <group name="main_info">
+                            <field name="total_partners" readonly="1"/>
+                            <field name="verification_type"/>
+                            <field name="processed_count" readonly="1" invisible="processed_count == 0"/>
+                        </group>
+                        <group name="results_info">
+                            <field name="successful_verifications" readonly="1" invisible="successful_verifications == 0"/>
+                            <field name="successful_count" readonly="1" invisible="successful_count == 0"/>
+                            <field name="failed_verifications" readonly="1" invisible="failed_verifications == 0"/>
+                            <field name="failed_count" readonly="1" invisible="failed_count == 0"/>
+                            <field name="progress" widget="percentage" readonly="1" invisible="progress == 0"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Contactos" name="partners_page">
+                            <field name="partner_ids" nolabel="1">
+                                <tree editable="false">
+                                    <field name="name"/>
+                                    <field name="rfc" optional="show"/>
+                                    <field name="curp" optional="show"/>
+                                    <field name="vat" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Opciones" name="options_page">
+                            <group>
+                                <group name="basic_options">
+                                    <field name="get_rfc"/>
+                                    <field name="get_curp"/>
+                                    <field name="get_69"/>
+                                    <field name="get_nss"/>
+                                </group>
+                                <group name="advanced_options">
+                                    <field name="get_regimen"/>
+                                    <field name="get_cp"/>
+                                    <field name="get_weeks"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Resultados" name="results_page" invisible="not verification_summary">
+                            <group name="timing_info">
+                                <field name="start_time" readonly="1"/>
+                                <field name="end_time" readonly="1"/>
+                                <field name="completed" readonly="1"/>
+                                <field name="current_partner_name" readonly="1" invisible="not current_partner_name"/>
+                            </group>
+                            <field name="verification_summary" nolabel="1" readonly="1" widget="text"/>
+                        </page>
+                    </notebook>
+
+                    <footer>
+                        <button name="action_verify_mass"
+                                string="Verificar Todos"
+                                type="object"
+                                class="btn-primary"
+                                invisible="verification_summary or state != 'draft'"/>
+
+                        <button name="action_view_verifications"
+                                string="Ver Verificaciones"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="not verification_summary"/>
+
+                        <button string="Cancelar"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <delete model="ir.actions.act_window" id="action_checkid_mass_wizard_final" search="[('res_model', '=', 'checkid.mass.verification.wizard')]"/>
+
+    </data>
+</odoo>

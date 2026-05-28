@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- PLAN DE CUENTAS -->
+
+    <record id="view_kuale_trial_balance" model="ir.ui.view">
+        <field name="name">account.account.kuale.trial.balance</field>
+        <field name="model">account.account</field>
+        <field name="arch" type="xml">
+            <kuale_trial_balance/>
+        </field>
+    </record>
+
+    <record id="action_kuale_trial_balance" model="ir.actions.act_window">
+        <field name="name">Plan de cuentas</field>
+        <field name="res_model">account.account</field>
+        <field name="view_mode">search,kuale_trial_balance</field>
+        <field name="view_id" ref="view_kuale_trial_balance"/>
+    </record>
+
+    <menuitem id="menu_kuale_trial_balance" name="Plan de cuentas"
+              parent="account.menu_finance_reports" action="action_kuale_trial_balance" sequence="95"/>
+
+    <!-- INCOME STATEMENT -->
+
+    <record id="view_kuale_income_statement" model="ir.ui.view">
+        <field name="name">account.account.kuale.income.statement</field>
+        <field name="model">account.account</field>
+        <field name="arch" type="xml">
+            <kuale_income_statement/>
+        </field>
+    </record>
+
+    <record id="action_kuale_income_statement" model="ir.actions.act_window">
+        <field name="name">Estado de resultados</field>
+        <field name="res_model">account.account</field>
+        <field name="view_mode">search,kuale_income_statement</field>
+        <field name="view_id" ref="view_kuale_income_statement"/>
+    </record>
+
+     <menuitem id="menu_kuale_income_statement" name="Estado de resultados"
+              parent="account.menu_finance_reports" action="action_kuale_income_statement" sequence="96"/>
+
+    <!-- FINANCIAL POSITION -->
+    <record id="view_kuale_financial_position" model="ir.ui.view">
+        <field name="name">account.account.kuale.financial.position</field>
+        <field name="model">account.account</field>
+        <field name="arch" type="xml">
+            <kuale_financial_position/>
+        </field>
+    </record>
+
+    <record id="action_kuale_financia_position" model="ir.actions.act_window">
+        <field name="name">Estado de situacion financiera</field>
+        <field name="res_model">account.account</field>
+        <field name="view_mode">search,kuale_financial_position</field>
+        <field name="view_id" ref="view_kuale_financial_position"/>
+    </record>
+
+    <menuitem id="menu_kuale_financial_position" name="Estado de situacion financiera"
+              parent="account.menu_finance_reports" action="action_kuale_financia_position" sequence="97"/>
+
+<!--    static balance -->
+    <record id="view_kuale_static_balance" model="ir.ui.view">
+        <field name="name">account.account.kuale.static.balance</field>
+        <field name="model">account.account</field>
+        <field name="arch" type="xml">
+            <kuale_static_balance/>
+        </field>
+    </record>
+
+    <record id="action_kuale_static_balance" model="ir.actions.act_window">
+        <field name="name">Balanza de resultados (estatica)</field>
+        <field name="res_model">account.account</field>
+        <field name="view_mode">search,kuale_static_balance</field>
+        <field name="view_id" ref="view_kuale_static_balance"/>
+    </record>
+
+    <menuitem id="menu_kuale_static_balance" name="Balance estatico"
+              parent="account.menu_finance_reports" action="action_kuale_static_balance" sequence="98"/>
+
+    <!-- Movimientos auxiliares -->
+    <record id="view_kuale_aux_movement" model="ir.ui.view">
+        <field name="name">account.account.kuale.aux.movement</field>
+        <field name="model">account.account</field>
+        <field name="arch" type="xml">
+            <kuale_aux_movement/>
+        </field>
+    </record>
+
+    <record id="action_kuale_aux_movement" model="ir.actions.act_window">
+        <field name="name">Movimientos Auxiliares</field>
+        <field name="res_model">account.account</field>
+        <field name="view_mode">search,kuale_aux_movement</field>
+        <field name="view_id" ref="view_kuale_aux_movement"/>
+    </record>
+
+    <menuitem id="menu_kuale_aux_movement" name="Movimientos auxiliares"
+              parent="account.menu_finance_reports" action="action_kuale_aux_movement" sequence="99"/>
+
+</odoo>

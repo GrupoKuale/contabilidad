@@ -1,0 +1,27 @@
+<odoo>
+    <record id="approvals_dashboard_purchase" model="approvals.dashboard">
+        <field name="name">Compras</field>
+        <field name="module_type">purchase</field>
+    </record>
+
+    <record id="approvals_dashboard_sale" model="approvals.dashboard">
+        <field name="name">Ventas</field>
+        <field name="module_type">sale</field>
+    </record>
+
+    <record id="approvals_dashboard_expense" model="approvals.dashboard">
+        <field name="name">Gastos</field>
+        <field name="module_type">expense</field>
+    </record>
+
+    <record id="approvals_dashboard_payment_supplier" model="approvals.dashboard">
+        <field name="name">Pagos a proveedores</field>
+        <field name="module_type">payment_supplier</field>
+    </record>
+
+    <record id="approvals_dashboard_payment_customer" model="approvals.dashboard">
+        <field name="name">Pagos de clientes</field>
+        <field name="module_type">payment_customer</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavelocalidad_filter" model="ir.ui.view">
+            <field name="name">filtro.clavelocalidad</field>
+            <field name="model">cfdi.clavelocalidad</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_localidad" string="Todo" filter_domain="['|',('Clave_localidad','ilike',self),
+                              '|',('Clave_estado','ilike',self),
+                              ('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavelocalidad_view_form" model="ir.ui.view">
+            <field name="name">clavelocalidad form</field>
+            <field name="model">cfdi.clavelocalidad</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_localidad"/>
+                            <field name="Clave_estado"/>
+                            <field name="Descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavelocalidad_view_tree" model="ir.ui.view">
+            <field name="name">clavelocalidad tree</field>
+            <field name="model">cfdi.clavelocalidad</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_localidad asc'  >
+                    <field name="Clave_localidad"/>
+                    <field name="Clave_estado"/>
+                    <field name="Descripcion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavelocalidad">
+            <field name="name">clavelocalidad</field>
+            <field name="res_model">cfdi.clavelocalidad</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

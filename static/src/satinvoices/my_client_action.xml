@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates xml:space="preserve">
+    <t t-name="contabilidad_kuale.clientaction" owl="1" class="o_action o_spreadsheet_dashboard_action o_field_highlight">
+       <ControlPanel display="controlPanelDisplay">
+            <!--t t-set-slot="layout-actions">
+                <t t-set="status" t-value="state.activeDashboard and state.activeDashboard.status"/>
+                <FilterValue
+              t-if="status === Status.Loaded"
+              filter="filter"
+              model="state.activeDashboard.model"
+              t-as="filter"
+              t-foreach="filters"
+              t-key="filter.id"
+                />
+            </t-->
+        </ControlPanel>
+        <div class="o_content o_component_with_search_panel">
+            <!-- Dashboard selection -->
+              <div class="o_spreadsheet_dashboard_search_panel o_search_panel flex-grow-0 border-end flex-shrink-0 pe-2 pb-5 ps-4 h-100 bg-view overflow-auto">
+                  <section class="o_search_panel_section o_search_panel_category">
+                      <header class="o_search_panel_section_header pt-4 pb-2 text-uppercase o_cursor_default user-select-none">
+                          <b>Prueba</b>
+                      </header>
+                      <ul class="list-group d-block o_search_panel_field">
+                          <li class="o_search_panel_category_value list-group-item cursor-pointer border-0">Hola</li>
+                          <li class="o_search_panel_category_value list-group-item cursor-pointer border-0">Mundo más largo</li>
+                      </ul>
+                  </section>
+              </div>
+            <!-- Main content -->
+            <div class="o_renderer">
+              <h3 class="dashboard-loading-status">Hola Mundo</h3>
+              <table class="o_list_table table table-sm table-hover position-relative mb-0 o_list_table_ungrouped table-striped" style="table-layout: fixed;">
+                <thead>
+                  <tr>
+                    <th class="o_list_record_selector o_list_controller align-middle pe-1 cursor-pointer" tabindex="-1" style="width: 41px;">
+                      <div class="o-checkbox form-check d-flex m-0">
+                        <input type="checkbox" class="form-check-input" id="checkbox-comp-1"/><label class="form-check-label" for="checkbox-comp-1"></label>
+                      </div>
+                    </th>
+                    <th data-tooltip-delay="1000" tabindex="-1" data-name="name" class="align-middle o_column_sortable position-relative cursor-pointer opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'name','type':'char','widget':null,'context':'{}','invisible':null,'column_invisible':null,'readonly':null,'required':null,'changeDefault':false}}" style="width: 114px;" title="">
+                      <div class="d-flex"><span class="d-block min-w-0 text-truncate flex-grow-1">Número</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="invoice_partner_display_name" class="align-middle o_column_sortable position-relative cursor-pointer opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'invoice_partner_display_name','type':'char','widget':null,'context':'{}','invisible':null,'column_invisible':'context.get('default_move_type') not in ('out_invoice', 'out_refund', 'out_receipt')','readonly':'True','required':null,'changeDefault':false}}" style="width: 188px;"><div class="d-flex"><span class="d-block min-w-0 text-truncate flex-grow-1">Cliente</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="invoice_date" class="align-middle o_column_sortable position-relative cursor-pointer opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'invoice_date','type':'date','widget':null,'context':'{}','invisible':null,'column_invisible':'context.get('default_move_type') not in ('out_invoice', 'out_refund', 'out_receipt')','readonly':'state != 'draft'','required':null,'changeDefault':false}}" style="min-width: 92px; width: 125px;"><div class="d-flex"><span class="d-block min-w-0 text-truncate flex-grow-1">Fecha de factura</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="invoice_date_due" class="align-middle o_column_sortable position-relative cursor-pointer o_remaining_days_cell opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'invoice_date_due','type':'date','widget':'remaining_days','widgetDescription':'Días restantes','context':'{}','invisible':'payment_state in ('paid', 'in_payment', 'reversed') or state == 'cancel'','column_invisible':null,'readonly':null,'required':null,'changeDefault':false}}" style="width: 159px;"><div class="d-flex"><span class="d-block min-w-0 text-truncate flex-grow-1">Fecha de vencimiento</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="activity_ids" class="align-middle cursor-default o_list_activity_cell opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'activity_ids','type':'one2many','widget':'list_activity','context':'{}','domain':[],'invisible':null,'column_invisible':null,'readonly':null,'required':null,'changeDefault':false,'relation':'mail.activity'}}" style="width: 173px;"><div class="d-flex"><span class="d-block min-w-0 text-truncate flex-grow-1">Actividades</span><i class="d-none fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="amount_untaxed_signed" class="align-middle o_column_sortable position-relative cursor-pointer o_list_number_th opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'amount_untaxed_signed','type':'monetary','widget':null,'context':'{}','invisible':null,'column_invisible':null,'readonly':'True','required':null,'changeDefault':false}}" style="min-width: 104px; width: 168px;"><div class="d-flex flex-row-reverse"><span class="d-block min-w-0 text-truncate flex-grow-1 o_list_number_th">Impuestos no incluidos</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="amount_total_signed" class="align-middle o_column_sortable position-relative cursor-pointer o_list_number_th opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'amount_total_signed','type':'monetary','widget':null,'context':'{}','invisible':null,'column_invisible':null,'readonly':'True','required':null,'changeDefault':false}}" style="min-width: 104px; width: 104px;"><div class="d-flex flex-row-reverse"><span class="d-block min-w-0 text-truncate flex-grow-1 o_list_number_th">Total</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="amount_total_in_currency_signed" class="align-middle o_column_sortable position-relative cursor-pointer o_list_number_th opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'amount_total_in_currency_signed','type':'monetary','widget':null,'context':'{}','invisible':null,'column_invisible':null,'readonly':'True','required':null,'changeDefault':false}}" style="min-width: 104px; width: 111px;"><div class="d-flex flex-row-reverse"><span class="d-block min-w-0 text-truncate flex-grow-1 o_list_number_th">Total en divisa</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="payment_state" class="align-middle o_column_sortable position-relative cursor-pointer o_badge_cell opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'payment_state','type':'selection','widget':'badge','widgetDescription':'Insignia','context':'{}','invisible':'payment_state == 'invoicing_legacy' or state != 'posted' or move_type == 'entry'','column_invisible':null,'readonly':'True','required':null,'changeDefault':false,'selection':[['not_paid','Sin pagar'],['in_payment','En proceso de pago'],['paid','Pagado'],['partial','Pagado parcialmente'],['reversed','Revertido'],['invoicing_legacy','Sistema anterior de facturación']]}}" style="width: 80px;"><div class="d-flex"><span class="d-block min-w-0 text-truncate flex-grow-1">Pago</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div><span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span></th><th data-tooltip-delay="1000" tabindex="-1" data-name="state" class="align-middle o_column_sortable position-relative cursor-pointer o_badge_cell opacity-trigger-hover" data-tooltip-template="web.FieldTooltip" data-tooltip-info="{'viewMode':'list','resModel':'account.move','debug':true,'field':{'name':'state','type':'selection','widget':'badge','widgetDescription':'Insignia','context':'{}','invisible':null,'column_invisible':null,'readonly':'True','required':'True','changeDefault':false,'selection':[['draft','Borrador'],['posted','Publicado'],['cancel','Cancelado']]}}" style="width: 83px;"><div class="d-flex"><span class="d-block min-w-0 text-truncate flex-grow-1">Estado</span><i class="fa fa-lg fa-angle-down opacity-0 opacity-75-hover"></i></div>
+                      <span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 bg-black-25 opacity-0 opacity-50-hover z-index-1"></span>
+                    </th>
+                    <th class="o_list_controller o_list_actions_header position-sticky end-0">
+                      <div class="o-dropdown dropdown o_optional_columns_dropdown text-center border-top-0 o-dropdown--no-caret"><button type="button" class="dropdown-toggle btn p-0" tabindex="-1" aria-expanded="false"><i class="o_optional_columns_dropdown_toggle oi oi-fw oi-settings-adjust"></i></button></div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="ui-sortable">
+                  <tr class="o_data_row" data-id="datapoint_2">
+                    <td class="o_list_record_selector user-select-none" tabindex="-1">
+                      <div class="o-checkbox form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox-comp-2"/><label class="form-check-label" for="checkbox-comp-2"></label>
+                      </div>
+                    </td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char fw-bold" data-tooltip-delay="1000" tabindex="-1" name="name" data-tooltip="INV/2024/00006">INV/2024/00006</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_partner_display_name" data-tooltip="YourCompany, Marc Demo">YourCompany, Marc Demo</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_date">19/04/2024</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_remaining_days_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date_due"></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_activity_cell" data-tooltip-delay="1000" tabindex="-1" name="activity_ids"><div name="activity_ids" class="o_field_widget o_field_list_activity"><a class="o-mail-ActivityButton" role="button" aria-label="Mostrar actividades" title="Mostrar actividades"><i class="fa fa-fw fa-lg text-muted fa-clock-o btn-link text-dark" role="img"></i></a><span class="o-mail-ListActivity-summary"></span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_untaxed_signed">$ 200.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier fw-bold" data-tooltip-delay="1000" tabindex="-1" name="amount_total_signed">$ 230.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_total_in_currency_signed">$ 230.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="payment_state" data-tooltip="Pagado"><div name="payment_state" class="o_field_widget o_readonly_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Pagado</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_required_modifier o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="state" data-tooltip="Publicado"><div name="state" class="o_field_widget o_readonly_modifier o_required_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Publicado</span></div></td>
+                    <td tabindex="-1"></td>
+                  </tr>
+                  <tr class="o_data_row" data-id="datapoint_4">
+                    <td class="o_list_record_selector user-select-none" tabindex="-1"><div class="o-checkbox form-check"><input type="checkbox" class="form-check-input" id="checkbox-comp-3"/><label class="form-check-label" for="checkbox-comp-3"></label></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char fw-bold" data-tooltip-delay="1000" tabindex="-1" name="name" data-tooltip="INV/2024/00005">INV/2024/00005</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_partner_display_name" data-tooltip="Deco Addict, Addison Olson">Deco Addict, Addison Olson</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_date">19/04/2024</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_remaining_days_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date_due"></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_activity_cell" data-tooltip-delay="1000" tabindex="-1" name="activity_ids"><div name="activity_ids" class="o_field_widget o_field_list_activity"><a class="o-mail-ActivityButton" role="button" aria-label="Mostrar actividades" title="Mostrar actividades"><i class="fa fa-fw fa-lg text-muted fa-clock-o btn-link text-dark" role="img"></i></a><span class="o-mail-ListActivity-summary"></span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_untaxed_signed">$ 2,696.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier fw-bold" data-tooltip-delay="1000" tabindex="-1" name="amount_total_signed">$ 3,100.40</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_total_in_currency_signed">$ 3,100.40</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="payment_state" data-tooltip="Pagado"><div name="payment_state" class="o_field_widget o_readonly_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Pagado</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_required_modifier o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="state" data-tooltip="Publicado"><div name="state" class="o_field_widget o_readonly_modifier o_required_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Publicado</span></div></td>
+                    <td tabindex="-1"></td>
+                  </tr>
+                  <tr class="o_data_row text-info" data-id="datapoint_6">
+                    <td class="o_list_record_selector user-select-none" tabindex="-1"><div class="o-checkbox form-check"><input type="checkbox" class="form-check-input" id="checkbox-comp-4"/><label class="form-check-label" for="checkbox-comp-4"></label></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char fw-bold" data-tooltip-delay="1000" tabindex="-1" name="name" data-tooltip="/">/</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_partner_display_name" data-tooltip="#Creado por: Mitchell Admin">#Creado por: Mitchell Admin</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date"></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_remaining_days_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date_due"><div name="invoice_date_due" class="o_field_widget o_field_remaining_days"><div class="fw-bold text-danger" title="19/04/2024">19/04/2024</div></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_activity_cell" data-tooltip-delay="1000" tabindex="-1" name="activity_ids"><div name="activity_ids" class="o_field_widget o_field_list_activity"><a class="o-mail-ActivityButton" role="button" aria-label="Mostrar actividades" title="Mostrar actividades"><i class="fa fa-fw fa-lg text-muted fa-clock-o btn-link text-dark" role="img"></i></a><span class="o-mail-ListActivity-summary"></span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_untaxed_signed">$ 0.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier fw-bold" data-tooltip-delay="1000" tabindex="-1" name="amount_total_signed">$ 0.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_total_in_currency_signed">$ 0.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="payment_state"></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_required_modifier o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="state" data-tooltip="Borrador"><div name="state" class="o_field_widget o_readonly_modifier o_required_modifier o_field_badge text-info"><span class="badge rounded-pill text-bg-info">Borrador</span></div></td>
+                    <td tabindex="-1"></td>
+                  </tr>
+                  <tr class="o_data_row" data-id="datapoint_8">
+                    <td class="o_list_record_selector user-select-none" tabindex="-1"><div class="o-checkbox form-check"><input type="checkbox" class="form-check-input" id="checkbox-comp-5"/><label class="form-check-label" for="checkbox-comp-5"></label></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char fw-bold" data-tooltip-delay="1000" tabindex="-1" name="name" data-tooltip="INV/2024/00002">INV/2024/00002</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_partner_display_name" data-tooltip="Deco Addict">Deco Addict</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_date">17/01/2024</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_remaining_days_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date_due"><div name="invoice_date_due" class="o_field_widget o_field_remaining_days"><div class="fw-bold text-danger" title="19/01/2024">19/01/2024</div></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_activity_cell" data-tooltip-delay="1000" tabindex="-1" name="activity_ids"><div name="activity_ids" class="o_field_widget o_field_list_activity"><a class="o-mail-ActivityButton" role="button" aria-label="Llamada" title="Llamada"><i class="fa fa-fw fa-lg text-danger fa-phone" role="img"></i></a><span class="o-mail-ListActivity-summary">Llamada</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_untaxed_signed">$ 41,750.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier fw-bold" data-tooltip-delay="1000" tabindex="-1" name="amount_total_signed">$ 48,012.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_total_in_currency_signed">$ 48,012.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="payment_state" data-tooltip="Sin pagar"><div name="payment_state" class="o_field_widget o_readonly_modifier o_field_badge text-danger"><span class="badge rounded-pill text-bg-danger">Sin pagar</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_required_modifier o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="state" data-tooltip="Publicado"><div name="state" class="o_field_widget o_readonly_modifier o_required_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Publicado</span></div></td>
+                    <td tabindex="-1"></td>
+                  </tr>
+                  <tr class="o_data_row" data-id="datapoint_11">
+                    <td class="o_list_record_selector user-select-none" tabindex="-1"><div class="o-checkbox form-check"><input type="checkbox" class="form-check-input" id="checkbox-comp-6"/><label class="form-check-label" for="checkbox-comp-6"></label></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char fw-bold" data-tooltip-delay="1000" tabindex="-1" name="name" data-tooltip="INV/2024/00003">INV/2024/00003</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_partner_display_name" data-tooltip="Deco Addict">Deco Addict</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_date">16/01/2024</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_remaining_days_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date_due"><div name="invoice_date_due" class="o_field_widget o_field_remaining_days"><div class="fw-bold text-danger" title="19/01/2024">19/01/2024</div></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_activity_cell" data-tooltip-delay="1000" tabindex="-1" name="activity_ids"><div name="activity_ids" class="o_field_widget o_field_list_activity"><a class="o-mail-ActivityButton" role="button" aria-label="Follow-up on payment" title="Follow-up on payment"><i class="fa fa-fw fa-lg text-danger fa-tasks" role="img"></i></a><span class="o-mail-ListActivity-summary">Follow-up on payment</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_untaxed_signed">$ 19,250.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier fw-bold" data-tooltip-delay="1000" tabindex="-1" name="amount_total_signed">$ 22,137.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_total_in_currency_signed">$ 22,137.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="payment_state" data-tooltip="Sin pagar"><div name="payment_state" class="o_field_widget o_readonly_modifier o_field_badge text-danger"><span class="badge rounded-pill text-bg-danger">Sin pagar</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_required_modifier o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="state" data-tooltip="Publicado"><div name="state" class="o_field_widget o_readonly_modifier o_required_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Publicado</span></div></td>
+                    <td tabindex="-1"></td>
+                  </tr>
+                  <tr class="o_data_row" data-id="datapoint_14">
+                    <td class="o_list_record_selector user-select-none" tabindex="-1"><div class="o-checkbox form-check"><input type="checkbox" class="form-check-input" id="checkbox-comp-7"/><label class="form-check-label" for="checkbox-comp-7"></label></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char fw-bold" data-tooltip-delay="1000" tabindex="-1" name="name" data-tooltip="INV/2024/00004">INV/2024/00004</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_partner_display_name" data-tooltip="Deco Addict">Deco Addict</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_date">04/01/2024</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_remaining_days_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date_due"><div name="invoice_date_due" class="o_field_widget o_field_remaining_days"><div class="fw-bold text-danger" title="04/01/2024">04/01/2024</div></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_activity_cell" data-tooltip-delay="1000" tabindex="-1" name="activity_ids"><div name="activity_ids" class="o_field_widget o_field_list_activity"><a class="o-mail-ActivityButton" role="button" aria-label="Mostrar actividades" title="Mostrar actividades"><i class="fa fa-fw fa-lg text-muted fa-clock-o btn-link text-dark" role="img"></i></a><span class="o-mail-ListActivity-summary"></span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_untaxed_signed">$ 31,750.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier fw-bold" data-tooltip-delay="1000" tabindex="-1" name="amount_total_signed">$ 36,512.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_total_in_currency_signed">$ 36,512.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="payment_state" data-tooltip="Sin pagar"><div name="payment_state" class="o_field_widget o_readonly_modifier o_field_badge text-danger"><span class="badge rounded-pill text-bg-danger">Sin pagar</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_required_modifier o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="state" data-tooltip="Publicado"><div name="state" class="o_field_widget o_readonly_modifier o_required_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Publicado</span></div></td>
+                    <td tabindex="-1"></td>
+                  </tr>
+                  <tr class="o_data_row" data-id="datapoint_16">
+                    <td class="o_list_record_selector user-select-none" tabindex="-1"><div class="o-checkbox form-check"><input type="checkbox" class="form-check-input" id="checkbox-comp-8"/><label class="form-check-label" for="checkbox-comp-8"></label></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char fw-bold" data-tooltip-delay="1000" tabindex="-1" name="name" data-tooltip="INV/2024/00001">INV/2024/00001</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_char o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_partner_display_name" data-tooltip="Azure Interior">Azure Interior</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="invoice_date">01/01/2024</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_remaining_days_cell" data-tooltip-delay="1000" tabindex="-1" name="invoice_date_due"><div name="invoice_date_due" class="o_field_widget o_field_remaining_days"><div class="fw-bold text-danger" title="29/02/2024">29/02/2024</div></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_activity_cell" data-tooltip-delay="1000" tabindex="-1" name="activity_ids"><div name="activity_ids" class="o_field_widget o_field_list_activity"><a class="o-mail-ActivityButton" role="button" aria-label="Include upsell" title="Include upsell"><i class="fa fa-fw fa-lg text-danger fa-tasks" role="img"></i></a><span class="o-mail-ListActivity-summary">Include upsell</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_untaxed_signed">$ 31,750.00</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier fw-bold" data-tooltip-delay="1000" tabindex="-1" name="amount_total_signed">$ 36,512.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_list_number o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="amount_total_in_currency_signed">$ 36,512.50</td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="payment_state" data-tooltip="Sin pagar"><div name="payment_state" class="o_field_widget o_readonly_modifier o_field_badge text-danger"><span class="badge rounded-pill text-bg-danger">Sin pagar</span></div></td>
+                    <td class="o_data_cell cursor-pointer o_field_cell o_badge_cell o_required_modifier o_readonly_modifier" data-tooltip-delay="1000" tabindex="-1" name="state" data-tooltip="Publicado"><div name="state" class="o_field_widget o_readonly_modifier o_required_modifier o_field_badge text-success"><span class="badge rounded-pill text-bg-success">Publicado</span></div></td>
+                    <td tabindex="-1"></td>
+                  </tr>
+                </tbody>
+                <tfoot class="o_list_footer cursor-default">
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="o_list_number"><span data-tooltip="Total">$ 127,396.00</span></td>
+                    <td class="o_list_number"><span data-tooltip="Total">$ 146,505.40</span></td><td class="o_list_number"><span data-tooltip="No se pueden agregar distintas divisas">—</span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+        </div>
+    </t>
+</templates>

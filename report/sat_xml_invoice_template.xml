@@ -1,0 +1,78 @@
+<odoo>
+    <template id="sat_xml_invoice_template">
+        <t t-call="web.external_layout">
+            <main>
+                <t t-foreach="docs" t-as="o">
+
+                    <!-- HEADER -->
+                    <div class="row mb16">
+                        <div class="col-6 text-end">
+                            <h3>CFDI de Ingreso</h3>
+                            <p><strong>Serie:</strong> <t t-esc="o.factura_serie"/></p>
+                            <p><strong>Folio:</strong> <t t-esc="o.factura_folio"/></p>
+                            <p><strong>Fecha:</strong> <t t-esc="o.factura_fecha"/></p>
+                        </div>
+                    </div>
+
+                    <!-- EMISOR -->
+                    <div class="bg-primary text-white p-2 mb8">
+                        <strong><t t-esc="o.nombre_emisor"/></strong><br/>
+                        RFC: <t t-esc="o.rfc_emisor"/><br/>
+                    </div>
+
+                    <!-- RECEPTOR -->
+                    <div class="mb16">
+                        <strong>Cliente:</strong> <t t-esc="o.nombre_receptor"/><br/>
+                        RFC: <t t-esc="o.rfc_receptor"/><br/>
+                    </div>
+
+                    <!-- TABLA CONCEPTOS -->
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Cantidad</th>
+                                <th>Unidad</th>
+                                <th>Descripción</th>
+                                <th class="text-end">Valor Unitario</th>
+                                <th class="text-end">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.concepts_ids" t-as="c">
+                                <tr>
+                                    <td><t t-esc="c.cantidad"/></td>
+                                    <td><t t-esc="c.clave_unidad"/></td>
+                                    <td><t t-esc="c.description"/></td>
+                                    <td class="text-end"><t t-esc="c.valor_unitario"/></td>
+                                    <td class="text-end"><t t-esc="c.importe"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- TOTALES -->
+                    <div class="row mt16">
+                        <div class="col-6">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td class="text-end"><t t-esc="o.factura_subtotal"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Impuestos</td>
+                                    <td class="text-end"><t t-esc="o.factura_impuestos"/></td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td>Total</td>
+                                    <td class="text-end"><t t-esc="o.factura_total"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </t>
+            </main>
+        </t>
+    </template>
+
+</odoo>

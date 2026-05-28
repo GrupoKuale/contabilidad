@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_stp_clave_rastreo" model="ir.sequence">
+        <field name="name">STP Clave Rastreo</field>
+        <field name="code">stp.clave.rastreo</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+        <field name="implementation">standard</field>
+    </record>
+</odoo>

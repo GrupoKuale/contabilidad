@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="share_category_confirm_wizard_form" model="ir.ui.view">
+        <field name="name">share.category.confirm.wizard.form</field>
+        <field name="model">share.category.confirm.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Compartir categoría">
+                <group>
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">
+                            <i class="fa fa-exclamation-triangle"/> Categoría no compartida
+                        </h4>
+                        <p>
+                            El producto <strong><field name="product_id" readonly="1" class="oe_inline" options="{'no_open': True}"/></strong>
+                            se está marcando como compartido, pero su categoría
+                            <strong><field name="category_id" readonly="1" class="oe_inline" options="{'no_open': True}"/></strong>
+                            no es compartida.
+                        </p>
+                        <hr/>
+                        <p class="mb-0">
+                            Para que el producto sea accesible desde otros grupos empresariales sin errores de permiso,
+                            la categoría también debe ser compartida.
+                        </p>
+                        <p class="mb-0 mt-2">
+                            <strong>¿Desea compartir la categoría junto con el producto?</strong>
+                        </p>
+                    </div>
+                </group>
+                <footer>
+                    <button name="action_confirm"
+                            string="Sí, compartir categoría y producto"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_cancel"
+                            string="No, cancelar"
+                            type="object"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

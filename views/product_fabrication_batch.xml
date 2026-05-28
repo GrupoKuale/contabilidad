@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_fabrication_batch_tree" model="ir.ui.view">
+            <field name="name">product.fabrication.batch.tree</field>
+            <field name="model">product.fabrication.batch</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="date"/>
+                    <field name="company_id"/>
+                    <field name="branch_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_fabrication_batch_form" model="ir.ui.view">
+            <field name="name">product.fabrication.batch.form</field>
+            <field name="model">product.fabrication.batch</field>
+            <field name="arch" type="xml">
+                <form string="Linea de Fabricación">
+                    <header>
+                        <button name="fabricate_products" type="object" string="Confirmar Fabricación"
+                                class="btn-primary" invisible="state != 'draft'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done,cancel"/>
+                    </header>
+                    <sheet>
+                        <group readonly="state == 'cancel' or state == 'done'">
+                            <field name="date"/>
+                            <field name="company_id"/>
+                            <field name="branch_id"/>
+                        </group>
+
+                        <field name="line_ids" readonly="state == 'cancel' or state == 'done'">
+                            <tree editable="bottom">
+                                <field name="product_id"/>
+                                <field name="quantity"/>
+                                <field name="uom"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_fabrication_batch" model="ir.actions.act_window">
+            <field name="name">Linea de Fabricación</field>
+            <field name="res_model">product.fabrication.batch</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem id="menu_fabrication_batch" name="Linea de Fabricación"
+                  parent="stock.menu_stock_inventory_control" action="action_fabrication_batch"/>
+
+        <!--Cron Production WH creation-->
+        <record id="ir_cron_create_production_locations" model="ir.cron">
+            <field name="name">Crear ubicaciones de producción por sucursal</field>
+            <field name="model_id" ref="base.model_res_company"/>
+            <field name="state">code</field>
+            <field name="code">model.create_production_locations()</field>
+            <field name="interval_number">0</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="True"/>
+            <field name="active">False</field> <!-- Para ejecutarlo manualmente -->
+        </record>
+    </data>
+</odoo>

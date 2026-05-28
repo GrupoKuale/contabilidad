@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cfdi_claveregimenfiscal_605" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">605</field>
+            <field name="Descripcion">Sueldos y Salarios e Ingresos Asimilados a Salarios</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_606" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">606</field>
+            <field name="Descripcion">Arrendamiento</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_608" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">608</field>
+            <field name="Descripcion">Demás ingresos</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_611" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">611</field>
+            <field name="Descripcion">Ingresos por Dividendos (socios y accionistas)</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_612" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">612</field>
+            <field name="Descripcion">Personas Físicas con Actividades Empresariales y Profesionales</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_614" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">614</field>
+            <field name="Descripcion">Ingresos por intereses</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_615" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">615</field>
+            <field name="Descripcion">Régimen de los ingresos por obtención de premios</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_616" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">616</field>
+            <field name="Descripcion">Sin obligaciones fiscales</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_621" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">621</field>
+            <field name="Descripcion">Incorporación Fiscal</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_622" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">622</field>
+            <field name="Descripcion">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_626" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">626</field>
+            <field name="Descripcion">Régimen Simplificado de Confianza (RESICO)</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_629" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">629</field>
+            <field name="Descripcion">De los Regímenes Fiscales Preferentes y de las Empresas Multinacionales</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_630" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">630</field>
+            <field name="Descripcion">Enajenación de acciones en bolsa de valores</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+
+        <record id="cfdi_claveregimenfiscal_601" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">601</field>
+            <field name="Descripcion">General de Ley Personas Morales</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_603" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">603</field>
+            <field name="Descripcion">Personas Morales con Fines no Lucrativos</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_607" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">607</field>
+            <field name="Descripcion">Régimen de Enajenación o Adquisición de Bienes - Empresas dedicadas a la compra/venta de bienes inmuebles.</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_609" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">609</field>
+            <field name="Descripcion">Consolidación - Tipo de sociedad que diversifica en un nuevo mercado.</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_620" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">620</field>
+            <field name="Descripcion">Sociedades Cooperativas de Producción que optan por diferir sus ingresos</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_622" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">622</field>
+            <field name="Descripcion">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_623" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">623</field>
+            <field name="Descripcion">Opcional para Grupos de Sociedades - En los casos especiales en los que el tipo de régimen no está especificado.</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_624" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">624</field>
+            <field name="Descripcion">Coordinados - Empresas principalmente dedicadas al transporte terrestre (mercancías o personas).</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveregimenfiscal_628" model="cfdi.claveregimenfiscal">
+            <field name="Clave_regimenFiscal">628</field>
+            <field name="Descripcion">Hidrocarburos - Empresas dedicadas a la comercialización de hidrocarburos.</field>
+            <field name="Fisica">False</field>
+            <field name="Moral">True</field>
+        </record>
+
+    </data>
+</odoo>

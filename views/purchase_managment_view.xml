@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="view_purchase_order_line_tree_custom" model="ir.ui.view">
+            <field name="name">purchase.order.line.tree.custom</field>
+            <field name="model">purchase.order.line</field>
+            <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="expense_center" optional="hide"/>
+                    <field name="branch_split_ids" optional="hide"/>
+                </xpath>
+                <xpath expr="//field[@name='price_unit']" position="before">
+                    <field name="price_per_pack"/>
+                </xpath>
+                <xpath expr="//field[@name='price_subtotal']" position="after">
+                    <field name="xml_description"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_purchase_order_form_custom" model="ir.ui.view">
+            <field name="name">purchase.order.form.custom</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Smart Button Pre-Póliza -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_view_pre_policy" type="object"
+                            class="oe_stat_button" icon="fa-book"
+                            invisible="not pre_policy_id">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Pre-Póliza</span>
+                            <field name="pre_policy_id" widget="many2one" readonly="1" nolabel="1"/>
+                        </div>
+                    </button>
+                </xpath>
+
+
+
+
+                <!-- Campos invisibles (necesarios para cálculos) -->
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="approval_level" invisible="1"/>
+                    <field name="can_approve" invisible="1"/>
+                    <field name="requires_authorization" invisible="1"/>
+                    <field name="pre_policy_id" invisible="1"/>
+                    <field name="picking_ids" invisible="1"/> 
+                </xpath>
+
+                <!-- STATUSBAR DINÁMICO -->
+                <xpath expr="//header/field[@name='state']" position="replace">
+                    <!-- Statusbar NORMAL (sin aprobaciones) -->
+                    <!-- CORRECTO: Statusbar SIEMPRE visible según requires_authorization -->
+                    <field name="state" widget="statusbar" 
+                        statusbar_visible="draft,sent,purchase"
+                        invisible="requires_authorization"/>
+
+                    <!-- Statusbar de aprobaciones (SIEMPRE visible si requires_authorization) -->
+                    <field name="approval_level" widget="statusbar" 
+                        statusbar_visible="4,3,2,1,done"
+                        invisible="not requires_authorization"
+                        readonly="1"/>
+
+                </xpath>
+
+                <!-- BOTONES EN HEADER -->
+                <xpath expr="//header" position="inside">
+
+                    <!-- 1. Solicitar Autorización -->
+                    <button name="action_request_approval" type="object"
+                            string="Solicitar Autorización"
+                            class="oe_highlight"
+                            invisible="not requires_authorization or state not in ('draft', 'sent') or approval_level"
+                            data-hotkey="a"/>
+
+                    <!-- 2. Aprobar Orden -->
+                    <button name="action_approve" type="object"
+                            string="Aprobar Orden"
+                            class="oe_highlight btn-success"
+                            invisible="not can_approve or state != 'to_approve'"/>
+
+                    <!-- 3. Ver Pre-Póliza (siempre visible si existe) -->
+                    <button name="action_view_pre_policy" type="object"
+                            string="Ver Pre-Póliza"
+                            class="btn-secondary"
+                            invisible="not pre_policy_id"/>
+
+                </xpath>
+
+
+
+                <!-- BOTÓN CONFIRMAR ORDEN -->
+                <xpath expr="//button[@name='button_confirm']" position="attributes">
+                    <attribute name="invisible">(requires_authorization and approval_level != 'done') or state in ('purchase', 'approved', 'done', 'cancel')</attribute>
+                </xpath>
+
+
+                <xpath expr="//button[@name='action_view_picking']" position="attributes">
+                    <attribute name="invisible">state not in ('purchase', 'approved', 'done') or not picking_ids</attribute>
+                </xpath>
+
+
+
+                <!-- Esconder el botón SIN clase (secundario) -->
+                <xpath expr="//button[@name='button_confirm' and not(@class)]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- BANNER INFORMATIVO -->
+                <xpath expr="//header" position="after">
+                    <!-- Banner: Esperando Solicitud de Aprobación -->
+                    <div class="alert alert-warning text-center" role="alert"
+                        invisible="not requires_authorization or approval_level or state != 'draft'">
+                        <i class="fa fa-exclamation-triangle"/> 
+                        <strong>Acción Requerida</strong><br/>
+                        Esta orden requiere autorización. Haz clic en 
+                        <strong>"Solicitar Autorización"</strong> para iniciar el flujo de niveles.
+                    </div>
+                    
+                    <!-- Banner: En Proceso de Aprobación -->
+                    <div class="alert alert-info text-center" role="alert"
+                        invisible="state != 'to_approve' or not approval_level">
+                        <i class="fa fa-info-circle"/> 
+                        <strong>Proceso de Aprobación Activo</strong><br/>
+                        Nivel actual requerido: 
+                        <field name="approval_level" readonly="1" nolabel="1" class="oe_inline font-weight-bold"/>
+                    </div>
+
+                    <div class="alert alert-success text-center" role="alert"
+                        invisible="state != 'approved'">
+                        <i class="fa fa-check-circle"/> 
+                        <strong>Productos Recibidos - Lista para Facturar</strong><br/>
+                        Todos los productos han sido recibidos. Puedes registrar la factura del proveedor.
+                    </div>
+                </xpath>
+
+                <!-- BOTÓN CREAR FACTURA DE PROVEEDOR -->
+                <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                    <attribute name="name">action_open_accounting_policy</attribute>
+                    <attribute name="string">Abrir Póliza Contable</attribute>
+                    <attribute name="invisible">state != 'approved' or not pre_policy_id</attribute>
+                    <attribute name="icon">fa-book</attribute>
+                </xpath>
+
+
+
+
+                <!-- LO COMENTADO DESHABILITA LA VISTA POR DEFECTO DEL MODULO DE COMPRA -->
+                <!--
+                                <xpath expr="//group" position="attributes">
+                                    <attribute name="invisible">1</attribute>
+                                </xpath>
+
+                                <xpath expr="//group" position="before">
+                                    <div class="container m-0">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="user_id" string="Comprador"/>
+                                                <br/>
+                                                <field name="user_id" domain="[('share', '=', False)]" widget="many2one_avatar_user"
+                                                       class="w-100"/>
+                                            </div>
+                                            <div class="col">
+                                                <label for="company_id" string="Empresa"/>
+                                                <br/>
+                                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"
+                                                       readonly="state in ['cancel', 'done', 'purchase']" class="w-100"/>
+                                            </div>
+                                            <div class="col">
+                                                <label for="payment_term_id" string="Términos de pago"/>
+                                                <br/>
+                                                <field name="payment_term_id" readonly="invoice_status == 'invoiced' or state == 'done'"
+                                                       options="{'no_create': True}" class="w-100"/>
+                                            </div>
+                                            <div class="col" invisible="state in ('draft', 'sent', 'to approve', 'cancel')">
+                                                <label for="invoice_status" string="Estado de facturación:"/>
+                                                <br/>
+                                                <field name="invoice_status"/>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="fiscal_position_id" string="Posición fiscal"/>
+                                                <br/>
+                                                <field name="fiscal_position_id" options="{'no_create': True}"
+                                                       readonly="invoice_status == 'invoiced' or state == 'done'" class="w-100"/>
+                                            </div>
+                                            <div class="col">
+                                                <label for="origin" string="Documento origen"/>
+                                                <br/>
+                                                <field name="origin" class="w-100"/>
+                                            </div>
+                                            <div class="col">
+                                                <label for="date_order" string="Fecha límite de la orden"/>
+                                                <br/>
+                                                <field name="date_order" invisible="state in ('purchase', 'done')"
+                                                       readonly="state in ['cancel', 'done', 'purchase']" class="w-100"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <separator string="Datos del contacto"/>
+                                    <div class="container m-0">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="partner_id" string="Proveedor"/>
+                                                <br/>
+                                                <field name="partner_id" widget="res_partner_many2one"
+                                                       context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
+                                                       placeholder="Name, TIN, Email, or Reference"
+                                                       readonly="state in ['cancel', 'done', 'purchase']" class="w-100"/>
+                                            </div>
+                                            <div class="col">
+                                                <label for="partner_ref" string="Referencia de proveedor"/>
+                                                <br/>
+                                                <field name="partner_ref" class="w-100"/>
+                                            </div>
+                                            <div class="col">
+                                                <label for="currency_id" string="Divisa"/>
+                                                <br/>
+                                                <field name="currency_id" groups="base.group_multi_currency" force_save="1"
+                                                       readonly="state in ['cancel', 'done', 'purchase']" class="w-100"/>
+                                                <field name="tax_calculation_rounding_method" invisible="1"/>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="date_planned"/>
+                                                <div name="date_planned_div" class="o_row">
+                                                    <field name="date_planned"
+                                                           readonly="state not in ('draft', 'sent', 'to approve', 'purchase')"/>
+                                                    <field name="mail_reminder_confirmed" invisible="1"/>
+                                                    <span class="text-muted" invisible="not mail_reminder_confirmed">(confirmed by
+                                                        vendor)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </xpath>
+
+                                <xpath expr="//page[@name='purchase_delivery_invoice']" position="attributes">
+                                    <attribute name="invisible">1</attribute>
+                                </xpath>
+                -->
+
+                <xpath expr="//page[@name='products']//field[@name='order_line']" position="replace">
+                    <field name="order_line" widget="section_and_note_one2many" mode="tree,kanban"
+                           context="{'default_state': 'draft'}" readonly="state in ('done', 'cancel')">
+                        <tree string="Purchase Order Lines" editable="bottom">
+                            <control>
+                                <create name="add_product_control" string="Agregar un producto"/>
+                                <create name="add_section_control" string="Agregar una seccion"
+                                        context="{'default_display_type': 'line_section'}"/>
+                                <create name="add_note_control" string="Agregar una nota"
+                                        context="{'default_display_type': 'line_note'}"/>
+                                <button name="action_add_from_catalog" string="Catalogo" type="object"
+                                        class="px-4 btn-link" context="{'order_id': parent.id}"/>
+                            </control>
+                            <field name="tax_calculation_rounding_method" column_invisible="True"/>
+                            <field name="display_type" column_invisible="True"/>
+                            <field name="company_id" column_invisible="True"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="state" column_invisible="True"/>
+                            <field name="product_type" column_invisible="True"/>
+                            <field name="product_uom" column_invisible="True" groups="!uom.group_uom"/>
+                            <field name="product_uom_category_id" column_invisible="True"/>
+                            <field name="invoice_lines" column_invisible="True"/>
+                            <field name="sequence" widget="handle"/>
+                            <field name="product_id" readonly="state in ('purchase', 'to approve', 'done', 'cancel')"
+                                   required="not display_type" width="35%"
+                                   context="{'partner_id': parent.partner_id, 'quantity': product_qty, 'company_id': parent.company_id, 'use_partner_name': False}"
+                                   force_save="1"
+                                   domain="[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', 'parent_of', parent.company_id)]"/>
+                            <field name="product_packaging_id" invisible="not product_id"
+                                   context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}"
+                                   groups="product.group_stock_packaging" optional="show"/>
+                            <field name="product_packaging_qty" invisible="not product_id or not product_packaging_id"
+                                   groups="product.group_stock_packaging" optional="show"/>
+                            <field name="price_per_pack" invisible="not product_id or not product_packaging_id"
+                                   groups="product.group_stock_packaging" optional="show" on_change="1"/>
+                            <field name="product_qty"/>
+                            <field name="product_uom" string="UdM" groups="uom.group_uom"
+                                   readonly="state in ('purchase', 'done', 'cancel')" required="not display_type"
+                                   options="{'no_open': True}" force_save="1" optional="show"/>
+                            <field name="price_unit" readonly="qty_invoiced != 0"/>
+                            <field name="taxes_id" widget="many2many_tags"
+                                   domain="[('type_tax_use', '=', 'purchase'), ('company_id', 'parent_of', parent.company_id), ('country_id', '=', parent.tax_country_id), ('active', '=', True)]"
+                                   context="{'default_type_tax_use': 'purchase', 'search_view_ref': 'account.account_tax_view_search'}"
+                                   optional="show"/>
+                            <field name="price_subtotal" string="Sin impuestos"/>
+                            <field name="name" widget="section_and_note_text" optional="hide"/>
+                            <field name="date_planned" optional="hide" required="not display_type" force_save="1"/>
+                            <field name="analytic_distribution" widget="analytic_distribution" optional="hide"
+                                   groups="analytic.group_analytic_accounting"
+                                   options="{'product_field': 'product_id', 'business_domain': 'purchase_order', 'amount_field': 'price_subtotal'}"/>
+                            <field name="qty_received_manual" column_invisible="True"/>
+                            <field name="qty_received_method" column_invisible="True"/>
+                            <field name="qty_received" string="Received"
+                                   column_invisible="parent.state not in ('purchase', 'done')"
+                                   readonly="qty_received_method != 'manual'" optional="show"/>
+                            <field name="qty_invoiced" string="Billed"
+                                   column_invisible="parent.state not in ('purchase', 'done')" optional="show"/>
+                            <button name="action_purchase_history" type="object" icon="fa-history"
+                                    title="Purchase History" invisible="not id"/>
+                            <field name="discount" string="% de desc." readonly="qty_invoiced != 0" optional="hide"/>
+                            <field name="price_total" string="Con impuestos"
+                                   column_invisible="parent.tax_calculation_rounding_method == 'round_globally'"
+                                   optional="hide"/>
+                        </tree>
+                        <form string="Purchase Order Line">
+                            <field name="tax_calculation_rounding_method" invisible="1"/>
+                            <field name="state" invisible="1"/>
+                            <field name="display_type" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <group invisible="display_type">
+                                <group>
+                                    <field name="product_uom_category_id" invisible="1"/>
+                                    <field name="product_id" context="{'partner_id': parent.partner_id}"
+                                           widget="many2one_barcode"
+                                           domain="[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                                           readonly="state in ('purchase', 'to approve', 'done', 'cancel')"/>
+                                    <label for="product_qty"/>
+                                    <div class="o_row">
+                                        <field name="product_qty"/>
+                                        <field name="product_uom" groups="uom.group_uom" required="not display_type"/>
+                                    </div>
+                                    <field name="qty_received_method" invisible="1"/>
+                                    <field name="qty_received" string="Received Quantity"
+                                           invisible="parent.state not in ('purchase', 'done')"
+                                           readonly="qty_received_method != 'manual'"/>
+                                    <field name="qty_invoiced" string="Billed Quantity"
+                                           invisible="parent.state not in ('purchase', 'done')"/>
+                                    <field name="product_packaging_qty"
+                                           invisible="not product_id or not product_packaging_id"
+                                           groups="product.group_stock_packaging"/>
+                                    <field name="product_packaging_id" invisible="not product_id"
+                                           context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}"
+                                           groups="product.group_stock_packaging"/>
+                                    <field name="price_unit"/>
+                                    <field name="discount"/>
+                                    <field name="taxes_id" widget="many2many_tags"
+                                           domain="[('type_tax_use', '=', 'purchase'), ('company_id', 'parent_of', parent.company_id), ('country_id', '=', parent.tax_country_id)]"
+                                           options="{'no_create': True}"/>
+                                </group>
+                                <group>
+                                    <field name="date_planned" widget="date" required="not display_type"/>
+                                    <field name="analytic_distribution" widget="analytic_distribution"
+                                           groups="analytic.group_analytic_accounting"
+                                           options="{'product_field': 'product_id', 'business_domain': 'purchase_order'}"/>
+                                </group>
+                                <group>
+                                    <notebook colspan="4">
+                                        <page string="Notes" name="notes">
+                                            <field name="name"/>
+                                        </page>
+                                        <page string="Invoices and Incoming Shipments"
+                                              name="invoices_incoming_shiptments">
+                                            <field name="invoice_lines"/>
+                                        </page>
+                                    </notebook>
+                                </group>
+                            </group>
+                            <label for="name" string="Section Name (eg. Products, Services)"
+                                   invisible="display_type != 'line_section'"/>
+                            <label for="name" string="Note" invisible="display_type != 'line_note'"/>
+                            <field name="name" nolabel="1" invisible="not display_type"/>
+                        </form>
+                        <kanban class="o_kanban_mobile">
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="product_qty"/>
+                            <field name="product_uom" groups="uom.group_uom"/>
+                            <field name="price_subtotal"/>
+                            <field name="price_tax"/>
+                            <field name="price_total"/>
+                            <field name="price_unit"/>
+                            <field name="discount"/>
+                            <field name="display_type"/>
+                            <field name="taxes_id"/>
+                            <field name="tax_calculation_rounding_method"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div t-attf-class="oe_kanban_card oe_kanban_global_click {{ record.display_type.raw_value ? 'o_is_' + record.display_type.raw_value : '' }}">
+                                        <t t-if="!record.display_type.raw_value">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <strong>
+                                                        <span t-esc="record.product_id.value"/>
+                                                    </strong>
+                                                </div>
+                                                <div class="col-4">
+                                                    <strong>
+                                                        <span>
+                                                            Tax excl.:
+                                                            <t t-esc="record.price_subtotal.value"
+                                                               class="float-end text-end"/>
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-8 text-muted">
+                                                    <span>
+                                                        Quantity:
+                                                        <t t-esc="record.product_qty.value"/>
+                                                        <small>
+                                                            <t t-esc="record.product_uom.value" groups="uom.group_uom"/>
+                                                        </small>
+                                                    </span>
+                                                </div>
+                                                <div class="col-4"
+                                                     t-if="record.tax_calculation_rounding_method.raw_value === 'round_per_line'">
+                                                    <strong>
+                                                        <span>
+                                                            Tax incl.:
+                                                            <t t-esc="record.price_total.value"/>
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 text-muted">
+                                                    <span>
+                                                        Unit Price:
+                                                        <field name="price_unit"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="row" t-if="record.discount.raw_value">
+                                                <div class="col-12 text-muted">
+                                                    <span>
+                                                        Discount:<t t-out="record.discount.value"/>%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <div t-elif="record.display_type.raw_value === 'line_section' || record.display_type.raw_value === 'line_note'"
+                                             class="row">
+                                            <div class="col-12">
+                                                <span t-esc="record.name.value"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </xpath>
+                <xpath expr="//page[@name='products']//tree//field[@name='price_unit']" position="after">
+                    <field name="mark_up" optional="show" column_invisible="not parent.has_markup"/>
+                    <field name="unit_price_markup" optional="show" column_invisible="not parent.has_markup"/>
+                    <field name="price_per_pack_markup" optional="show" column_invisible="not parent.has_markup"/>
+                </xpath>
+
+                <xpath expr="//page[@name='products']//tree//field[@name='product_id']" position="after">
+                    <field name="expense_center" optional="hide"/>
+                    <field name="branch_split_ids" widget="many2many_tags"
+                           context="{'default_order_line_id': active_id, 'current_order_line_id': active_id}"
+                           options="{'no_open': True,}"/>
+                </xpath>
+                <xpath expr="//page[@name='products']//tree//field[@name='price_subtotal']" position="after">
+                    <field name="xml_description"/>
+                </xpath>
+
+                <xpath expr="//div[@name='reminder']" position="after">
+                    <field name="invoice_date"/>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <field name="branch_id"/>
+                </xpath>
+
+                <xpath expr="//group[@class='oe_subtotal_footer']//field[@name='tax_totals']" position="before">
+                    <field name="markup_total" readonly="1" string="MarkUp" widget="monetary" options="{'precision': 2}"
+                           invisible="not has_markup"/>
+                    <field name="markup_total_iva" readonly="1" string="MarkUp Iva" widget="monetary"
+                           options="{'precision': 2}" invisible="not has_markup"/>
+                </xpath>
+
+
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="has_markup" widget="boolean_toggle"/>
+                    <field name="sale_note_total" widget="monetary"/>
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="factor" invisible="not has_markup"/>
+                </xpath>
+
+                <xpath expr="//page[@name='products']" position="after">
+                    <page string="Archivos Digitales">
+                        <field name="additional_files">
+                            <tree editable="bottom">
+                                <field name="file_name" string="Nombre del Archivo"/>
+                                <field name="description" string="Descripción"/>
+                                <field name="file" string="Archivo" widget="download_binary" filename="file_name"/>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="file_name"/>
+                                        <field name="description"/>
+                                        <field name="file" widget="binary" filename="file_name"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="DIOT">
+                        <field name="diot_ids">
+                            <tree editable="bottom">
+                                <field name="folio"/>
+                                <field name="code"/>
+                                <field name="partner_id"/>
+                                <field name="taxes_ids" widget="many2many_tags"/>
+                                <field name="amount"/>
+                                <field name="factor_type"/>
+                                <field name="rate"/>
+                                <field name="tax_amount"/>
+                                <field name="deductible"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Contacto del proveedor">
+                        <group>
+                            <group>
+                                <group>
+                                    <field name="partner_id"/>
+                                    <field name="branch_account"/>
+                                    <field name="phone"/>
+                                </group>
+                                <group>
+                                    <field name="comercial_name"/>
+                                    <field name="clabe"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="rfc"/>
+                                    <field name="bank"/>
+                                </group>
+                                <group>
+                                    <field name="account_number"/>
+                                    <field name="email"/>
+                                </group>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Factura SAT">
+                        <group>
+                            <group>
+                                <field name="uuid"/>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="invoice_folio"/>
+                                </group>
+                                <group>
+                                    <button name="action_see_invoice" type="object" string="ver detalles"
+                                            class="btn btn-outline-primary" icon="fa-file-archive-o"/>
+                                </group>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Fiscal">
+                        <field name="fiscal_ids">
+                            <tree editable="bottom">
+                                <field name="account"/>
+                                <field name="deductible_percentage"/>
+                                <field name="deductible_amount"/>
+                                <field name="amount"/>
+                                <field name="amount_art"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_purchase_order_tree_custom" model="ir.ui.view">
+            <field name="name">purchase.order.tree.custom</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="action_import_invoice_xml" type="object" string="Importar desde XML"
+                            class="oe_highlight" display="always"/>
+                </xpath>
+
+                <xpath expr="//field[@name='invoice_status']" position="after">
+                    <field name="invoice_date" optional="hide"/>
+                    <field name="effective_date" optional="hide"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- wizard fill -->
+        <record id="view_purchase_order_import_xml_form" model="ir.ui.view">
+            <field name="name">purchase.order.import.xml.form</field>
+            <field name="model">purchase.order.import.xml</field>
+            <field name="arch" type="xml">
+                <form string="Importar XML de Factura">
+                    <group>
+                        <field name="file" filename="filename"/>
+                        <field name="filename"/>
+                    </group>
+                    <footer>
+                        <button name="action_process_xml" type="object" string="Importar" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_purchase_order_branch_split_form" model="ir.ui.view">
+            <field name="name">purchase order branch split form</field>
+            <field name="model">purchase.line.branch.split</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="branch_id"/>
+                            <field name="percent"/>
+                        </group>
+                        <group>
+                            <field name="qty"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_purchase_order_branch_split_tree" model="ir.ui.view">
+            <field name="name">purchase order branch split tree</field>
+            <field name="model">purchase.line.branch.split</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="branch_id"/>
+                    <field name="qty"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

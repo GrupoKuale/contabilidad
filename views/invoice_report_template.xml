@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="report_invoice_template">
+        <t t-call="web.html_container">
+            <meta charset="utf-8"/>
+            <t t-set="background_color">
+                <t t-if="company_id == 1">197abf</t>
+                <!--  197abf  -->
+                <t t-if="company_id == 2">fc8207</t>
+                <!--  fc8207  -->
+                <t t-if="company_id == 4">ffcd32</t>
+                <!--  ffcd32  -->
+                <t t-if="company_id not in [1, 2, 4]">f0f0f0</t>
+                <!--  Valor por defecto  -->
+            </t>
+            <style>.page { font-family: arial, sans-serif; margin: 15px; line-height: 1.5; padding-top: 30px; }
+                .emisor-details-table { width: auto; border-collapse: collapse; margin-bottom: 15px; padding: 2px;
+                line-height: 1; table-layout: auto; } .emisor-details-table th { text-align: center; font-size: 14px;
+                padding: 6px; border: none; vertical-align: middle; } .emisor-details-table td { padding: 6px; border:
+                1px solid black; font-size: 11px; } .emisor-details-table td, .emisor-details-table th { white-space:
+                nowrap; /* evita saltos de línea */ } .emisor-details-table thead { border: none; text-align: center; }
+                .centered { text-align: center; } .invoice-table { width: 100%; border-collapse: collapse; font-size:
+                12px; margin-top:5px; padding: 2px; line-height: 1; } .invoice-table th { font-size: 12px; }
+                .invoice-table td { border: 1px solid black; padding: 6px; } .product-table { padding: 2px; line-height:
+                1; width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 10px; table-layout: auto; }
+                .product-table td { border: 1px solid black; padding: 2px; text-align: center; } .product-table th {
+                border: 1px solid black; white-space: nowrap; font-size: 10px; padding: 6px 8px; } /* fondo blanco para
+                otras secciones */ .bg-black { background-color: black; color: white; font-size:12px; } .bg-gray {
+                background-color: #eaeaea; text-align: left; margin-right:2px; } .sello-table { width: 100%;
+                border-collapse: collapse; table-layout: auto; /* permite que las columnas se ajusten al contenido */
+                margin-top: 5px; } .sello-table td { white-space: pre-wrap; /* permite saltos de línea si es necesario
+                */ text-align: justify; font-size: 8px; /* reduce el tamaño de la letra */ border: none; padding: 1px
+                3px; /* reduce los espacios */ line-height: 1; } .sello-table .bg-black { background-color: black;
+                color: white; font-size: 9px; text-align: center; padding: 2px 4px; } .sello-table .left-aligned2 {
+                text-align: left; word-wrap: break-word; /* evita que el texto se desborde */ } .sello-table img {
+                max-width: 180px; /* reduce el tamaño del qr */ max-height: 180px; object-fit: contain; display: block;
+                margin: auto; margin-right:30px; } .left-aligned2 { word-break: break-all; } .invoice-table
+                .products-body tr th, .invoice-table .products-body tr td { border: 1px solid black; padding: 6px; } /*
+                asegurar que los totales no tengan bordes */ .invoice-table .totals-body tr th, .invoice-table
+                .totals-body tr td { border: none; } .no-border { border: none !important; } .totals-table { width:
+                100%; border-collapse: collapse; margin-top: 10px; font-size: 10px; line-height: 1; table-layout: auto;
+                } .totals-table th, .totals-table td { padding: 6px 10px; text-align: center; white-space: nowrap; }
+                .totals-table th { width: 1%; max-width: 150px; text-align: center; } .totals-table td { min-width:
+                50px; text-align: right; } .totals-table tr th:nth-child(n+3), .totals-table tr td:nth-child(n+3) {
+                border: 1px solid #ddd; } .totals-header { text-align: center; vertical-align: middle; font-size: 12px;
+                padding: 4px 10px; white-space: nowrap; } .sello-table-container { position: absolute; bottom: 0; width:
+                100%; }
+            </style>
+            <div class="page">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="width: 25%; vertical-align: center; padding: 3px;">
+                            <img t-att-src="'data:image/png+xml;base64,' + logo_base64" alt="Logo"
+                                 style="width: 70%; max-width: 100%;"/>
+                        </td>
+                        <td style="width: 75%; vertical-align: top; padding: 3px;">
+                            <div style="display: flex; flex-direction: column; width: 100%;">
+                                <table class="emisor-details-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th class="centered" colspan="4"
+                                                centeredstyle="padding: 2px; line-height: 1;"
+                                                t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                                EMISOR
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>Nombre</strong>
+                                            </td>
+                                            <td colspan="3" style="padding: 3px; line-height: 1;">
+                                                <t t-esc="emisor['@Nombre']"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; " rowspan="2">
+                                                <strong>Régimen Fiscal</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;" rowspan="2">
+                                                <t t-esc="emisor['@RegimenFiscal']"/>
+                                                -
+                                                <t t-esc="descripcion_regimen_fiscal_emisor"/>
+                                            </td>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>RFC</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;">
+                                                <t t-esc="emisor['@Rfc']"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>Código postal</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;">
+                                                <t t-esc="invoice_data.get('@LugarExpedicion', '')"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>Lugar de expedición</strong>
+                                            </td>
+                                            <td colspan="3" style="padding: 3px; line-height: 1;">
+                                                <t t-esc="invoice_data.get('@LugarExpedicion', '')"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="emisor-details-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th class="centered" colspan="4"
+                                                centeredstyle="padding: 2px; line-height: 1;"
+                                                t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                                RECEPTOR
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                                <strong>Nombre</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;" colspan="3">
+                                                <t t-esc="receptor['@Nombre']"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                                <strong>RFC</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;">
+                                                <t t-esc="receptor['@Rfc']"/>
+                                            </td>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>Uso de CFDI</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;">
+                                                <t t-esc="receptor['@UsoCFDI']"/>
+                                                -
+                                                <t t-esc="descripcion_uso_cfdi"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>Régimen Fiscal</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;">
+                                                <t t-esc="receptor['@RegimenFiscalReceptor']"/>
+                                                -
+                                                <t t-esc="descripcion_regimen_fiscal_receptor"/>
+                                            </td>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>Código postal</strong>
+                                            </td>
+                                            <td style="padding: 3px; line-height: 1;">
+                                                <t t-esc="receptor['@DomicilioFiscalReceptor']"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray" style="padding: 3px; line-height: 1; ">
+                                                <strong>Domicilio</strong>
+                                            </td>
+                                            <td colspan="3" style="padding: 3px; line-height: 1;">
+                                                <t t-if="domicilio_extra and domicilio_extra.strip()">
+                                                    <t t-esc="domicilio_extra"/>
+                                                </t>
+                                                <t t-else="">
+                                                    CP: <t t-esc="receptor.get('@DomicilioFiscalReceptor', '')"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table class="emisor-details-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th colspan="6" style="padding: 2px; line-height: 1; "
+                                t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                DATOS CFDI
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Tipo de comprobante</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;">
+                                <t t-esc="invoice_data['@TipoDeComprobante']"/>
+                                - Ingreso
+                            </td>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Fecha y hora de certificación</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;" colspan="3">
+                                <t t-if="'cfdi:Complemento' in invoice_data and 'tfd:TimbreFiscalDigital' in invoice_data['cfdi:Complemento']">
+                                <t t-esc="invoice_data['cfdi:Complemento']['tfd:TimbreFiscalDigital']['@FechaTimbrado']"/>
+                            </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Fecha</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;">
+                                <t t-esc="invoice_data['@Fecha']"/>
+                            </td>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Folio fiscal</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;" colspan="3">
+                                <t t-if="'cfdi:Complemento' in invoice_data and 'tfd:TimbreFiscalDigital' in invoice_data['cfdi:Complemento']">
+                                <t t-esc="invoice_data['cfdi:Complemento']['tfd:TimbreFiscalDigital']['@UUID']"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Serie y folio</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;">
+                                <t t-esc="invoice_data['@Serie']"/>
+                                -
+                                <t t-esc="invoice_data['@Folio']"/>
+                            </td>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Serie del certificado emisor</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;" colspan="3">
+                                <t t-if="'cfdi:Complemento' in invoice_data and 'tfd:TimbreFiscalDigital' in invoice_data['cfdi:Complemento']">
+                                <t t-esc="invoice_data['@NoCertificado']"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Exportación</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;">
+                                <t t-esc="invoice_data['@Exportacion']"/>
+                            </td>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>No. serie del certificado del SAT</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;" colspan="3">
+                                <t t-if="'cfdi:Complemento' in invoice_data and 'tfd:TimbreFiscalDigital' in invoice_data['cfdi:Complemento']">
+                                <t t-esc="invoice_data['cfdi:Complemento']['tfd:TimbreFiscalDigital']['@NoCertificadoSAT']"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;" rowspan="2">
+                                <strong>Forma de pago</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;" rowspan="2">
+                                <t t-esc="invoice_data['@FormaPago']"/>
+                                -
+                                <t t-esc="descripcion_forma_pago"/>
+                            </td>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;" rowspan="2">
+                                <strong>Método de pago</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;" rowspan="2">
+                                <t t-esc="invoice_data['@MetodoPago']"/>
+                                -
+                                <t t-esc="descripcion_metodo_pago"/>
+                            </td>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Moneda</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;">
+                                <t t-esc="invoice_data['@Moneda']"/>
+                                -
+                                <t t-esc="descripcion_moneda"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Tipo de cambio</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;"></td>
+                        </tr>
+                        <tr>
+                            <th colspan="6"
+                                style="padding: 2px; line-height: 1; background-color:#d9d9d9; color:black;">CFDI
+                                RELACIONADOS
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>Tipo de relación</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;"></td>
+                            <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                <strong>CFDI Relacionados</strong>
+                            </td>
+                            <td style="padding: 3px; line-height: 1;" colspan="3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="invoice-table">
+                    <t t-set="header_color_products"
+                       t-value="'background-color: #' + (company_id == 1 and 'ee4546' or company_id == 2 and 'a175bb' or company_id == 4 and '000000' or 'f0f0f0')"/>
+                    <t t-set="text_color" t-value="'color: ' + (company_id == 4 and 'white' or 'black')"/>
+                    <thead t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                        <tr>
+                            <th colspan="10" style="font-size:14px; padding: 2px; line-height: 1;">DETALLE</th>
+                        </tr>
+                    </thead>
+                    <t t-set="contador" t-value="0"/>
+                    <t t-foreach="conceptos" t-as="concepto">
+                        <t t-set="contador" t-value="contador + 1"/>
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <!--  Columna para el contador  -->
+                                    <th t-att-style="header_color_products + '; ' + text_color">Cantidad</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Clave Unidad</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Unidad</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Clave Prod. Serv.</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">No Identificación</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color" colspan="5">
+                                        Concepto/Descripción
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <t t-esc="contador"/>
+                                    </td>
+                                    <!--  Aquí se muestra el número  -->
+                                    <td>
+                                        <t t-esc="concepto['@Cantidad']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="concepto['@ClaveUnidad']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="concepto['@ClaveProdServ']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="concepto['@NoIdentificacion']"/>
+                                    </td>
+                                    <td colspan="5">
+                                        <t t-esc="concepto['@Descripcion']"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Valor Unitario</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Importe</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Descuento</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Objeto de impuesto</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Impuesto</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Tipo</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Base</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Tipo Factor</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Tasa</th>
+                                    <th t-att-style="header_color_products + '; ' + text_color">Importe</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="'{:.2f}'.format(float(concepto['@ValorUnitario']))"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="'{:.2f}'.format(float(concepto['@Importe']))"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="concepto.get('@Descuento', '0.00')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="concepto['@ObjetoImp']"/>
+                                        -
+                                        <t t-esc="descripcion_objetoimp"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="concepto['cfdi:Impuestos']['cfdi:Traslados']['cfdi:Traslado']['@Impuesto']"/>
+                                        -
+                                        <t t-esc="descripcion_impuesto"/>
+                                    </td>
+                                    <td>Traslado</td>
+                                    <td>
+                                        <t t-esc="'{:.2f}'.format(float(concepto['cfdi:Impuestos']['cfdi:Traslados']['cfdi:Traslado']['@Base']))"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="concepto['cfdi:Impuestos']['cfdi:Traslados']['cfdi:Traslado']['@TipoFactor']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="'{:.2f}%%'.format(float(concepto['cfdi:Impuestos']['cfdi:Traslados']['cfdi:Traslado']['@TasaOCuota']) * 100)"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="'{:.2f}'.format(float(concepto['cfdi:Impuestos']['cfdi:Traslados']['cfdi:Traslado']['@Importe']))"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <!--  Separación entre cada tabla de productos  -->
+                    </t>
+                    <table class="totals-table">
+                        <tbody>
+                            <!-- Fila de Totales -->
+                            <tr>
+
+                                <th colspan="10" class="totals-header"
+                                    t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                    TOTALES
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <th class="bg-gray">Subtotal</th>
+                                <td>
+                                    <t t-esc="'{:.2f}'.format(float(invoice_data.get('@SubTotal', 0)))"/>
+                                </td>
+                                <th class="bg-gray">Descuento</th>
+                                <td>
+                                    <t t-esc="descuento"/>
+                                </td>
+                                <th class="bg-gray">Impuestos Traslados</th>
+                                <td>
+                                    <t t-esc="'{:.2f}'.format(float(total_impuestos_trasladados))"/>
+                                </td>
+                                <th t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                    Total
+                                </th>
+                                <td>
+                                    <t t-esc="'{:.2f}'.format(float(invoice_data.get('@Total', 0)))"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+
+                                <th colspan="3"
+                                    t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                    Importe con letra
+                                </th>
+                                <td colspan="7" class="centered" style="text-align: left;">
+                                    <t t-esc="total_letras"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                </table>
+                <t t-if="complemento != 'none'">
+                    <h3 class="text-center m-0">Complemento CFDI</h3>
+
+                    <!-- Complemento Detallista -->
+                    <t t-if="complemento == 'detallista'">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th class="centered" colspan="6"
+                                        centeredstyle="padding: 2px; line-height: 1;"
+                                        t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                        COMPLEMENTO DETALLISTA
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Versión</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Estructura del Documento</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Estado del Documento</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Tipo</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="2">
+                                        <strong>Identificación del Pago</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="detallista['@contentVersion']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['@documentStructureVersion']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['@documentStatus']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['@type']"/>
+                                    </td>
+                                    <td colspan="2">
+                                        <t t-esc="detallista['detallista:requestForPaymentIdentification']['detallista:entityType']"/>
+                                    </td>
+                                </tr>
+
+                                <!-- Información de Orden y Adicional -->
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Referencia Orden</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Tipo Ref. Orden</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Referencia Información</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="3">
+                                        <strong>Tipo Ref. Información</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="detallista['detallista:orderIdentification']['detallista:referenceIdentification']['#text']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['detallista:orderIdentification']['detallista:referenceIdentification']['@type']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['detallista:AdditionalInformation']['detallista:referenceIdentification']['#text']"/>
+                                    </td>
+                                    <td colspan="3">
+                                        <t t-esc="detallista['detallista:AdditionalInformation']['detallista:referenceIdentification']['@type']"/>
+                                    </td>
+                                </tr>
+
+                                <!-- Información del Comprador y Vendedor -->
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>GLN Comprador</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Nombre Contacto</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>GLN Vendedor</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="3">
+                                        <strong>ID Alterno Vendedor</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="detallista['detallista:buyer']['detallista:gln']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['detallista:buyer']['detallista:contactInformation']['detallista:personOrDepartmentName']['detallista:text']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['detallista:seller']['detallista:gln']"/>
+                                    </td>
+                                    <td colspan="3">
+                                        <t t-esc="detallista['detallista:seller']['detallista:alternatePartyIdentification']['#text']"/>
+                                    </td>
+                                </tr>
+
+                                <!-- Información de Monedas -->
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Moneda Facturación</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Función Moneda Facturación</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Moneda Pago</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Función Moneda Pago</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="2">
+                                        <strong>Tipo de Cambio</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="detallista['detallista:currency'][0]['@currencyISOCode']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['detallista:currency'][0]['detallista:currencyFunction']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['detallista:currency'][1]['@currencyISOCode']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="detallista['detallista:currency'][1]['detallista:currencyFunction']"/>
+                                    </td>
+                                    <td colspan="2">
+                                        <t t-esc="detallista['detallista:currency'][1]['detallista:rateOfChange']"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+
+                    <!-- Complemento Donataria -->
+                    <t t-if="complemento == 'donataria'">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th class="centered" colspan="8"
+                                        centeredstyle="padding: 2px; line-height: 1;"
+                                        t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                        COMPLEMENTO DONATARIO
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Version</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="2">
+                                        <strong>Número de Autorización</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="2">
+                                        <strong>Fecha de Autorización</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="3">
+                                        <strong>Leyenda</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="donataria['@version']"/>
+                                    </td>
+                                    <td colspan="2">
+                                        <t t-esc="donataria['@noAutorizacion']"/>
+                                    </td>
+                                    <td colspan="2">
+                                        <t t-esc="donataria['@fechaAutorizacion']"/>
+                                    </td>
+                                    <td colspan="3">
+                                        <t t-esc="donataria['@leyenda']"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <!-- Complemento INE -->
+                    <t t-if="complemento == 'ine'">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th class="centered" colspan="6"
+                                        centeredstyle="padding: 2px; line-height: 1;"
+                                        t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                        COMPLEMENTO INE
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Version</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Tipo Proceso</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Clave entidad</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Ambito</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="2">
+                                        <strong>Id contabilidad</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="ine['@Version']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="ine['@TipoProceso']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="ine['ine:Entidad']['@ClaveEntidad']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="ine['ine:Entidad']['@Ambito']"/>
+                                    </td>
+                                    <td colspan="2">
+                                        <t t-esc="ine['ine:Entidad']['ine:Contabilidad']['@IdContabilidad']"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <!-- Complemento Aerolíneas -->
+                    <t t-if="complemento == 'aerolinea'">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th class="centered" colspan="6"
+                                        centeredstyle="padding: 2px; line-height: 1;"
+                                        t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                        COMPLEMENTO AEROLÍNEA
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Versión</strong>
+                                    </td>
+                                    <td>
+                                        <t t-esc="aerolinea['@Version']"/>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>TUA</strong>
+                                    </td>
+                                    <td>
+                                        <t t-esc="aerolinea['@TUA']"/>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Total de Otros Cargos</strong>
+                                    </td>
+                                    <td>
+                                        <t t-esc="aerolinea['aerolineas:OtrosCargos']['@TotalCargos']"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="3">
+                                        <strong>Código de Cargo</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="3">
+                                        <strong>Importe</strong>
+                                    </td>
+                                </tr>
+                                <t t-if="aerolinea.get('aerolineas:OtrosCargos') and aerolinea['aerolineas:OtrosCargos'].get('aerolineas:Cargo')">
+                                    <t t-foreach="aerolinea['aerolineas:OtrosCargos']['aerolineas:Cargo']" t-as="cargo">
+                                        <tr>
+                                            <td colspan="3">
+                                                <t t-esc="cargo['@CodigoCargo']"/>
+                                            </td>
+                                            <td colspan="3">
+                                                <t t-esc="cargo['@Importe']"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <!-- Complemento Divisas -->
+                    <t t-if="complemento == 'divisa'">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th class="centered" colspan="4"
+                                        centeredstyle="padding: 2px; line-height: 1;"
+                                        t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                        COMPLEMENTO DIVISAS
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="">
+                                        <strong>Versión</strong>
+                                    </td>
+                                    <td>
+                                        <t t-esc="divisa['@version']"/>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="">
+                                        <strong>Tipo de Operacion</strong>
+                                    </td>
+                                    <td>
+                                        <t t-esc="divisa['@tipoOperacion']"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <!-- Complemento Servicios Parciales de Construcción -->
+                    <t t-if="complemento == 'build'">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th class="centered" colspan="10"
+                                        centeredstyle="padding: 2px; line-height: 1;"
+                                        t-att-style="'background-color: #' + (company_id == 1 and '197abf' or company_id == 2 and 'fc8207' or company_id == 4 and 'ffcd32' or 'f0f0f0')">
+                                        COMPLEMENTO SERVICIOS PARCIALES DE CONSTRUCCION
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="5">
+                                        <strong>Numero de Licencia / Autorizacion / Permiso</strong>
+                                    </td>
+                                    <td colspan="5">
+                                        <t t-esc="build['@NumPerLicoAut']"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Colonia</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Municipio</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Calle</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Estado</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;" colspan="2">
+                                        <strong>Referencia</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>No. Interior</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>No. Exterior</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Codigo Postal</strong>
+                                    </td>
+                                    <td class="bg-gray" style="padding: 3px; line-height: 1;">
+                                        <strong>Localidad</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@Colonia']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@Municipio']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@Calle']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@Estado']"/>
+                                    </td>
+                                    <td colspan="2">
+                                        <t t-esc="build['servicioparcial:Inmueble']['@Referencia']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@NoInterior']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@NoExterior']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@CodigoPostal']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="build['servicioparcial:Inmueble']['@Localidad']"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                </t>
+                <table class="sello-table">
+                    <!--  Sello Digital del CFDI  -->
+                    <tr>
+                        <td class="bg-black" style="font-size:11px; padding: 2px; line-height: 1;" colspan="3">
+                            <strong>SELLO DIGITAL DEL CFDI</strong>
+                        </td>
+                        <td class="no-border" style="padding-left:10px; vertical-align: top;" rowspan="4">
+                            <!--  El QR ocupa más espacio verticalmente  -->
+                            <img t-att-src="'data:image/png;base64,' + qr_base64"
+                                 style="max-width: 120px; max-height: 120px;display: block;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-aligned2" colspan="3"><br/><t t-if="'cfdi:Complemento' in invoice_data and 'tfd:TimbreFiscalDigital' in invoice_data['cfdi:Complemento']"><t t-esc="invoice_data['cfdi:Complemento']['tfd:TimbreFiscalDigital'].get('@SelloCFD', 'No disponible').strip()"/></t>
+                        </td>
+                    </tr>
+                    <!--  Sello del SAT  -->
+                    <tr>
+                        <td class="bg-black" style="font-size:11px; padding: 2px; line-height: 1;" colspan="3">
+                            <strong>SELLO DEL SAT</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-aligned2" colspan="3"><br/><t t-if="'cfdi:Complemento' in invoice_data and 'tfd:TimbreFiscalDigital' in invoice_data['cfdi:Complemento']"><t t-esc="invoice_data['cfdi:Complemento']['tfd:TimbreFiscalDigital']['@SelloSAT'].strip()"/></t>
+                        </td>
+                    </tr>
+                    <!--  Certificado del SAT  -->
+                    <tr>
+                        <td class="bg-black" style="font-size:11px; padding: 2px; line-height: 1;" colspan="4">
+                            <strong>CERTIFICADO ORIGINAL DEL COMPLEMENTO DE CERTIFICACIÓN DIGITAL DEL SAT</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-aligned2" colspan="4"><br/><t t-if="'cfdi:Complemento' in invoice_data and 'tfd:TimbreFiscalDigital' in invoice_data['cfdi:Complemento']"><t t-esc="invoice_data['@Certificado'].strip()"/></t>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>

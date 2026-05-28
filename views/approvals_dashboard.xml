@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="approvals_dashboard_kanban_view" model="ir.ui.view">
+            <field name="name">approvals.dashboard.kanban</field>
+            <field name="model">approvals.dashboard</field>
+            <field name="arch" type="xml">
+
+                <kanban create="false"
+                        class="o_kanban_dashboard"
+                        js_class="approvals_dashboard_kanban">
+
+                    <style>
+                        .o_kanban_dashboard .o_kanban_record {
+                        border-radius: 4px;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.10);
+                        margin-bottom: 20px;
+                        padding: 0 !important;
+                        background: white;
+                        }
+
+                        .o_kanban_record::before {
+                        content: "";
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 4px;
+                        height: 100%;
+                        background: #b197fc; /* igual que Odoo */
+                        border-radius: 4px 0 0 4px;
+                        }
+
+                        .o_kanban_card_header {
+                        padding: 16px 20px 10px 20px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        }
+
+                        .o_kanban_card_header_title .o_primary {
+                        font-size: 20px;
+                        font-weight: 600;
+                        color: #1572A1;
+                        }
+
+                        .o_kanban_dropdown {
+                        position: relative;
+                        }
+
+                        .o_kanban_dropdown a {
+                        color: #999 !important;
+                        font-size: 20px;
+                        cursor: pointer;
+                        padding: 0 5px;
+                        }
+
+                        .o_kanban_card_content {
+                        padding: 0px 20px 20px 20px;
+                        }
+
+                        .o_dashboard_action_btn {
+                        background: #1aa3a9;
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 3px;
+                        font-weight: 600;
+                        margin-bottom: 10px;
+                        display: inline-block;
+                        cursor: pointer;
+                        }
+
+                        .o_quick_item {
+                        font-size: 14px;
+                        margin-bottom: 8px;
+                        }
+
+                        .o_quick_item a {
+                        color: #1aa3a9 !important;
+                        text-decoration: none;
+                        font-weight: 600;
+                        }
+
+                        .o_quick_item a:hover {
+                        text-decoration: underline;
+                        }
+
+                        .o_btn_full {
+                        background: #1aa3a9;
+                        width: 100%;
+                        color: white !important;
+                        padding: 10px;
+                        border-radius: 3px;
+                        text-align: center;
+                        font-weight: 600;
+                        margin-top: 15px;
+                        cursor: pointer;
+                        }
+
+                        .o_btn_full:hover {
+                        opacity: 0.9;
+                        }
+
+                        .metric-row {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 6px;
+                        }
+                        .metric-label {
+                        font-weight: 600;
+                        }
+                        .metric-value {
+                        font-weight: 600;
+                        color: #1aa3a9;
+                        }
+
+                    </style>
+
+                    <field name="kanban_dashboard"/>
+                    <field name="module_type"/>
+                    <field name="name"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+
+                            <t t-set="db" t-value="JSON.parse(record.kanban_dashboard.raw_value)"/>
+
+                            <!-- HEADER -->
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <span t-esc="db.title"/>
+                                    </div>
+                                </div>
+
+                                <!-- CONTEXT MENU -->
+                                <div class="o_kanban_dropdown dropdown">
+                                    <a data-bs-toggle="dropdown">⋮</a>
+
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item"
+                                               type="object"
+                                               name="open_records">
+                                               Ver registros
+                                            </a>
+                                        </li>
+
+                                        <!-- COMPRAS -->
+                                        <t t-if="record.module_type.raw_value == 'purchase'">
+                                            <li><a class="dropdown-item" type="action"
+                                                name="purchase.purchase_rfq">Crear orden de compra</a></li>
+
+                                            <li><a class="dropdown-item" type="object"
+                                                name="action_import_purchase_xml">Importar XML</a></li>
+                                        </t>
+
+                                        <!-- VENTAS -->
+                                        <t t-if="record.module_type.raw_value == 'sale'">
+                                            <li><a class="dropdown-item" type="action"
+                                                name="sale.action_quotations">Crear cotización</a></li>
+                                        </t>
+
+                                        <!-- GASTOS -->
+                                        <t t-if="record.module_type.raw_value == 'expense'">
+                                            <li><a class="dropdown-item" type="action"
+                                                name="hr_expense.action_move_expense">Registrar gasto</a></li>
+
+                                            <li><a class="dropdown-item" type="action"
+                                                name="hr_expense.action_hr_expense_upload">Subir gasto</a></li>
+                                        </t>
+
+                                        <!-- PAGOS -->
+                                        <t t-if="record.module_type.raw_value == 'payment'">
+                                            <li><a class="dropdown-item" type="action"
+                                                name="account.action_account_payments">Crear pago</a></li>
+                                        </t>
+
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- BODY -->
+                            <div class="o_kanban_card_content">
+
+                                <!-- MÉTRICA: TOTAL -->
+                                <div class="metric-row">
+                                    <div class="metric-label">Total:</div>
+                                    <div class="metric-value">
+                                        <a type="object" name="open_total">
+                                            <span t-esc="db.total"/>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- MÉTRICA: POR APROBAR -->
+                                <div class="metric-row">
+                                    <div class="metric-label">Por aprobar:</div>
+                                    <div class="metric-value">
+                                        <a type="object" name="open_pending">
+                                            <span t-esc="db.pending"/>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- MÉTRICA: APROBADAS -->
+                                <div class="metric-row">
+                                    <div class="metric-label">Aprobadas:</div>
+                                    <div class="metric-value">
+                                        <a type="object" name="open_approved">
+                                            <span t-esc="db.approved"/>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- BOTÓN FINAL -->
+                                <button type="object"
+                                        name="open_records"
+                                        class="o_btn_full">
+                                    Ver Registros
+                                </button>
+
+                            </div>
+
+                        </t>
+                    </templates>
+
+                </kanban>
+
+            </field>
+        </record>
+
+        <record id="approvals_dashboard_action" model="ir.actions.act_window">
+            <field name="name">Aprobaciones</field>
+            <field name="res_model">approvals.dashboard</field>
+            <field name="view_mode">kanban</field>
+        </record>
+
+
+
+    </data>
+</odoo>

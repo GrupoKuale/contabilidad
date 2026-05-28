@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- Vista árbol -->
+        <record id="view_ticket_sell_types_tree" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.ticket_sell_types.tree</field>
+            <field name="model">contabilidad_kuale.ticket_sell_types</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="clave"/>
+                    <field name="analytic_account"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista formulario -->
+        <record id="view_ticket_sell_types_form" model="ir.ui.view">
+            <field name="name">contabilidad_kuale.ticket_sell_types.form</field>
+            <field name="model">contabilidad_kuale.ticket_sell_types</field>
+            <field name="arch" type="xml">
+                <form string="Tipo de Venta">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="clave"/>
+                            <field name="analytic_account"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción -->
+        <record id="action_ticket_sell_types" model="ir.actions.act_window">
+            <field name="name">Tipos de Venta</field>
+            <field name="res_model">contabilidad_kuale.ticket_sell_types</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crea los diferentes tipos de venta para usarlos en el monitoreo de tickets.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

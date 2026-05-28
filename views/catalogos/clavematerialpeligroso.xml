@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavematerialpeligroso_filter" model="ir.ui.view">
+            <field name="name">filtro.clavematerialpeligroso</field>
+            <field name="model">cfdi.clavematerialpeligroso</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_materialpeligroso" string="Todo" filter_domain="['|',('Clave_materialpeligroso','ilike',self),
+                              '|',('Descripcion','ilike',self),
+                              '|',('Clase','ilike',self),
+                              '|',('Peligro_secundario','ilike',self),
+                              ('Nombre_tecnico','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavematerialpeligroso_view_form" model="ir.ui.view">
+            <field name="name">clavematerialpeligroso form</field>
+            <field name="model">cfdi.clavematerialpeligroso</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_materialpeligroso"/>
+                            <field name="Descripcion"/>
+                            <field name="Clase"/>
+                            <field name="Peligro_secundario"/>
+                            <field name="Nombre_tecnico"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavematerialpeligroso_view_tree" model="ir.ui.view">
+            <field name="name">clavematerialpeligroso tree</field>
+            <field name="model">cfdi.clavematerialpeligroso</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_materialpeligroso asc'  >
+                    <field name="Clave_materialpeligroso"/>
+                    <field name="Descripcion"/>
+                    <field name="Clase"/>
+                    <field name="Peligro_secundario"/>
+                    <field name="Nombre_tecnico"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavematerialpeligroso">
+            <field name="name">clavematerialpeligroso</field>
+            <field name="res_model">cfdi.clavematerialpeligroso</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

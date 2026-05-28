@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_usuariosapp_filter" model="ir.ui.view">
+            <field name="name">filtro.usuariosapp</field>
+            <field name="model">cfdi.usuariosapp</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscan en todo">
+                    <field name="name" string="Todo" filter_domain="['|',('name','ilike',self),
+                              '|',('user','ilike',self),
+                              '|',('Permiso_SCT','ilike',self),
+                              '|',('password','ilike',self),
+                              '|',('token','ilike',self),
+                              ('lastlogin','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="usuariosapp_view_form" model="ir.ui.view">
+            <field name="name">usuariosapp form</field>
+            <field name="model">cfdi.usuariosapp</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active == True"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="user"/>
+                            <field name="password"/>
+                            <field name="token"/>
+                            <field name="lastlogin"/>
+                        </group>
+                    </sheet>
+
+                    <div class="oe_chatter" modifiers="{}">
+                        <field name="message_follower_ids" widget="mail_followers" modifiers="{}"/>
+                        <field name="activity_ids" widget="mail_activity" modifiers="{}"/>
+                        <field name="message_ids" widget="mail_thread" modifiers="{}" options="{'display_log_button': True}"/>
+                    </div>
+                </form>
+
+            </field>
+        </record>
+
+        <record id="usuariosapp_view_tree" model="ir.ui.view">
+            <field name="name">usuariosapp tree</field>
+            <field name="model">cfdi.usuariosapp</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='name asc'  >
+                    <field name="name"/>
+                    <field name="user"/>
+                    <field name="password"/>
+                    <field name="token"/>
+                    <field name="lastlogin"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_usuariosapp">
+            <field name="name">usuariosapp</field>
+            <field name="res_model">cfdi.usuariosapp</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_claveobjetoimp_filter" model="ir.ui.view">
+            <field name="name">filtro.claveobjetoimp</field>
+            <field name="model">cfdi.claveobjetoimp</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_objetoimp" string="Todo" filter_domain="['|',('Clave_objetoimp','ilike',self),
+                              ('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="claveobjetoimp_view_form" model="ir.ui.view">
+            <field name="name">claveobjetoimp form</field>
+            <field name="model">cfdi.claveobjetoimp</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_objetoimp"/>
+                            <field name="Descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="claveobjetoimp_view_tree" model="ir.ui.view">
+            <field name="name">claveobjetoimp tree</field>
+            <field name="model">cfdi.claveobjetoimp</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_objetoimp asc'  >
+                    <field name="Clave_objetoimp"/>
+                    <field name="Descripcion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_claveobjetoimp">
+            <field name="name">claveobjetoimp</field>
+            <field name="res_model">cfdi.claveobjetoimp</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

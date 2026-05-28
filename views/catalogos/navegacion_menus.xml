@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <menuitem id="cfdi_menu_catalogos" name="Catálogos SAT" web_icon="cfdi,static/src/img/icono-CATALOGOS.png"/>
+
+        <menuitem id="cfdi_submenu_catalogos_cfdi" name="Catálogos SAT CFDI" parent="cfdi_menu_catalogos"/>
+        <!-- Menu catalogos CFDI-->
+        <menuitem id="cfdi_submenu_claveformadepago" name="Forma de pago" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveformadepago"/>
+        <menuitem id="cfdi_submenu_clavemoneda" name="Moneda" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavemoneda"/>
+        <menuitem id="cfdi_submenu_claveexportacion" name="Exportacion" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveexportacion"/>
+        <menuitem id="cfdi_submenu_clavemetododepago" name="Metodo de pago" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavemetododepago"/>
+        <menuitem id="cfdi_submenu_claveregimenfiscal" name="Regimen fiscal" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveregimenfiscal"/>
+        <menuitem id="cfdi_submenu_clavepais" name="Pais" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavepais"/>
+        <menuitem id="cfdi_submenu_claveusocfdi" name="Uso cfdi" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveusocfdi"/>
+        <menuitem id="cfdi_submenu_claveprodserv" name="Producto servicio" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveprodserv"/>
+        <menuitem id="cfdi_submenu_claveunidad" name="Unidad" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveunidad"/>
+        <menuitem id="cfdi_submenu_claveobjetoimp" name="Objeto impuesto" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveobjetoimp"/>
+        <menuitem id="cfdi_submenu_claveimpuesto" name="Impuesto" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveimpuesto"/>
+        <menuitem id="cfdi_submenu_clavecolonia" name="Colonia" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavecolonia"/>
+        <menuitem id="cfdi_submenu_claveestado" name="Estado" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_claveestado"/>
+        <menuitem id="cfdi_submenu_clavelocalidad" name="Localidad" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavelocalidad"/>
+        <menuitem id="cfdi_submenu_clavemunicipio" name="Municipio" parent="cfdi_submenu_catalogos_cfdi"
+                  action="act_cfdi_clavemunicipio"/>
+    </data>
+</odoo>

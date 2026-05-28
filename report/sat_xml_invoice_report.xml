@@ -1,0 +1,10 @@
+<odoo>
+    <record id="action_report_sat_xml_invoice" model="ir.actions.report">
+        <field name="name">Factura XML (PDF)</field>
+        <field name="model">sat.xml.invoices</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">contabilidad_kuale.sat_xml_invoice_template</field>
+        <field name="report_file">contabilidad_kuale.sat_xml_invoice_template</field>
+        <field name="print_report_name">'Factura_%s' % (object.tfd_uuid or '')</field>
+    </record>
+</odoo>

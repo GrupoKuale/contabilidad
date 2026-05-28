@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_ticket_invoice_cancellation_form" model="ir.ui.view">
+        <field name="name">ticket.invoice.cancellation.form</field>
+        <field name="model">contabilidad_ticket.invoice_cancellation</field>
+        <field name="arch" type="xml">
+            <form string="Cancelar CFDI" version="7.0">
+                <group>
+                    <group>
+                        <field name="company_id" required="1"/>
+                        <field name="branch_id" required="1"/>
+                    </group>
+                    <group>
+                        <field name="invoice_uuid" readonly="1"/>
+                        <field name="cancel_reason" required="1"/>
+
+                        <field name="uuid_replacement" invisible="cancel_reason != '01'"/>
+                    </group>
+                </group>
+
+                <footer>
+                    <button string="Cancelar CFDI"
+                            name="action_cancel_invoice"
+                            type="object"
+                            class="btn btn-danger"/>
+
+                    <button string="Cerrar"
+                            special="cancel"
+                            class="btn btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    </data>
+</odoo>

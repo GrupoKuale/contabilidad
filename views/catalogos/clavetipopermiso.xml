@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavetipopermiso_filter" model="ir.ui.view">
+            <field name="name">filtro.clavetipopermiso</field>
+            <field name="model">cfdi.clavetipopermiso</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_Tipopermiso" string="Todo" filter_domain="['|',('Clave_Tipopermiso','ilike',self),
+                              '|',('Descripcion','ilike',self),
+                              ('Clave_Transporte','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavetipopermiso_view_form" model="ir.ui.view">
+            <field name="name">clavetipopermiso form</field>
+            <field name="model">cfdi.clavetipopermiso</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_Tipopermiso"/>
+                            <field name="Descripcion"/>
+                            <field name="Clave_Transporte"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavetipopermiso_view_tree" model="ir.ui.view">
+            <field name="name">clavetipopermiso tree</field>
+            <field name="model">cfdi.clavetipopermiso</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_Tipopermiso asc'  >
+                    <field name="Clave_Tipopermiso"/>
+                    <field name="Descripcion"/>
+                    <field name="Clave_Transporte"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavetipopermiso">
+            <field name="name">clavetipopermiso</field>
+            <field name="res_model">cfdi.clavetipopermiso</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

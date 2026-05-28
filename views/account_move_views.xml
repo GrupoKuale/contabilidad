@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- add "company_group" -->
+    <!--
+    <record model="ir.ui.view" id="view_account_tax_group_company">
+        <field name="name">account.tax.company.group</field>
+        <field name="model">account.tax</field>
+        <field name="inherit_id" ref="account.view_tax_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tax_scope']" position="after">
+                <field name="company_group" required="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    -->
+
+    <!-- Add "Asset Category" to supplier invoices -->
+    <record model="ir.ui.view" id="view_invoice_asset_category">
+        <field name="name">account.invoice.supplier.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header//button[@name='preview_invoice']" position="attributes">
+                <field name="invisible">True</field>
+            </xpath>
+            <xpath expr="//header//button[@name='preview_invoice']" position="replace">
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <!--invisible="state != 'posted'-->
+
+                <!-- Botón para Registrar Pago en pólizas de proveedores -->
+                <button name="action_register_payment_supplier" type="object"
+                        string="Registrar Pago" class="oe_highlight"
+                        invisible="state != 'posted' or not is_purchase_journal"
+                        help="Registrar pago para esta póliza de proveedor"
+                        data-hotkey="g"/>
+
+                <!-- Botones de timbrado  -->
+                <button name="action_timbrar_factura" type="object" string="Timbrar"
+                        invisible="state not in ['draft', 'posted', 'preinvoiced'] or timbrado_status == 'timbrado' or is_purchase_journal"
+                        class="oe_highlight"
+                        help="Validar, publicar y timbrar la factura en un solo paso"/>
+
+                <button name="action_preview_invoice" string="Previsualizar PDF" type="object" class="btn-secondary"
+                        invisible="is_purchase_journal"/>
+                <button name="duplicate_invoice" type="object" string="Clonar factura" class="oe_highlight"
+                        invisible="is_purchase_journal"/>
+                <button name="action_schedule_invoice" type="object" string="Programar Factura" class="oe_highlight"
+                        invisible="is_purchase_journal"/>
+
+                <div class="row w-100" invisible="is_purchase_journal">
+                        <div class="col-3">
+                            <label for="timbrado_status">Estado de Timbrado</label>
+                            <field name="timbrado_status" class="w-100" readonly="1"
+                                widget="badge"
+                                decoration-success="timbrado_status == 'ready'"
+                                decoration-warning="timbrado_status == 'draft'"
+                                decoration-danger="timbrado_status == 'error'"
+                                decoration-info="timbrado_status == 'timbrado'"/>
+                        </div>
+                    </div>
+
+
+            </xpath>
+
+            <xpath expr="//header//button[@name='action_invoice_sent']" position="replace">
+                <button name="send_invoice_to_email" type="object"
+                        invisible="state != 'posted' or is_being_sent or invoice_pdf_report_id or move_type not in ('out_invoice', 'out_refund') "
+                        class="oe_highlight" data-hotkey="y">Enviar factura
+                </button>
+                <button name="send_invoice_to_email" type="object"
+                        invisible="state != 'posted' or not is_being_sent and not invoice_pdf_report_id or move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')"
+                        class="oe_highlight" data-hotkey="y">Enviar factura
+                </button>
+
+
+
+            </xpath>
+
+            <xpath expr="//group" position="replace">
+                <field name="has_due" invisible="1"/>
+                <field name="is_warning" invisible="1"/>
+                <field name="is_purchase_journal" invisible="1"/>
+                <div class="container w-100 p-0">
+                    <div class="row w-100">
+                        <separator string="Empresa"/>
+                        <div class="col" readonly="state not in 'draft'">
+                            <label for="company_id"/>
+                            <br/>
+                            <field name="company_id" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="branch_id"/>
+                            <br/>
+                            <field name="branch_id" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="company_rfc"/>
+                            <br/>
+                            <field name="company_rfc" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="company_zip"/>
+                            <br/>
+                            <field name="company_zip" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="company_tax_regiment"/>
+                            <br/>
+                            <field name="company_tax_regiment" class="w-100" readonly="1"/>
+                        </div>
+
+                    </div>
+                    <div class="row w-100" invisible="is_purchase_journal">
+                        <separator string="Cliente"/>
+                        <div class="col">
+                            <label for="partner_id" string="cliente"/>
+                            <br/>
+                            <field name="partner_id" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="client_cfdi_use"/>
+                            <br/>
+                            <field name="client_cfdi_use" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="client_rfc"/>
+                            <br/>
+                            <field name="client_rfc" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="client_zip"/>
+                            <br/>
+                            <field name="client_zip" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="client_tax_regiment"/>
+                            <br/>
+                            <field name="client_tax_regiment" class="w-100" readonly="1"/>
+                        </div>
+
+                    </div>
+                    <div class="row w-100" invisible="not is_purchase_journal">
+                        <separator string="Proveedor"/>
+                        <div class="col">
+                            <label for="partner_id" string="Proveedor"/>
+                            <br/>
+                            <field name="partner_id" class="w-100" readonly="state not in 'draft'"
+                                   domain="[('supplier_rank', '>', 0)]"
+                                   context="{'default_supplier_rank': 1}"/>
+                        </div>
+                        <div class="col">
+                            <label for="client_cfdi_use" string="Uso de CFDI"/>
+                            <br/>
+                            <field name="client_cfdi_use" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="client_rfc" string="RFC Proveedor"/>
+                            <br/>
+                            <field name="client_rfc" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="client_zip" string="CP Proveedor"/>
+                            <br/>
+                            <field name="client_zip" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col" readonly="1">
+                            <label for="client_tax_regiment" string="Régimen Fiscal Proveedor"/>
+                            <br/>
+                            <field name="client_tax_regiment" class="w-100" readonly="1"/>
+                        </div>
+
+                    </div>
+                    <div class="row w-100">
+                        <separator string="Datos de facturacion"/>
+                        <div class="col">
+                            <label for="payment_method"/>
+                            <br/>
+                            <field name="payment_method" class="w-100" readonly="state not in 'draft'"
+                                   options="{'no_quick_create': False, 'no_create': False}"/>
+                        </div>
+                        <div class="col">
+                            <label for="payment_type"/>
+                            <br/>
+                            <field name="payment_type" class="w-100" readonly="state not in 'draft'"
+                                   options="{'no_quick_create': False, 'no_create': False}"/>
+                        </div>
+                        <div class="col">
+                            <label for="coin_type"/>
+                            <br/>
+                            <field name="coin_type" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="invoice_date"/>
+                            <br/>
+                            <field name="invoice_date" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="payment_reference"/>
+                            <br/>
+                            <field name="payment_reference" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+
+                    <div class="row w-100">
+                        <div class="col">
+                            <label for="invoice_date_due"/>
+                            <br/>
+                            <div class="d-flex"
+                                 invisible="move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt')"
+                                 name="due_date">
+                                <field name="invoice_date_due" force_save="1" placeholder="Date"
+                                       invisible="invoice_payment_term_id" readonly="state not in 'draft'"/>
+                                <span class="o_form_label mx-3 oe_edit_only"
+                                      invisible="state != 'draft' or invoice_payment_term_id">o
+                                </span>
+                                <field name="invoice_payment_term_id"
+                                       context="{'example_date': invoice_date, 'example_amount': tax_totals['amount_total']}"
+                                       placeholder="Payment Terms" options="{'no_quick_create':True}"
+                                       readonly="state in ['cancel', 'posted']"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="journal_id"/>
+                            <br/>
+                            <div name="journal_div" class="d-flex" groups="account.group_account_readonly"
+                                 invisible="context.get('default_journal_id') and context.get('move_type', 'entry') != 'entry'">
+                                <field name="journal_id" options="{'no_create': True, 'no_open': True}"
+                                       readonly="posted_before and name not in (False, '', '/')"/>
+                                <span class="oe_inline o_form_label mx-3" groups="base.group_multi_currency"
+                                      invisible="move_type == 'entry'">en
+                                </span>
+                                <field name="currency_id" groups="base.group_multi_currency"
+                                       invisible="move_type == 'entry'" readonly="state != 'draft'"
+                                       options="{'no_create': True}"
+                                       context="{'search_default_active': 1, 'search_default_inactive': 1}"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="fiscal_position_id"/>
+                            <br/>
+                            <field name="fiscal_position_id" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+
+                    <div class="row w-100" invisible="not timbrado_errors or is_purchase_journal">
+                        <div class="col-12">
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 20px; border-left: 5px solid #dc3545;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa fa-exclamation-triangle fa-2x text-danger mr-3"></i>
+                                    <div>
+                                        <h4 class="mb-1">¡Atención! Problemas encontrados</h4>
+                                        <small class="text-muted">La factura no puede ser timbrada hasta resolver estos errores</small>
+                                    </div>
+                                </div>
+                                <hr style="border-color: #dc3545; opacity: 0.3;"/>
+                                <div class="bg-light p-3 rounded" style="border-left: 3px solid #dc3545;">
+                                    <field name="timbrado_errors" readonly="1" nolabel="1"
+                                        style="white-space: pre-line; font-family: 'Courier New', monospace; font-size: 13px; color: #721c24; background: transparent; border: none;"/>
+                                </div>
+                                <hr style="border-color: #dc3545; opacity: 0.3;"/>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <small class="text-muted">
+                                        <i class="fa fa-info-circle mr-1"></i>
+                                        Corrija estos errores y presione <strong>"Timbrar"</strong> nuevamente
+                                    </small>
+                                    <span class="badge badge-danger">
+                                        <i class="fa fa-times mr-1"></i>Con errores
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="row w-100">
+                        <separator string="Adicional"/>
+                        <div class="col">
+                            <label for="complements"/>
+                            <br/>
+                            <field name="complements" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col" invisible="1">
+                            <label for="is_global"/>
+                            <field name="is_global" widgetd="boolean_toggle"/>
+                        </div>
+                        <div class="col">
+                            <label for="is_cron"/>
+                            <field name="is_cron" widgetd="boolean_toggle"/>
+                        </div>
+                        <div class="col" invisible="move_type in ('out_invoice',) and not is_purchase_journal">
+                            <label for="invoice"/>
+                            <br/>
+                            <field name="invoice" class="w-100"/>
+                        </div>
+                        <div class="col" invisible="move_type in ('out_invoice',) and not is_purchase_journal">
+                            <label for="invoice_details"/>
+                            <br/>
+                            <field name="invoice_details" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100">
+                        <div class="col" invisible="move_type not in('in_invoice','in_receipt','in_refund')">
+                            <label for="ref"/>
+                            <br/>
+                            <field name="ref" class="w-100"/>
+                        </div>
+                        <div class="col"
+                             invisible="move_type in ('out_invoice','out_refund','out_receipt') and not quick_edit_mode and not (state == 'posted' and date != invoice_date)">
+                            <label for="date"/>
+                            <br/>
+                            <field name="date" class="w-100"/>
+                        </div>
+                        <div class="col" invisible="move_type not in ('in_invoice','in_refund','in_receipt')">
+                            <label for="partner_bank_id"/>
+                            <br/>
+                            <field name="partner_bank_id" class="w-100"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="not is_global">
+                        <separator string="Información global"/>
+                        <div class="col">
+                            <label for="periodicity"/>
+                            <br/>
+                            <field name="periodicity" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="month"/>
+                            <br/>
+                            <field name="month" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="year"/>
+                            <br/>
+                            <field name="year" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="not is_cron">
+                        <separator string="CFDI Programado"/>
+                        <div class="col">
+                            <label for="recurrence_type"/>
+                            <br/>
+                            <field name="recurrence_type" class="w-100"/>
+                        </div>
+                        <div class="col" invisible="recurrence_type not in ('once')">
+                            <label for="schedule_date"/>
+                            <br/>
+                            <field name="schedule_date" class="w-100"/>
+                        </div>
+                        <div class="col" invisible="recurrence_type not in ('weekly')">
+                            <label for="week_day"/>
+                            <br/>
+                            <field name="week_day" class="w-100"/>
+                        </div>
+                        <div class="col" invisible="recurrence_type not in ('monthly')">
+                            <label for="month_day"/>
+                            <br/>
+                            <field name="month_day" class="w-100"/>
+                        </div>
+                        <div class="col" invisible="recurrence_type not in ('yearly')">
+                            <label for="year_month"/>
+                            <br/>
+                            <field name="year_month" class="w-100"/>
+                        </div>
+                    </div>
+
+                    <div class="row w-100" invisible="complements not in ('details') ">
+                        <separator string="Complemento Detallista"/>
+                        <div class="col">
+                            <label for="status"/>
+                            <br/>
+                            <field name="status" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="document_type"/>
+                            <br/>
+                            <field name="document_type" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="reference_date"/>
+                            <br/>
+                            <field name="reference_date" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="request_number"/>
+                            <br/>
+                            <field name="request_number" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="special_instructions_type"/>
+                            <field name="special_instructions_type" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('details')">
+                        <div class="col">
+                            <label for="special_instructions"/>
+                            <br/>
+                            <field name="special_instructions" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="additional_info_type"/>
+                            <br/>
+                            <field name="additional_info_type" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="additional_info"/>
+                            <br/>
+                            <field name="additional_info" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="folio_ticket"/>
+                            <br/>
+                            <field name="folio_ticket" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="folio_ticket_date"/>
+                            <br/>
+                            <field name="folio_ticket_date" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('details')">
+                        <div class="col">
+                            <label for="gln_buyer"/>
+                            <br/>
+                            <field name="gln_buyer" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="buyer_info"/>
+                            <br/>
+                            <field name="buyer_info" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="gln_seller"/>
+                            <br/>
+                            <field name="gln_seller" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="secondary_identification"/>
+                            <br/>
+                            <field name="secondary_identification" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="secondary_number"/>
+                            <br/>
+                            <field name="secondary_number" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('donors') ">
+                        <separator string="Complemento Donatarias"/>
+                        <div class="col">
+                            <label for="authorization_number"/>
+                            <br/>
+                            <field name="authorization_number" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="authorization_date"/>
+                            <br/>
+                            <field name="authorization_date" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="details_text"/>
+                            <br/>
+                            <field name="details_text" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('ine') ">
+                        <separator string="Complemento INE"/>
+                        <div class="col">
+                            <label for="process_type"/>
+                            <field name="process_type" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="scope"/>
+                            <br/>
+                            <field name="scope" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="clave_state"/>
+                            <br/>
+                            <field name="clave_state" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="contabilidad_identification"/>
+                            <br/>
+                            <field name="contabilidad_identification" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('aeroline') ">
+                        <separator string="Complemento Aerolineas"/>
+                        <group>
+                            <group>
+                                <field name="tua"/>
+                            </group>
+                            <group>
+                                <field name="complement_aeroline_ids" readonly="state not in 'draft'">
+                                    <tree editable="bottom">
+                                        <field name="code"/>
+                                        <field name="importe"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('divisas') ">
+                        <separator string="Complemento Divisas"/>
+                        <div class="col">
+                            <label for="operation_type"/>
+                            <br/>
+                            <field name="operation_type" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('building') ">
+                        <separator string="Complemento Servicios Parciales de Construccion"/>
+                        <div class="col">
+                            <label for="license_number"/>
+                            <br/>
+                            <field name="license_number" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="street"/>
+                            <br/>
+                            <field name="street" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="exterior_number"/>
+                            <br/>
+                            <field name="exterior_number" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="interior_number"/>
+                            <br/>
+                            <field name="interior_number" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="colony"/>
+                            <br/>
+                            <field name="colony" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+                    <div class="row w-100" invisible="complements not in ('building') ">
+                        <div class="col">
+                            <label for="locality"/>
+                            <br/>
+                            <field name="locality" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="reference"/>
+                            <br/>
+                            <field name="reference" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="municipality"/>
+                            <br/>
+                            <field name="municipality" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="country"/>
+                            <br/>
+                            <field name="country" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                        <div class="col">
+                            <label for="zip"/>
+                            <br/>
+                            <field name="zip" class="w-100" readonly="state not in 'draft'"/>
+                        </div>
+                    </div>
+
+                </div>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Archivos Digitales">
+                    <field name="additional_files">
+                        <tree editable="bottom">
+                            <field name="file_name" string="Nombre del Archivo"/>
+                            <field name="description" string="Descripción"/>
+                            <field name="file" string="Archivo" widget="download_binary" filename="file_name"/>
+                        </tree>
+                        <form>
+                            <sheet>
+                                <group>
+                                    <field name="file_name"/>
+                                    <field name="description"/>
+                                    <field name="file" filename="file_name" widget="binary"/>
+                                </group>
+                            </sheet>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/tree" position="inside">
+                <field name="clave_prodserv" optional="show"/>
+                <field name="unit_clave" optional="hide"/>
+            </xpath>
+
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_id']"
+                   position="before">
+                <field string="Categoría de activo"
+                       column_invisible="parent.move_type != 'in_invoice'"
+                       name="asset_category_id"
+                       domain="[('type','=','purchase')]"
+                       context="{'default_type':'purchase'}"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='account_id']"
+                   position="after">
+                <field string="Categoría de activo" name="asset_category_id"
+                       invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_move_schedule_wizard" model="ir.ui.view">
+        <field name="name">account.move.schedule.wizard.form</field>
+        <field name="model">account.move.schedule.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Programar Factura">
+                <group>
+                    <field name="recurrence_type" required="1"/>
+                    <field name="schedule_date" invisible="recurrence_type not in ('once')"/>
+                    <field name="week_day" invisible="recurrence_type not in ('weekly')"/>
+                    <field name="month_day" invisible="recurrence_type not in ('monthly')"/>
+                    <field name="year_month" invisible="recurrence_type not in ('yearly')"/>
+
+                </group>
+                <footer>
+                    <button name="confirm_schedule" type="object" string="Confirmar" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="ir_cron_process_scheduled_invoices" model="ir.cron">
+        <field name="name">Procesar Facturas Programadas</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">
+            model.cron_process_scheduled_invoices()
+        </field>
+        <field name="user_id" ref="base.user_root"/> <!-- Usuario con permisos para ejecutar el cron -->
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field> <!-- Ejecutar cada 1 día -->
+        <field name="numbercall">-1</field> <!-- Ejecutar sin límite de veces -->
+        <field name="active" eval="True"/><!-- Primera ejecución al momento de instalar el cron -->
+    </record>
+
+</odoo>

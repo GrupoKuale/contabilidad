@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<templates xml:space="preserve">
+    <t t-name="kuale_trial_balance.Renderer">
+    <style>
+      .child-row {
+        display: none;
+        background-color: #E2EAF4;  <!--#E4E4E5-->
+        }
+
+      /* Mejorar tabla */
+      .table thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+        color: #495057;
+        padding: 0.75rem 0.5rem;
+      }
+
+      .table td, .table th {
+        padding: 0.5rem;
+        vertical-align: middle;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.075);
+      }
+    </style>
+        <!--      header-->
+        <header>
+            <div class="ms-auto d-flex gap-2">
+              <button class="btn btn-sm btn-primary" t-on-click="exportToExcel">
+                <i class="fa fa-file-excel-o me-1"/>
+                  Exportar a Excel
+              </button>
+              <button class="btn btn-sm btn-secondary" t-on-click="exportToPDF">
+                <i class="fa fa-file-pdf-o me-1"/>
+                  Guardar PDF
+              </button>
+            </div>
+        </header>
+
+        <!-- Filtros -->
+        <div class="mb-1">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label for="company-select" class="form-label small">Compañía:</label>
+                    <select id="company-select" class="form-select form-select-sm"
+                            t-model="state.selectedCompanyId" t-on-change="onCompanyChange">
+                        <t t-foreach="state.companyList" t-as="company" t-key="company.id">
+                            <option t-att-value="company.id" t-esc="company.name"/>
+                        </t>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="branch-select" class="form-label small">Sucursal:</label>
+                    <select id="branch-select" class="form-select form-select-sm"
+                            t-model="state.selectedBranchId" t-on-change="onBranchChange">
+                        <t t-foreach="state.branchList" t-as="branch" t-key="branch.id or 'all'">
+                            <option t-att-value="branch.id" t-esc="branch.name"/>
+                        </t>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="sat-nivel-select" class="form-label small">Nivel SAT:</label>
+                    <select id="sat-nivel-select" class="form-select form-select-sm"
+                            t-model="state.selectedSatNivel" t-on-change="onSatNivelChange">
+                        <t t-foreach="state.satNivelList" t-as="opt" t-key="opt.value or 'all'">
+                            <option t-att-value="opt.value" t-esc="opt.label"/>
+                        </t>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="from-date" class="form-label small">Período:</label>
+                    <input type="date" id="from-date" class="form-control form-control-sm"
+                           t-model="state.fromDate" t-on-change="onDateChange"/>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="to-date" class="form-label small">Hasta:</label>
+                    <input type="date" id="to-date" class="form-control form-control-sm"
+                           t-model="state.toDate" t-on-change="onDateChange"/>
+                </div>
+            </div>
+
+            <div class="row mt-1 mb-1">
+                <div class="col-auto">
+                    <div class="form-check">
+                        <input type="checkbox" id="include-empty" class="form-check-input"
+                               t-att-checked="state.includeEmpty ? 'checked' : null"
+                               t-on-change="onIncludeEmptyToggle"/>
+                        <label for="include-empty" class="form-check-label small">Incluir cuentas vacías</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <table class="table table-sm table-hover table-striped" style="margin-top: 5px !important; margin-bottom: 20px !important;">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+            <th>Código</th>
+            <th class="text-end">Saldo Inicial</th>
+            <th class="text-end">Débito</th>
+            <th class="text-end">Crédito</th>
+            <th class="text-end">Saldo Final</th>
+        </tr>
+      </thead>
+            <tbody>
+        <t t-foreach="props.model.state.groups or []" t-as="group" t-key="group.id">
+          <t t-call="kuale_trial_balance.GroupRow" t-set="group.level" t-value="0"/>
+        </t>
+      </tbody>
+    </table>
+  </t>
+
+    <!-- Fila de grupo + hijos -->
+    <t t-name="kuale_trial_balance.GroupRow" t-vars="group, level">
+
+    <!-- GRUPO (toggle, data-id, clases por nivel) -->
+        <tr
+                t-attf-class="#{group.group_id ? ('child-row parent-g-' + group.group_id[0] + ' ') : ''}#{(((group.children ? group.children.length : 0) + (group.accounts ? group.accounts.length : 0)) > 0) ? 'toggle ' : ''}level-#{level} fw-bold bg-light"
+                t-attf-data-id="g-#{group.id}"
+                t-on-click="onToggle"
+        >
+      <td>
+        <span t-attf-style="padding-left: #{group.level * 20}px">
+          <t t-if="((group.children ? group.children.length : 0) + (group.accounts ? group.accounts.length : 0)) > 0">
+            <span class="k-toggle-icon">[+]</span>
+          </t>
+            <t t-esc="group.name"/>
+        </span>
+      </td>
+            <td><t t-esc="group.code_prefix_start or ''"/></td>
+            <td class="text-end"><t t-esc="(group.initial_balance_total or 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(group.debit_total or 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(group.credit_total or 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(group.ending_balance_total or 0).toFixed(2)"/></td>
+    </tr>
+
+        <!-- HIJOS DIRECTOS (mezcla: cuentas primero, luego subgrupos) -->
+        <t t-foreach="group.items" t-as="it" t-key="(it.kind == 'acc' and ('a-' + it.id)) or ('g-' + it.id)">
+
+      <!-- Cuenta -->
+            <t t-if="it.kind == 'acc'">
+        <tr
+                t-attf-class="child-row parent-g-#{group.id} level-#{group.level + 1}"
+                t-attf-data-id="a-#{it.id}"
+        >
+          <td>
+            <span t-attf-style="padding-left: #{(group.level + 1) * 20}px">
+              <t t-esc="it.ref.name"/>
+            </span>
+          </td>
+            <td><t t-esc="it.ref.code"/></td>
+            <td class="text-end"><t t-esc="(it.ref.initial_balance or 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(it.ref.debit or 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(it.ref.credit or 0).toFixed(2)"/></td>
+            <td class="text-end"><t t-esc="(it.ref.ending_balance or 0).toFixed(2)"/></td>
+        </tr>
+      </t>
+
+            <!-- Subgrupo -->
+            <t t-if="it.kind == 'grp'">
+        <t t-call="kuale_trial_balance.GroupRow">
+          <t t-set="group" t-value="it.ref"/>
+            <t t-set="level" t-value="group.level + 1"/>
+        </t>
+      </t>
+
+    </t>
+  </t>
+
+</templates>
+

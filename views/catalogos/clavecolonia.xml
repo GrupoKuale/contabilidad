@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavecolonia_filter" model="ir.ui.view">
+            <field name="name">filtro.clavecolonia</field>
+            <field name="model">cfdi.clavecolonia</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_colonia" string="Todo" filter_domain="['|',('Clave_colonia','ilike',self),
+                              '|',('Codigo_postal','ilike',self),
+                              ('Nombre','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavecolonia_view_form" model="ir.ui.view">
+            <field name="name">clavecolonia form</field>
+            <field name="model">cfdi.clavecolonia</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_colonia"/>
+                            <field name="Codigo_postal"/>
+                            <field name="Nombre"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavecolonia_view_tree" model="ir.ui.view">
+            <field name="name">clavecolonia tree</field>
+            <field name="model">cfdi.clavecolonia</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_colonia asc'  >
+                    <field name="Clave_colonia"/>
+                    <field name="Codigo_postal"/>
+                    <field name="Nombre"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavecolonia">
+            <field name="name">clavecolonia</field>
+            <field name="res_model">cfdi.clavecolonia</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

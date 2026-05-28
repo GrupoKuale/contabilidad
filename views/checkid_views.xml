@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- CheckID API Configuration Views -->
+        <record id="view_checkid_api_form" model="ir.ui.view">
+            <field name="name">checkid.api.form</field>
+            <field name="model">checkid.api</field>
+            <field name="arch" type="xml">
+                <form string="Configuración CheckID API">
+                    <header>
+                        <button name="check_available_requests" string="Verificar Solicitudes" type="object" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="api_name"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="api_key" widget="password"/>
+                                <field name="api_url"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="available_requests" readonly="1"/>
+                                <field name="last_update" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <separator string="Información"/>
+                        <div class="alert alert-info" role="alert">
+                            <p><strong>Configuración de CheckID API</strong></p>
+                            <ul>
+                                <li>Obtenga su API Key desde <a href="https://www.checkid.mx/App/ControlApi" target="_blank">https://www.checkid.mx/App/ControlApi</a></li>
+                                <li>Solo puede haber una configuración activa a la vez</li>
+                                <li>Use "Verificar Solicitudes" para comprobar el saldo de su cuenta</li>
+                            </ul>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_checkid_api_tree" model="ir.ui.view">
+            <field name="name">checkid.api.tree</field>
+            <field name="model">checkid.api</field>
+            <field name="arch" type="xml">
+                <tree string="Configuraciones CheckID API">
+                    <field name="api_name"/>
+                    <field name="active"/>
+                    <field name="available_requests"/>
+                    <field name="last_update"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_checkid_api" model="ir.actions.act_window">
+            <field name="name">Configuración CheckID API</field>
+            <field name="res_model">checkid.api</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear configuración CheckID API
+                </p>
+                <p>
+                    Configure su API Key de CheckID para verificar RFC y CURP de sus contactos.
+                </p>
+            </field>
+        </record>
+
+        <!-- CheckID Verification Views -->
+        <record id="view_checkid_verification_form" model="ir.ui.view">
+            <field name="name">checkid.verification.form</field>
+            <field name="model">checkid.verification</field>
+            <field name="arch" type="xml">
+                <form string="Verificación CheckID" create="false" edit="false">
+                    <header>
+                        <field name="verification_type" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="partner_id"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="search_term"/>
+                                <field name="verification_date"/>
+                            </group>
+                            <group>
+                                <field name="error_code" invisible="not error_code"/>
+                                <field name="error_message" invisible="not error_message"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Datos RFC" invisible="not rfc_exitoso">
+                                <group>
+                                    <group>
+                                        <field name="rfc_exitoso"/>
+                                        <field name="rfc_valido"/>
+                                        <field name="rfc_encontrado"/>
+                                        <field name="razon_social"/>
+                                    </group>
+                                    <group>
+                                        <field name="rfc_valido_hasta"/>
+                                        <field name="email_contacto"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Datos CURP" invisible="not curp_exitoso">
+                                <group>
+                                    <group>
+                                        <field name="curp_exitoso"/>
+                                        <field name="curp_encontrado"/>
+                                        <field name="nombres"/>
+                                        <field name="primer_apellido"/>
+                                        <field name="segundo_apellido"/>
+                                    </group>
+                                    <group>
+                                        <field name="fecha_nacimiento"/>
+                                        <field name="sexo"/>
+                                        <field name="nacionalidad"/>
+                                        <field name="entidad"/>
+                                        <field name="municipio_registro"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Otros Datos">
+                                <group>
+                                    <group>
+                                        <field name="codigo_postal"/>
+                                        <field name="nss"/>
+                                        <field name="total_semanas_cotizadas"/>
+                                    </group>
+                                    <group>
+                                        <field name="regimen_fiscal"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Lista Negra SAT">
+                                <group>
+                                    <field name="estado_69_con_problema"/>
+                                    <field name="estado_69_situacion" invisible="not estado_69_con_problema"/>
+                                    <field name="estado_69_status" invisible="not estado_69_con_problema"/>
+                                </group>
+                                <div invisible="not estado_69_con_problema" class="alert alert-danger">
+                                    <strong>¡ATENCIÓN!</strong> Este contribuyente aparece en la lista negra del SAT.
+                                </div>
+                                <div invisible="estado_69_con_problema" class="alert alert-success">
+                                    Este contribuyente NO aparece en la lista negra del SAT.
+                                </div>
+                            </page>
+
+                            <page string="Resultado Completo">
+                                <field name="full_result" widget="text"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_checkid_verification_tree" model="ir.ui.view">
+            <field name="name">checkid.verification.tree</field>
+            <field name="model">checkid.verification</field>
+            <field name="arch" type="xml">
+                <tree string="Verificaciones CheckID" create="false">
+                    <field name="verification_date"/>
+                    <field name="partner_id"/>
+                    <field name="search_term"/>
+                    <field name="verification_type"/>
+                    <field name="rfc_exitoso" string="RFC OK"/>
+                    <field name="curp_exitoso" string="CURP OK"/>
+                    <field name="estado_69_con_problema" string="Lista Negra" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- CheckID Verification Wizard Views -->
+        <record id="view_checkid_verification_wizard_form" model="ir.ui.view">
+            <field name="name">checkid.verification.wizard.form</field>
+            <field name="model">checkid.verification.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Verificar con CheckID">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>Verificación CheckID</h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="partner_id" readonly="1"/>
+                                <field name="search_term"/>
+                                <field name="verification_type"/>
+                            </group>
+                        </group>
+
+                        <separator string="Opciones de Búsqueda"/>
+                        <group>
+                            <group>
+                                <field name="get_rfc"/>
+                                <field name="get_curp"/>
+                                <field name="get_69"/>
+                                <field name="get_nss"/>
+                            </group>
+                            <group>
+                                <field name="get_regimen"/>
+                                <field name="get_cp"/>
+                                <field name="get_weeks"/>
+                            </group>
+                        </group>
+
+                        <div invisible="not verification_result">
+                            <separator string="Resultado"/>
+                            <field name="verification_result" widget="text" readonly="1"/>
+                        </div>
+
+                        <footer>
+                            <button string="Verificar" name="action_verify" type="object" class="btn-primary"/>
+                            <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción de servidor para verificación masiva CheckID -->
+        <record id="server_action_checkid_mass_verification" model="ir.actions.server">
+            <field name="name">Verificación Masiva CheckID</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="state">code</field>
+            <field name="binding_model_id" ref="base.model_res_partner"/>
+            <field name="binding_view_types">list</field>
+            <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Verificación Masiva CheckID',
+    'res_model': 'checkid.mass.verification.wizard',
+    'view_mode': 'form',
+    'view_id': env.ref('contabilidad_kuale.checkid_mass_wizard_form_final').id,
+    'target': 'new',
+    'context': {
+        'active_ids': env.context.get('active_ids', []),
+        'active_model': 'res.partner',
+    }
+}
+            </field>
+        </record>
+
+    </data>
+</odoo>

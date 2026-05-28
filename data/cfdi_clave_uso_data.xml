@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cfdi_claveusocfdi_g01" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">G01</field>
+            <field name="Descripcion">Adquisición de mercancías</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_g02" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">G02</field>
+            <field name="Descripcion">Devoluciones, descuentos o bonificaciones</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_g03" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">G03</field>
+            <field name="Descripcion">Gastos en general</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i01" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I01</field>
+            <field name="Descripcion">Construcciones</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i02" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I02</field>
+            <field name="Descripcion">Mobilario y equipo de oficina por inversiones</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i03" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I03</field>
+            <field name="Descripcion">Equipo de transporte</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i04" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I04</field>
+            <field name="Descripcion">Equipo de computo y accesorios</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i05" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I05</field>
+            <field name="Descripcion">Dados, troqueles, moldes, matrices y herramental</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i06" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I06</field>
+            <field name="Descripcion">Comunicaciones telefónicas</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i07" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I07</field>
+            <field name="Descripcion">Comunicaciones satelitales</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_i08" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">I08</field>
+            <field name="Descripcion">Otra maquinaria y equipo</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d01" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D01</field>
+            <field name="Descripcion">Honorarios médicos, dentales y gastos hospitalarios</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d02" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D02</field>
+            <field name="Descripcion">Gastos médicos por incapacidad o discapacidad</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d03" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D03</field>
+            <field name="Descripcion">Gastos funerales</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d04" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D04</field>
+            <field name="Descripcion">Donativos</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d05" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D05</field>
+            <field name="Descripcion">Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación)</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d06" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D06</field>
+            <field name="Descripcion">Aportaciones voluntarias al SAR</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d07" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D07</field>
+            <field name="Descripcion">Primas por seguros de gastos médicos</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d08" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D08</field>
+            <field name="Descripcion">Gastos de transportación escolar obligatoria</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d09" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D09</field>
+            <field name="Descripcion">Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_d10" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">D10</field>
+            <field name="Descripcion">Pagos por servicios educativos (colegiaturas)</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+        <record id="cfdi_claveusocfdi_p01" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">P01</field>
+            <field name="Descripcion">Por definir</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">True</field>
+        </record>
+        <record id="cfdi_claveusocfdi_s01" model="cfdi.claveusocfdi">
+            <field name="Clave_UsoCFDI">S01</field>
+            <field name="Descripcion">Sin efectos fiscales</field>
+            <field name="Fisica">True</field>
+            <field name="Moral">False</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Contacts Module Actions and Views -->
+
+        <!-- Action for All Contacts -->
+        <record id="action_contacts_kuale" model="ir.actions.act_window">
+            <field name="name">Contactos</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{
+                'default_is_company': False,
+                'default_customer_rank': 0,
+                'default_supplier_rank': 0
+            }</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear un contacto
+                </p>
+                <p>
+                    Crea un contacto en tu directorio de direcciones.
+                </p>
+                <p>
+                    Odoo te ayuda a rastrear fácilmente todas las actividades relacionadas con
+                    un contacto: conversaciones, historial de actividades, documentos, etc.
+                </p>
+            </field>
+        </record>
+
+        <!-- Action for Customers -->
+        <record id="action_customers_kuale" model="ir.actions.act_window">
+            <field name="name">Clientes</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('customer_rank', '>', 0)]</field>
+            <field name="context">{
+                'default_is_company': True,
+                'default_customer_rank': 1,
+                'default_supplier_rank': 0
+            }</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear un cliente
+                </p>
+                <p>
+                    Crea un cliente en tu directorio de direcciones.
+                </p>
+                <p>
+                    Odoo te ayuda a rastrear fácilmente todas las actividades relacionadas con
+                    un cliente: conversaciones, historial de ventas, documentos, etc.
+                </p>
+            </field>
+        </record>
+
+        <!-- Action for Vendors/Suppliers -->
+        <record id="action_suppliers_kuale" model="ir.actions.act_window">
+            <field name="name">Proveedores</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('supplier_rank', '>', 0)]</field>
+            <field name="context">{
+                'default_is_company': True,
+                'default_supplier_rank': 1,
+                'default_customer_rank': 0
+            }</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear un proveedor
+                </p>
+                <p>
+                    Crea un proveedor en tu directorio de direcciones.
+                </p>
+                <p>
+                    Odoo te ayuda a rastrear fácilmente todas las actividades relacionadas con
+                    un proveedor: conversaciones, historial de compras, documentos, etc.
+                </p>
+            </field>
+        </record>
+
+        <!-- Action for Companies -->
+        <record id="action_companies_kuale" model="ir.actions.act_window">
+            <field name="name">Empresas</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('is_company', '=', True)]</field>
+            <field name="context">{
+                'default_is_company': True
+            }</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear una empresa
+                </p>
+                <p>
+                    Crea una empresa en tu directorio de direcciones.
+                </p>
+                <p>
+                    Las empresas pueden ser clientes, proveedores o ambos.
+                </p>
+            </field>
+        </record>
+
+        <!-- Inherit partner form view to add custom fields -->
+        <record id="view_partner_form_kuale_custom" model="ir.ui.view">
+            <field name="name">res.partner.form.kuale.custom</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <!-- Add RFC and SAT fields to the form -->
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="rfc" invisible="not is_company"/>
+                    <field name="tax_regime" invisible="not is_company"/>
+                    <field name="Use_CFDI"/>
+                    <field name="rfc_blacklist" invisible="not is_company"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit partner tree view to show RFC -->
+        <record id="view_partner_tree_kuale_custom" model="ir.ui.view">
+            <field name="name">res.partner.tree.kuale.custom</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="rfc" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Configuration Actions inherited from contacts module -->
+        <record id="action_partner_category_kuale" model="ir.actions.act_window">
+            <field name="name">Etiquetas de Contacto</field>
+            <field name="res_model">res.partner.category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear una etiqueta de contacto
+                </p>
+                <p>
+                    Las etiquetas se utilizan para clasificar los contactos y pueden ser útiles para filtrar información.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_partner_title_kuale" model="ir.actions.act_window">
+            <field name="name">Títulos de Contacto</field>
+            <field name="res_model">res.partner.title</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear un título de contacto
+                </p>
+                <p>
+                    Los títulos se utilizan para identificar el rol o posición de un contacto (Sr., Sra., Dr., etc.).
+                </p>
+            </field>
+        </record>
+
+        <record id="action_partner_industry_kuale" model="ir.actions.act_window">
+            <field name="name">Industrias</field>
+            <field name="res_model">res.partner.industry</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear una industria
+                </p>
+                <p>
+                    Las industrias ayudan a categorizar los contactos por su sector comercial.
+                </p>
+            </field>
+        </record>
+
+        <!-- CheckID Configuration Menu for Contacts -->
+        <menuitem id="menu_contacts_checkid_config"
+                  name="CheckID API"
+                  parent="contacts.menu_contacts"
+                  sequence="50"
+                  action="action_checkid_api"
+                  groups="base.group_system"/>
+
+        <!-- CheckID Verifications Menu -->
+        <record id="action_checkid_verifications" model="ir.actions.act_window">
+            <field name="name">Verificaciones CheckID</field>
+            <field name="res_model">checkid.verification</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay verificaciones CheckID
+                </p>
+                <p>
+                    Las verificaciones aparecerán aquí cuando se realicen desde los contactos.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_contacts_checkid_verifications"
+                  name="Verificaciones CheckID"
+                  parent="contacts.menu_contacts"
+                  sequence="51"
+                  action="action_checkid_verifications"
+                  groups="base.group_user"/>
+
+    </data>
+</odoo>

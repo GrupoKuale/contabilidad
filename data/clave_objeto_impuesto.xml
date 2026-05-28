@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <!-- IMPUESTOS -->
+        <record id="clave_impuesto_001" model="cfdi.claveimpuesto">
+            <field name="Clave_impuesto">01</field>
+            <field name="Descripcion">ISR</field>
+            <field name="Retencion">True</field>
+            <field name="Traslado">False</field>
+            <field name="Local_Federal">Federal</field>
+        </record>
+        <record id="clave_impuesto_002" model="cfdi.claveimpuesto">
+            <field name="Clave_impuesto">02</field>
+            <field name="Descripcion">IVA</field>
+            <field name="Retencion">True</field>
+            <field name="Traslado">True</field>
+            <field name="Local_Federal">Federal</field>
+        </record>
+        <record id="clave_impuesto_03" model="cfdi.claveimpuesto">
+            <field name="Clave_impuesto">003</field>
+            <field name="Descripcion">IEPS</field>
+            <field name="Retencion">True</field>
+            <field name="Traslado">True</field>
+            <field name="Local_Federal">Federal</field>
+        </record>
+        <!-- OBJ IMP -->
+        <record id="clave_objeto_impuesto_01" model="cfdi.claveobjetoimp">
+            <field name="Clave_objetoimp">01</field>
+            <field name="Descripcion">No objeto de impuesto.</field>
+        </record>
+        <record id="clave_objeto_impuesto_02" model="cfdi.claveobjetoimp">
+            <field name="Clave_objetoimp">02</field>
+            <field name="Descripcion">Sí objeto de impuesto.</field>
+        </record>
+        <record id="clave_objeto_impuesto_03" model="cfdi.claveobjetoimp">
+            <field name="Clave_objetoimp">03</field>
+            <field name="Descripcion">Sí objeto del impuesto y no obligado al desglose.</field>
+        </record>
+
+        <!-- TAX MARKUP-->
+        <record id="tax_markup_16" model="account.tax">
+            <field name="name">IVA Markup 16%</field>
+            <field name="amount">16.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

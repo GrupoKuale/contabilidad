@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_customer_form" model="ir.ui.view">
+        <field name="name">Límite de crédito</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='accounting']" position="inside">
+                <group string="Límite de crédito"
+                       invisible="not enable_credit_limit">
+                    <group>
+                        <field name="active_limit"/>
+                        <field name="enable_credit_limit" invisible="1"/>
+                        <field name="warning_stage"
+                               invisible="not active_limit"/>
+                        <field name="blocking_stage"
+                               invisible="not active_limit"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="header_view" model="ir.ui.view">
+        <field name="name">Límite de crédito</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="has_due" invisible="1"/>
+                <field name="is_warning" invisible="1"/>
+            </xpath>
+            <xpath expr="//header" position="after">
+                <div class="alert alert-info" role="alert"
+                     style="height: 40px; margin-bottom:0px;"
+                     invisible="not has_due">
+                    El importe adeudado de este Cliente es
+                    <strong>
+                        <field name="due_amount"/>
+                    </strong>
+                    .
+                </div>
+            </xpath>
+            <xpath expr="//sheet/div[@name='button_box']" position="after">
+                <div role="alert" class="alert alert-danger"
+                     style="height: 40px; width: 350px; margin-bottom:0px;"
+                     invisible="not is_warning">
+                    Se ha superado el <strong>límite de advertencia</strong> de este cliente.
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="account_move_form_inherited" model="ir.ui.view">
+        <field name="name">Movimiento de cuenta</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="has_due" invisible="1"/>
+                <field name="is_warning" invisible="1"/>
+            </xpath>
+            <xpath expr="//header" position="after">
+                <div class="alert alert-info" role="alert"
+                     style="height: 40px; margin-bottom:0px;"
+                     invisible="not has_due or move_type not in ['out_invoice','out_refund','out_receipt']">
+                    El importe adeudado de este Cliente es
+                    <strong>
+                        <field name="due_amount"/>
+                    </strong>
+                    .
+                </div>
+            </xpath>
+            <xpath expr="//sheet/div[@name='button_box']" position="after">
+                <div role="alert" class="alert alert-danger"
+                     style="height: 40px; width: 350px; margin-bottom:0px;"
+                     invisible="not is_warning or move_type not in ['out_invoice','out_refund','out_receipt']">
+                    Se ha superado el <strong>límite de advertencia</strong> de este cliente.
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

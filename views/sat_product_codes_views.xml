@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!--
+        SAT Product Codes
+     -->
+
+
+  <record model="ir.ui.view" id="view_sat_product_codes_form">
+    <field name="name">sat.product.codes.form</field>
+    <field name="model">sat.product.codes</field>
+    <field name="arch" type="xml">
+      <form string="Claves de Producto SAT">
+        <sheet>
+          <group>
+            <group>
+              <field name="code"/>
+              <field name="name"/>
+            </group>
+            <group string="Cuentas Contables">
+              <field name="account_ids" nolabel="1" colspan="2">
+                <tree editable="bottom">
+                  <field name="company_id" required="1"/>
+                  <field name="account_in"/>
+                  <field name="account_out"/>
+                </tree>
+              </field>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record model="ir.ui.view" id="view_sat_product_codes_tree">
+    <field name="name">sat.product.codes.tree</field>
+    <field name="model">sat.product.codes</field>
+    <field name="arch" type="xml">
+      <tree string="Productos SAT">
+        <field name="code"/>
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+  <record model="ir.actions.act_window" id="action_sat_product_codes_form">
+    <field name="name">Productos SAT</field>
+    <field name="res_model">sat.product.codes</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_sat_product_codes_tree"/>
+  </record>
+  <menuitem parent="account.menu_finance_entries_management"
+            id="menu_action_sat_product_codes_form"
+            action="action_sat_product_codes_form" sequence="102"
+            groups="account.group_account_user"/>
+  <!--
+        SAT Agregados Partner
+     -->
+
+  <record id="view_sat_diot_inherit" model="ir.ui.view">
+    <field name="name">sat.diot.form.inherit</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='vat']" position="attributes">
+        <field name="invisible">1</field>
+        <field name="readonly">1</field>
+      </xpath>
+<!--      hide this lines when updating -->
+      <xpath expr="//field[@name='category_id']" position="after">
+        <field name="rfc" required="1"/>
+        <field name="tax_regime"/>
+        <field name="Use_CFDI"/>
+      </xpath>
+
+      <xpath expr="//page[@name='sales_purchases']" position="after">
+        <page string="Datos DIOT" name="sat_diot">
+          <group>
+            <group string="Información SAT">
+              <field name="sat_tipo_tercero"/>
+              <field name="sat_tipo_operacion"/>
+              <field name="sat_nombre_extranjero"/>
+              <field name="sat_pais_residencia"/>
+              <field name="sat_nacionalidad"/>
+            </group>
+          </group>
+        </page>
+        <page string="CFDIs" name="sat_cfdis">
+          <group>
+            <group string="Facturas">
+              <field name="sat_invoices"/>
+            </group>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+  <!--
+        SAT Tipo de Tercero
+     -->
+  <record model="ir.ui.view" id="view_sat_tipo_tercero_form">
+    <field name="name">sat.tipo.tercero.form</field>
+    <field name="model">sat.tipo.tercero</field>
+    <field name="arch" type="xml">
+      <form string="Tipo de Tercero SAT">
+        <sheet>
+          <group>
+            <group>
+              <field name="code"/>
+              <field name="name"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record model="ir.ui.view" id="view_sat_tipo_tercero_tree">
+    <field name="name">sat.tipo.tercero.tree</field>
+    <field name="model">sat.tipo.tercero</field>
+    <field name="arch" type="xml">
+      <tree string="Tipos de tercero SAT">
+        <field name="code"/>
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+  <record model="ir.actions.act_window" id="action_sat_tipo_tercero_form">
+    <field name="name">Tipos de tercero SAT</field>
+    <field name="res_model">sat.tipo.tercero</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_sat_tipo_tercero_tree"/>
+  </record>
+  <menuitem parent="account.menu_finance_entries_management"
+            id="menu_action_sat_tipo_tercero_form"
+            action="action_sat_tipo_tercero_form" sequence="103"
+            groups="account.group_account_user"/>
+  <!--
+        SAT Tipo de Operacion
+     -->
+  <record model="ir.ui.view" id="view_sat_tipo_operacion_form">
+    <field name="name">sat.tipo.operacion.form</field>
+    <field name="model">sat.tipo.operacion</field>
+    <field name="arch" type="xml">
+      <form string="Tipo de operación SAT">
+        <sheet>
+          <group>
+            <group>
+              <field name="code"/>
+              <field name="name"/>
+                <field name="supplier"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record model="ir.ui.view" id="view_sat_tipo_operacion_tree">
+    <field name="name">sat.tipo.operacion.tree</field>
+    <field name="model">sat.tipo.operacion</field>
+    <field name="arch" type="xml">
+      <tree string="Tipos de operación SAT">
+        <field name="code"/>
+        <field name="name"/>
+          <field name="supplier"/>
+      </tree>
+    </field>
+  </record>
+  <record model="ir.actions.act_window" id="action_sat_tipo_operacion_form">
+    <field name="name">Tipos de operación SAT</field>
+    <field name="res_model">sat.tipo.operacion</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_sat_tipo_operacion_tree"/>
+  </record>
+  <menuitem parent="account.menu_finance_entries_management"
+            id="menu_action_sat_tipo_operacion_form"
+            action="action_sat_tipo_operacion_form" sequence="104"
+            groups="account.group_account_user"/>
+  <!--
+        SAT País de residencia
+     -->
+  <record model="ir.ui.view" id="view_sat_pais_residencia_form">
+    <field name="name">sat.pais.residencia.form</field>
+    <field name="model">sat.pais.residencia</field>
+    <field name="arch" type="xml">
+      <form string="País de residencia SAT">
+        <sheet>
+          <group>
+            <group>
+              <field name="code"/>
+              <field name="name"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record model="ir.ui.view" id="view_sat_pais_residencia_tree">
+    <field name="name">sat.pais.residencia.tree</field>
+    <field name="model">sat.pais.residencia</field>
+    <field name="arch" type="xml">
+      <tree string="Paises de residencia SAT">
+        <field name="code"/>
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+  <record model="ir.actions.act_window" id="action_sat_pais_residencia_form">
+    <field name="name">Paises de residencia SAT</field>
+    <field name="res_model">sat.pais.residencia</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_sat_pais_residencia_tree"/>
+  </record>
+  <menuitem parent="account.menu_finance_entries_management"
+            id="menu_action_sat_pais_residencia_form"
+            action="action_sat_pais_residencia_form" sequence="105"
+            groups="account.group_account_user"/>
+</odoo>

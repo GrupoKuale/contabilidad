@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+       <record id="view_supplierinfo_form_add_default_packaging" model="ir.ui.view">
+            <field name="name">product.supplierinfo.form.add.default.packaging</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='product_name']" position="after">
+                    <field name="default_packaging_id"/>
+                </xpath>
+
+            </field>
+        </record>
+
+           <record id="view_supplierinfo_tree_add_default_packaging" model="ir.ui.view">
+            <field name="name">product.supplierinfo.tree.add.default.packaging</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//tree/field[@name='product_code']" position="after">
+                    <field name="default_packaging_id" string="Embalaje predeterminado" optional="show"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    <!-- Product Template -->
+    <record id="view_product_template_form_inherit" model="ir.ui.view">
+        <field name="name">Product Template (form)</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+
+
+            <field name="property_account_expense_id" position="after">
+                <field name="asset_category_id"
+                       domain="[('type', '=', 'purchase')]"
+                       context="{'default_type': 'purchase'}"
+                       groups="account.group_account_user"/>
+                <field name="general_account_code" invisible="not can_be_expensed"/>
+                <field name="admin_account_code" invisible="not can_be_expensed"/>
+                <field name="sales_account_code" invisible="not can_be_expensed"/>
+            </field>
+
+            <xpath expr="//div[@name='options']" position="inside">
+                <span class="d-inline-flex">
+                    <field name="elaborate_ok" field_id="elaborate_ok_0"/>
+                    <label for="elaborate_ok"/>
+                </span>
+            </xpath>
+
+            <xpath expr="//div[@name='standard_price_uom']" position="after">
+                <field name="price_increase_percentage" class="oe_inline" widget="float"
+                       options="{'field_digits': True}" string="Porcentaje de Incremento (%)"/>
+                <field name="utility_price" class="oe_inline" widget="float"/>
+                <field name="has_ieps" widget="boolean_toggle"/>
+            </xpath>
+
+
+            <xpath expr="//page[@name='general_information']//group" position="after">
+                <separator string="Precios plataforma pixl" invisible="not sale_ok"/>
+                <div invisible="not sale_ok" class="row">
+                    <div class="col">
+                        <label for="pixl_price_a" string="Precio A"/>
+                        <br/>
+                        <field name="pixl_price_a" string="Precio A" class="w-100" required="sale_ok"/>
+                    </div>
+                    <div class="col">
+                        <label for="pixl_price_b" string="Precio B"/>
+                        <br/>
+                        <field name="pixl_price_b" string="Precio B" class="w-100" required="sale_ok"/>
+                    </div>
+                    <div class="col">
+                        <label for="pixl_price_c" string="Precio C"/>
+                        <br/>
+                        <field name="pixl_price_c" string="Precio C" class="w-100" required="sale_ok"/>
+                    </div>
+                </div>
+                <separator string="Información Fiscal y Comercial" invisible="not sale_ok"/>
+                <div invisible="not sale_ok" class="row">
+                    <div class="col">
+                        <label for="third_party_id" string="ID de terceros"/>
+                        <br/>
+                        <field name="third_party_id" string="Id de Terceros" class="w-100" required="sale_ok"/>
+                    </div>
+                    <div class="col">
+                        <label for="sat_code_id" string="Clave ProdServ"/>
+                        <br/>
+                        <field name="sat_code_id" string="Clave ProdServ" class="w-100" required="sale_ok"/>
+                    </div>
+                    <div class="col">
+                        <label for="unit_clave" string="Clave Unidad SAT"/>
+                        <br/>
+                        <field name="unit_clave" class="w-100" required="sale_ok"/>
+                    </div>
+                    <div class="col">
+                        <label for="identification_number" string="Numero de Identificación(SKU)"/>
+                        <br/>
+                        <field name="identification_number" class="w-100" required="sale_ok"/>
+                    </div>
+                </div>
+            </xpath>
+
+            <xpath expr="//page[@name='general_information']//field[@name='company_id']" position="replace">
+            </xpath>
+
+             <xpath expr="//field[@name='uom_po_id']" position="after">
+                
+                <field name="is_shared_product" 
+                       widget="boolean_toggle"
+                       string="Producto Compartido"
+                       groups="base.group_system"/>
+                
+                <field name="company_group" 
+                       placeholder="Seleccione el grupo empresarial..."
+                       class="oe_inline"/>
+                
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Receta" invisible="not elaborate_ok">
+                    <field name="bom_line_ids" widget="one2many" context="{'default_product_tmpl_id': active_id}">
+                        <tree editable="bottom">
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="component_id"/>
+                            <field name="qty_available" optional="show"/>
+                            <field name="quantity"/>
+                            <field name="uom" optional="show"/>
+                            <field name="unit_price" widget="monetary" optional="show"/>
+                            <field name="has_ieps" optional="hide"/>
+                            <field name="ieps_unit_price" widget="monetary" optional="hide"/>
+                            <field name="total_price"/>
+                        </tree>
+                    </field>
+                    <group class="fs-1 text-end position-absolute end-0">
+                        <field name="total_recipe_cost" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+            <!--    en produccion, payables  || en test, email_template    -->
+            <xpath expr="//page[@name='invoicing']//group[@name='payables']" position="after">
+                <group name="tax_object" string="Informacion contable fiscal">
+                    <field name="tax_object_id"/>
+                </group>
+                <group name="sat_operation" string="SAT - DIOT">
+                    <field name="sat_operation_type"/>
+                    <field name="nat_sat_operation_type"/>
+                    <field name="int_sat_operation_type"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="ir_cron_update_sales_prices" model="ir.cron">
+        <field name="name">Actualizar Precios de Costo</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="state">code</field>
+        <field name="code">model._scheduler_update_sales_prices()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Product Template de reclutamiento  -->
+    <record id="view_product_recruitment_form_inherit" model="ir.ui.view">
+        <field name="name">product.template.recruitment.custom</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="reclutamiento__kuale.product_template_kuale_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='uniform_type']" position="replace">
+                <field name="is_pxc"/>
+                <field name="is_lgp"/>
+                <field name="is_dh"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- searchview -->
+    <record id="product_template_search_third_party_filter" model="ir.ui.view">
+        <field name="name">product.template.search.third.party.filter</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//search" position="inside">
+                <filter
+                        name="no_third_party"
+                        string="Sin Tercero asignado"
+                        domain="[('third_party_id', '=', False)]"
+                />
+            </xpath>
+
+        </field>
+    </record>
+    <record id="view_product_template_search_inherit_shared" model="ir.ui.view">
+        <field name="name">product.template.search.shared</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                
+                <separator/>
+                
+                <filter name="filter_shared_products" 
+                        string="Productos Compartidos" 
+                        domain="[('is_shared_product', '=', True)]"
+                        groups="base.group_system"
+                        help="Productos visibles en todos los grupos empresariales"/>
+                
+                <filter name="filter_my_group_only" 
+                        string="Solo Mi Grupo" 
+                        domain="[('is_shared_product', '=', False)]"
+                        help="Productos exclusivos de un grupo empresarial"/>
+                
+                <separator/>
+                
+                <!-- Agrupaciones -->
+                <group expand="0" string="Agrupar Por">
+                    <filter name="group_by_shared" 
+                            string="Compartido / No Compartido" 
+                            context="{'group_by': 'is_shared_product'}"
+                            groups="base.group_system"/>
+                    <filter name="group_by_company_group" 
+                            string="Grupo Empresarial" 
+                            context="{'group_by': 'company_group'}"/>
+                </group>
+                
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_template_tree_inherit_shared" model="ir.ui.view">
+        <field name="name">product.template.tree.shared</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="is_shared_product" 
+                       string="Compartido" 
+                       optional="hide"
+                       groups="base.group_system"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_supplierinfo_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.supplierinfo.form.inherit</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='price']" position="after">
+                <field name="default_packaging_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_supplierinfo_tree_view_inherit" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.inherit</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='price']" position="after">
+                <field name="default_packaging_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

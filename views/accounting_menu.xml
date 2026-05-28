@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--    Change invoicing menu to Accounting     -->
+    <record model="ir.ui.menu" id="account.menu_finance">
+        <field name="name">Cuentas</field>
+    </record>
+    <menuitem id="account_reports_generic_statements" sequence="1"
+              name="Declaraciones genéricas"
+              parent="account.menu_finance_reports"/>
+    <menuitem id="account_reports_daily_reports" sequence="2"
+              name="Reportes diarios" parent="account.menu_finance_reports"/>
+    <menuitem id="account_reports_partner" sequence="3"
+              name="Informes de socios" parent="account.menu_finance_reports"/>
+    <menuitem id="account_reports_audit" sequence="4"
+              name="Informes de auditoría" parent="account.menu_finance_reports"/>
+</odoo>

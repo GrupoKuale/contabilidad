@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavepartetransporte_filter" model="ir.ui.view">
+            <field name="name">filtro.clavepartetransporte</field>
+            <field name="model">cfdi.clavepartetransporte</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscan en todo">
+                    <field name="Clave_partetransporte" string="Todo" filter_domain="['|',('Clave_partetransporte','ilike',self),
+                              ('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavepartetransporte_view_form" model="ir.ui.view">
+            <field name="name">clavepartetransporte form</field>
+            <field name="model">cfdi.clavepartetransporte</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_partetransporte"/>
+                            <field name="Descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavepartetransporte_view_tree" model="ir.ui.view">
+            <field name="name">clavepartetransporte tree</field>
+            <field name="model">cfdi.clavepartetransporte</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_partetransporte asc'  >
+                    <field name="Clave_partetransporte"/>
+                    <field name="Descripcion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavepartetransporte">
+            <field name="name">clavepartetransporte</field>
+            <field name="res_model">cfdi.clavepartetransporte</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

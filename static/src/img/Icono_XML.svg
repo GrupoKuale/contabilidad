@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="56" height="75" viewBox="0 0 56 75">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectángulo_160" data-name="Rectángulo 160" width="56" height="72" fill="#f59b00"/>
+    </clipPath>
+  </defs>
+  <g id="Grupo_120" data-name="Grupo 120" transform="translate(-856 -368)">
+    <g id="Grupo_82" data-name="Grupo 82" transform="translate(856 368)">
+      <g id="Grupo_81" data-name="Grupo 81" clip-path="url(#clip-path)">
+        <path id="Trazado_195" data-name="Trazado 195" d="M31.682,0H4.664A4.52,4.52,0,0,0,0,4.35v63.3A4.52,4.52,0,0,0,4.664,72H51.337A4.52,4.52,0,0,0,56,67.65V21.957Zm.879,4.627L50.8,21.1H33.4a.817.817,0,0,1-.842-.786ZM4.664,2.755H29.608V20.314a3.679,3.679,0,0,0,3.8,3.541H53.047v31.5H2.953v-51a1.658,1.658,0,0,1,1.711-1.6" fill="#f59b00"/>
+        <path id="Trazado_196" data-name="Trazado 196" d="M65.844,136.546l-4.32-3.7,4.32-3.7v-2.38l-7.1,6.079,7.1,6.079Z" transform="translate(-42.975 -95.021)" fill="#f59b00"/>
+        <path id="Trazado_197" data-name="Trazado 197" d="M123.426,126.767v2.379l4.32,3.7-4.32,3.7v2.379l7.1-6.079Z" transform="translate(-90.294 -95.022)" fill="#f59b00"/>
+        <path id="Trazado_198" data-name="Trazado 198" d="M98.9,112.876H96.973l-4.288,18.33h1.923Z" transform="translate(-67.805 -84.609)" fill="#f59b00"/>
+      </g>
+    </g>
+    <text id="XML" transform="translate(884 437)" fill="#fafafa" font-size="16" font-family="AloeveraDisplay-SemiBold, Aloevera Display" font-weight="600"><tspan x="-15.528" y="0">XML</tspan></text>
+  </g>
+</svg>

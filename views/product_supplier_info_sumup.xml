@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="product_supplier_info_sumup_tree_view" model="ir.ui.view">
+            <field name="name">product_supplierinfo_sumup_tree_view</field>
+            <field name="model">product.supplierinfo.sumup</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <header>
+                        <button name="action_create_supplierinfo" type="object" string="Actualizar información"/>
+                    </header>
+                    <field name="partner_id"/>
+                    <field name="name"/>
+                    <field name="product_code"/>
+                    <field name="price"/>
+                    <field name="product_id"/>
+                    <field name="state" widget="badge" decoration-success="state == 'done'"
+                           decoration-info="state == 'pending'" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_supplier_info_sumup_form_view" model="ir.ui.view">
+            <field name="name">product_supplierinfo_sumup_form_view</field>
+            <field name="model">product.supplierinfo.sumup</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="name"/>
+                            <field name="product_code"/>
+                        </group>
+                        <group>
+                            <field name="price"/>
+                            <field name="product_id"/>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="product_supplier_info_sumup_search_view" model="ir.ui.view">
+            <field name="name">product_supplierinfo_sumup_search_view</field>
+            <field name="model">product.supplierinfo.sumup</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="state"/>
+                    <filter string="Pendientes" domain="[('state', '=', 'pending')]" name="filter_pending" />
+                    <filter string="Hechos" domain="[('state', '=', 'done')]" name="filter_done"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_supplierinfo_sumup" model="ir.actions.act_window">
+            <field name="name">Informacion de proveedores</field>
+            <field name="res_model">product.supplierinfo.sumup</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'group_by':'partner_id','search_default_filter_pending':1}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay registros aún.
+                </p>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

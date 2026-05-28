@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="view_res_company_contabilidad_kuale_custom_view" model="ir.ui.view">
+            <field name="name">res.company.form.inherit</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="company_clave"/>
+                    <field name="company_group"/>
+                </xpath>
+                <xpath expr="//page[@name='general_info']//group//group[3]" position="after">
+                    <group string="Autorizaciones necesarias">
+                        <field name="requires_sale_authorization"/>
+                        <field name="requires_purchase_authorization"/>
+                        <field name="billable" string="Es facturable"/>
+                        <field name="single_concept" string="Concepto único" widget="boolean_toggle"/>
+                        <separator string="Seguimiento de facturas"/>
+                        <field name="client_folio_number"/>
+                        <field name="global_folio_number"/>
+                        <field name="client_serial_number"/>
+                        <field name="global_serial_number"/>
+                    </group>
+                    <group string="Asientos contables">
+                        <field name="account_payable" options="{'no_create': True}" context="{'view_mode': 'tree'}"/>
+                        <field name="account_receivable" options="{'no_create': True}"/>
+                    </group>
+                </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                    <field name="is_branch" invisible="1"/>
+                    <page string="FIEL" invisible="is_branch">
+                        <group>
+                            <group string="Archivos digitales">
+                                <field name="fiel_cert" filename="fiel.cer" string="Certificado (.cer)"/>
+                                <field name="fiel_key" filename="fiel.key" string="Clave privada (.key)"/>
+                            </group>
+                            <group string="Configuración">
+                                <field name="fiel_password" string="Contraseña eFirma" password="True"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="CSD" invisible="is_branch">
+                        <group>
+                            <group string="Archivos digitales">
+                                <field name="csd_cert" filename="csd.cert" string="Certificado (.cer)"/>
+                                <field name="csd_key" filename="csd.key" string="Clave privada (.key)"/>
+                            </group>
+                            <group string="Configuración">
+                                <field name="csd_password" string="Contraseña CSD" password="True"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Configuración de Correos" name="web_invoice_config">
+                        <group>
+                            <group string="Correos Electrónicos de Sistema">
+                                <div class="o_row" colspan="3">
+                                <label for="invoice_email_template_id" string="Facturación Web"/>
+                                <div class="o_row" colspan="2">
+                                    <div class="text-muted mb-2">
+                                        * Plantilla que se enviará automáticamente al timbrar una factura desde el sitio web.
+                                    </div>
+                                </div>
+                                <field name="invoice_email_template_id" nolabel="1"
+                                       options="{'no_create': True, 'no_open': False}"/>
+                                </div>
+                                <div class="o_row" colspan="3">
+                                <label for="missing_product_email_template_id" string="Alerta de Productos Faltantes (API)"/>
+                                <div class="o_row" colspan="2">
+                                    <div class="text-muted mb-2">
+                                        * Plantilla enviada si un ticket no se puede subir porque contiene productos sin código de terceros registrado.
+                                        Usa el comodín <b>__PRODUCTOS_FALTANTES__</b> en tu plantilla para listar los códigos faltantes.
+                                    </div>
+                                </div>
+                                <field name="missing_product_email_template_id" nolabel="1"
+                                       options="{'no_create': True, 'no_open': False}"/>
+                                </div>
+                                <div class="o_row" colspan="3">
+                                <label for="ticket_error_channel_id" string="Canal de Notificación Interna (API)"/>
+                                <div class="o_row" colspan="2">
+                                    <div class="text-muted mb-2">
+                                        * Canal de discusión en Odoo donde el sistema publicará automáticamente cuando falle una subida de ticket.
+                                    </div>
+                                </div>
+                                <field name="ticket_error_channel_id" nolabel="1"
+                                       options="{'no_create': True, 'no_open': False}"/>
+                                </div>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_company_view_form_reclutamiento_kuale_extended" model="ir.ui.view">
+            <field name="name">res.company.form_reclutamiento_kuale.extended</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="reclutamiento__kuale.res_company_view_form_reclutamiento_kuale"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='rfc']" position="after">
+                    <field name="regimen_fiscal" string="Régimen Fiscal"/>
+                    <field name="trade_name"/>
+                    <field name="client_serial_number"/>
+                    <field name="global_serial_number"/>
+                </xpath>
+
+                 <xpath expr="//page[@name='branch_info']//field[@name='no_store']" position="after">
+                    <field name="business_name" required="1"/>
+                    <field name="rfc" required="1"/>
+                    <field name="regimen_fiscal" string="Régimen Fiscal" required="1"/>
+                    <field name="cp_invoice_web"/>
+                </xpath>
+
+                <xpath expr="//field[@name='opening_date']" position="after">
+                    <field name="client_invoice_color"/>
+                    <field name="client_invoice_logo" widget="image"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record id="view_company_form_inherit_po_approval" model="ir.ui.view">
+            <field name="name">res.company.form.po.approval</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Niveles de Aprobación OC">
+                        
+                        <group string="Límites de Autorización y Control">
+                            <field name="po_approval_amount_limit" widget="monetary"/>
+                            <div class="text-muted mb-4" colspan="2">
+                                * Si una orden es menor a este monto, se aprobará automáticamente tras la autorización del jefe inmediato.
+                            </div>
+
+                            <label for="po_user_daily_limit" string="Límites de Solicitudes (Cantidad)"/>
+                            <div class="o_row" colspan="2">
+                                <span class="o_form_label">Diario:</span>
+                                <field name="po_user_daily_limit" class="oe_inline"/>
+                                <span class="o_form_label ml-4">Mensual:</span>
+                                <field name="po_user_monthly_limit" class="oe_inline"/>
+                            </div>
+                            <div class="text-muted" colspan="2">
+                                * Cantidad máxima de solicitudes permitidas por usuario.
+                            </div>
+                        </group>
+
+                        <group string="Proveedores de Planta (Sin Autorización)">
+                            <field name="po_plant_supplier_ids" widget="many2many_tags" 
+                                   options="{'no_create': True}" colspan="2"
+                                   placeholder="Selecciona proveedores que no requieren autorización..."/>
+                            <div class="text-muted" colspan="2">
+                                * Los proveedores listados aquí se aprueban automáticamente al solicitar autorización, sin pasar por los niveles.
+                            </div>
+                        </group>
+                        
+                        <group>
+                            <group string="Nivel 1 (Directores Generales)">
+                                <field name="po_level_1_active" widget="boolean_toggle"/>
+                                <field name="po_level_1_users" widget="many2many_tags" invisible="not po_level_1_active"/>
+                            </group>
+                            <group string="Nivel 2 (Subdirectores/Gerentes)">
+                                <field name="po_level_2_active" widget="boolean_toggle"/>
+                                <field name="po_level_2_users" widget="many2many_tags" invisible="not po_level_2_active"/>
+                            </group>
+                            <group string="Nivel 3 (Encargados Dpto.)">
+                                <field name="po_level_3_active" widget="boolean_toggle"/>
+                                <field name="po_level_3_users" widget="many2many_tags" invisible="not po_level_3_active"/>
+                            </group>
+                            <group string="Nivel 4 (Usuarios Base)">
+                                <field name="po_level_4_active" widget="boolean_toggle"/>
+                                <field name="po_level_4_users" widget="many2many_tags" invisible="not po_level_4_active"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

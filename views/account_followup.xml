@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_account_followup_followup_line_tree"
+            model="ir.ui.view">
+        <field name="name">followup.line.tree</field>
+        <field name="model">followup.line</field>
+        <field name="arch" type="xml">
+            <tree string="Follow-up Steps">
+                <field name="name"/>
+                <field name="delay"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_account_followup_followup_line_form"
+            model="ir.ui.view">
+        <field name="name">followup.line.form</field>
+        <field name="model">followup.line</field>
+        <field name="arch" type="xml">
+            <form string="Pasos de seguimiento">
+                <label for="name" class="oe_edit_only"/>
+                <h1>
+                    <field name="name"/>
+                </h1>
+                <div class="oe_inline">
+                    Después de
+                    <field name="delay" class="oe_inline"/>
+                    días de retraso, realice las siguientes acciones:
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="view_account_followup_followup_form" model="ir.ui.view">
+        <field name="name">account.followup.form</field>
+        <field name="model">account.followup</field>
+        <field name="arch" type="xml">
+            <form string="Seguimiento">
+                <h1>
+                    <field name="name"/>
+                </h1>
+                <label for="company_id" groups="base.group_multi_company"/>
+                <field name="company_id" options="{'no_create': True}"
+                       class="oe_inline" groups="base.group_multi_company"/>
+                <p class="oe_grey">
+                    Para recordar a los clientes que deben pagar sus facturas, puede
+                    definir diferentes acciones según el grado de
+                    retraso en el pago del cliente. Estas acciones se agrupan
+                    en niveles de seguimiento que se activan cuando la fecha de vencimiento de una factura ha
+                    transcurrido una determinada cantidad de días. Si hay otras facturas vencidas para el
+                    mismo cliente, se ejecutarán las acciones de la factura más
+                    vencida.
+                </p>
+                <field name="followup_line_ids"/>
+            </form>
+        </field>
+    </record>
+    <record id="view_account_followup_followup_tree" model="ir.ui.view">
+        <field name="name">account.followup.tree</field>
+        <field name="model">account.followup</field>
+        <field name="arch" type="xml">
+            <tree string="Seguimiento">
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_account_followup_filter" model="ir.ui.view">
+        <field name="name">account.followup.select</field>
+        <field name="model">account.followup</field>
+        <field name="arch" type="xml">
+            <search string="Buscar seguimiento">
+                <field name="company_id" groups="base.group_multi_company"/>
+            </search>
+        </field>
+    </record>
+    <record id="view_account_followup_followup_kanban" model="ir.ui.view">
+        <field name="name">account.followup.kanban</field>
+        <field name="model">account.followup</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div>
+                                <strong>
+                                    <i class="fa fa-building" role="img"
+                                       aria-label="Enterprise"/>
+                                    <t t-esc="record.name.value"/>
+                                </strong>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="action_account_followup_definition_form"
+            model="ir.actions.act_window">
+        <field name="name">Seguimiento de pagos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.followup</field>
+        <field name="search_view_id" ref="view_account_followup_filter"/>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define niveles de seguimiento y sus acciones relacionadas
+            </p>
+            <p>
+                Para cada paso, especifique las acciones a realizar y el plazo en
+                días. Es
+                posible utilizar plantillas impresas y de correo electrónico para enviar
+                mensajes específicos al cliente.
+            </p>
+        </field>
+    </record>
+    <menuitem action="action_account_followup_definition_form"
+              id="account_followup_menu"
+              parent="account.account_management_menu"
+              name="Niveles de seguimiento"
+              groups="account.group_account_manager" sequence="2"/>
+</odoo>

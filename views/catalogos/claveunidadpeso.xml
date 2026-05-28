@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_claveunidadpeso_filter" model="ir.ui.view">
+            <field name="name">filtro.claveunidadpeso</field>
+            <field name="model">cfdi.claveunidadpeso</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_unidad" string="Todo" filter_domain="['|',('Clave_unidad','ilike',self),
+                              '|',('Nombre','ilike',self),
+                              '|',('Descripcion','ilike',self),
+                              '|',('Simolo','ilike',self),
+                              ('Bandera','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="claveunidadpeso_view_form" model="ir.ui.view">
+            <field name="name">claveunidadpeso form</field>
+            <field name="model">cfdi.claveunidadpeso</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_unidad"/>
+                            <field name="Nombre"/>
+                            <field name="Descripcion"/>
+                            <field name="Simolo"/>
+                            <field name="Bandera"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="claveunidadpeso_view_tree" model="ir.ui.view">
+            <field name="name">claveunidadpeso tree</field>
+            <field name="model">cfdi.claveunidadpeso</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_unidad asc'  >
+                    <field name="Clave_unidad"/>
+                    <field name="Nombre"/>
+                    <field name="Descripcion"/>
+                    <field name="Simolo"/>
+                    <field name="Bandera"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_claveunidadpeso">
+            <field name="name">claveunidadpeso</field>
+            <field name="res_model">cfdi.claveunidadpeso</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

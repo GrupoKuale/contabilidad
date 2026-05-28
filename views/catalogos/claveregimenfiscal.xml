@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_claveregimenfiscal_filter" model="ir.ui.view">
+            <field name="name">filtro.claveregimenfiscal</field>
+            <field name="model">cfdi.claveregimenfiscal</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_regimenFiscal" string="Todo" filter_domain="['|',('Clave_regimenFiscal','ilike',self),
+                              ('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="claveregimenfiscal_view_form" model="ir.ui.view">
+            <field name="name">claveregimenfiscal form</field>
+            <field name="model">cfdi.claveregimenfiscal</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_regimenFiscal"/>
+                            <field name="Descripcion"/>
+                            <field name="Fisica"/>
+                            <field name="Moral"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="claveregimenfiscal_view_tree" model="ir.ui.view">
+            <field name="name">claveregimenfiscal tree</field>
+            <field name="model">cfdi.claveregimenfiscal</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_regimenFiscal asc'  >
+                    <field name="Clave_regimenFiscal"/>
+                    <field name="Descripcion"/>
+                    <field name="Fisica"/>
+                    <field name="Moral"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_claveregimenfiscal">
+            <field name="name">claveregimenfiscal</field>
+            <field name="res_model">cfdi.claveregimenfiscal</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

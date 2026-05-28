@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_clavetipoembalaje_filter" model="ir.ui.view">
+            <field name="name">filtro.clavetipoembalaje</field>
+            <field name="model">cfdi.clavetipoembalaje</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Buscar en todo">
+                    <field name="Clave_tipoembalaje" string="Todo" filter_domain="['|',('Clave_tipoembalaje','ilike',self),
+                              ('Descripcion','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="clavetipoembalaje_view_form" model="ir.ui.view">
+            <field name="name">clavetipoembalaje form</field>
+            <field name="model">cfdi.clavetipoembalaje</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="Clave_tipoembalaje"/>
+                            <field name="Descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="clavetipoembalaje_view_tree" model="ir.ui.view">
+            <field name="name">clavetipoembalaje tree</field>
+            <field name="model">cfdi.clavetipoembalaje</field>
+            <field name="arch" type="xml">
+                <tree class="text-center" default_order='Clave_tipoembalaje asc'  >
+                    <field name="Clave_tipoembalaje"/>
+                    <field name="Descripcion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_cfdi_clavetipoembalaje">
+            <field name="name">clavetipoembalaje</field>
+            <field name="res_model">cfdi.clavetipoembalaje</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>
