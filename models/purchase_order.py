@@ -321,10 +321,26 @@ class PurchaseOrder(models.Model):
         """
         Override de button_confirm para validar aprobaciones antes de confirmar.
         FLUJO:
-        1. Valida aprobación (approval_level = 'done')
-        2. Llama al super() para crear pickings y cambiar a 'purchase'
-        3. Vincula picking con la orden
+        1. Valida que el usuario no sea solo guía en entrenamiento
+        2. Valida aprobación (approval_level = 'done')
+        3. Llama al super() para crear pickings y cambiar a 'purchase'
+        4. Vincula picking con la orden
         """
+        user = self.env.user
+        is_entrenamiento = user.has_group('reclutamiento__kuale.group_guias_entrenamiento')
+        can_confirm = (
+            user.has_group('reclutamiento__kuale.group_guias_generales') or
+            user.has_group('reclutamiento__kuale.group_guias_foraneos') or
+            user.has_group('reclutamiento__kuale.group_dh_access') or
+            user.has_group('base.group_system')
+        )
+        if is_entrenamiento and not can_confirm:
+            raise UserError(_(
+                'Los guías en entrenamiento no pueden confirmar órdenes de compra directamente.\n\n'
+                'Acción requerida: usa el botón "Solicitar Autorización" para que un Guía General '
+                'o DH autorice la orden.'
+            ))
+
         for order in self:
             _logger.info(
                 'BUTTON_CONFIRM: %s | state=%s | requires_auth=%s | approval=%s',

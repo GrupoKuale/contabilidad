@@ -8,6 +8,7 @@
     'depends': ['base', 'web', 'account', 'sale', 'purchase', 'account_check_printing', 'analytic', 'spreadsheet',
                 'hr_contract', 'hr_expense',
                 'hr_holidays', 'portal', 'payment', 'stock', 'delivery', 'stock_delivery', 'sale_management',
+                'contacts',
                 'reclutamiento__kuale', 'spiffy_theme_backend', 'mail'],
     'data': [
         # security
