@@ -352,13 +352,6 @@ access_ticket_audit_queue_manager,ticket.audit.queue.manager,model_contabilidad_
 
 access_logbook_xml_viewer_user,logbook.xml.viewer.user,model_contabilidad_kuale_logbook_xml_viewer,base.group_user,1,1,1,1
 
-# ============================================================
-# DIRECCIÓN / CONSEJO — Solo lectura (read=1, write/create/unlink=0)
-# account.group_account_readonly cubre modelos estándar de account.
-# Las siguientes líneas cubren modelos personalizados de este módulo.
-# ============================================================
-
-# SAT
 access_sat_product_codes_dir,sat.product.codes dir,model_sat_product_codes,reclutamiento__kuale.group_direccion,1,0,0,0
 access_sat_product_account_dir,sat.product.account dir,model_sat_product_account,reclutamiento__kuale.group_direccion,1,0,0,0
 access_sat_uploads_dir,sat.uploads dir,model_sat_uploads,reclutamiento__kuale.group_direccion,1,0,0,0
@@ -373,13 +366,9 @@ access_sat_tipo_operacion_dir,sat.tipo.operacion dir,model_sat_tipo_operacion,re
 access_sat_pais_residencia_dir,sat.pais.residencia dir,model_sat_pais_residencia,reclutamiento__kuale.group_direccion,1,0,0,0
 access_sat_diot_dir,sat.diot dir,model_sat_diot,reclutamiento__kuale.group_direccion,1,0,0,0
 access_sat_diot_cfdis_dir,sat.diot.cfdis dir,model_sat_diot_cfdis,reclutamiento__kuale.group_direccion,1,0,0,0
-
-# Presupuestos
 access_budget_budget_dir,budget.budget dir,model_budget_budget,reclutamiento__kuale.group_direccion,1,0,0,0
 access_account_budget_post_dir,account.budget.post dir,model_account_budget_post,reclutamiento__kuale.group_direccion,1,0,0,0
 access_budget_lines_dir,budget.lines dir,model_budget_lines,reclutamiento__kuale.group_direccion,1,0,0,0
-
-# Activos y reportes financieros
 access_account_asset_category_dir,account.asset.category dir,model_account_asset_category,reclutamiento__kuale.group_direccion,1,0,0,0
 access_account_asset_asset_dir,account.asset.asset dir,model_account_asset_asset,reclutamiento__kuale.group_direccion,1,0,0,0
 access_account_asset_depreciation_line_dir,account.asset.depreciation.line dir,model_account_asset_depreciation_line,reclutamiento__kuale.group_direccion,1,0,0,0
@@ -387,27 +376,17 @@ access_asset_asset_report_dir,asset.asset.report dir,model_asset_asset_report,re
 access_account_financial_report_dir,account.financial.report dir,model_account_financial_report,reclutamiento__kuale.group_direccion,1,0,0,0
 access_account_followup_dir,account.followup dir,model_account_followup,reclutamiento__kuale.group_direccion,1,0,0,0
 access_followup_line_dir,followup.line dir,model_followup_line,reclutamiento__kuale.group_direccion,1,0,0,0
-
-# Conciliaciones y extractos bancarios
 access_santander_bank_statement_dir,santander.bank.statement dir,model_santander_bank_statement,reclutamiento__kuale.group_direccion,1,0,0,0
 access_bank_reconciliation_dir,bank.reconciliation dir,model_bank_reconciliation,reclutamiento__kuale.group_direccion,1,0,0,0
 access_bank_reconciliation_line_dir,bank.reconciliation.line dir,model_bank_reconciliation_line,reclutamiento__kuale.group_direccion,1,0,0,0
-
-# Órdenes de compra (módulo purchase — no cubierto por account_readonly)
 access_purchase_order_dir,purchase.order dir,model_purchase_order,reclutamiento__kuale.group_direccion,1,0,0,0
 access_purchase_order_line_dir,purchase.order.line dir,model_purchase_order_line,reclutamiento__kuale.group_direccion,1,0,0,0
-
-# Cortes de caja y transacciones bancarias (antes solo base.group_system)
 access_cash_cut_dir,cash.cut dir,model_contabilidad_kuale_cash_cut,reclutamiento__kuale.group_direccion,1,0,0,0
 access_cash_cut_line_dir,cash.cut.line dir,model_contabilidad_kuale_cash_cut_line,reclutamiento__kuale.group_direccion,1,0,0,0
 access_bank_transaction_dir,bank.transaction dir,model_contabilidad_kuale_bank_transaction,reclutamiento__kuale.group_direccion,1,0,0,0
 access_bank_transaction_line_dir,bank.transaction.line dir,model_contabilidad_kuale_bank_transaction_line,reclutamiento__kuale.group_direccion,1,0,0,0
-
-# Resúmenes y tickets (antes solo base.group_system)
 access_ticket_monitor_summary_dir,ticket.monitor.summary dir,model_contabilidad_kuale_ticket_monitor_summary,reclutamiento__kuale.group_direccion,1,0,0,0
 access_ticket_monitor_dir,ticket.monitor dir,model_contabilidad_kuale_ticket_monitor,reclutamiento__kuale.group_direccion,1,0,0,0
-
-# STP (para ver movimientos, no operar)
 access_stp_empresa_dir,stp.empresa dir,model_stp_empresa,reclutamiento__kuale.group_direccion,1,0,0,0
 access_stp_consult_order_current_date_dir,stp.consult.order.current.date dir,model_stp_consult_order_current_date,reclutamiento__kuale.group_direccion,1,0,0,0
 access_stp_consult_order_historical_dir,stp.consult.order.historical dir,model_stp_consult_order_historical,reclutamiento__kuale.group_direccion,1,0,0,0
